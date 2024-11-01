@@ -58,6 +58,8 @@ public class AuthenticationMenu extends AbstractMenu {
         // We can create contexts for other UserTypes.
         UserContext userContext = new UserContext(name, userType, ID);
 
+        //TODO: Remember to add assertion for UserContext to not be null.
+
         System.out.println("Switching to MainMenu");
         app.setCurrentMenu(new PatientMenu(app));
     }
