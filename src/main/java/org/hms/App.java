@@ -1,5 +1,6 @@
 package org.hms;
 
+import org.hms.entities.UserContext;
 import org.hms.services.AppointmentService;
 import org.hms.services.MedicalRecordService;
 import org.hms.views.AuthenticationMenu;
@@ -39,7 +40,8 @@ public class App {
         return appointmentService;
     }
 
-    public UserContext getUserContext() {
-        return userContext;
-    }
+//    public UserContext getUserContext() {
+//        return userContext;
+//    }
+
 }

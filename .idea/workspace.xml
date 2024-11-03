@@ -4,25 +4,58 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a825249c-a78b-4548-99fe-be812804f47e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
-    </list>
+    <list default="true" id="a825249c-a78b-4548-99fe-be812804f47e" name="Changes" comment="Fix error" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 4
-}]]></component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Coziyu&quot;
+  }
+}</component>
+  <component name="GitRewordedCommitMessages">
+    <option name="onto" value="c09da59c97a64be6853f7cfed931ec9aa907fc17" />
+  </component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Coziyu/HospitalManagementSystem&quot;,
+    &quot;accountId&quot;: &quot;b094e68e-574e-4847-a344-af19279018d7&quot;
+  }
+}</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
   <component name="ProjectId" id="2oFgbb3o3vA0bB9PuFvwVEtQdke" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -30,13 +63,26 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "refactor",
     "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "onboarding.tips.debug.path": "D:/Code/Projects/HospitalManagementSystem/src/main/java/org/example/Main.java",
+    "settings.editor.selected.configurable": "reference.settings.ide.settings.uml",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="org.hms.entities" />
+      <recent name="org.hms.views" />
+      <recent name="org.hms.services" />
+      <recent name="org.hms" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -53,22 +99,116 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1730470809829</updated>
-      <workItem from="1730470810830" duration="1000" />
+      <workItem from="1730470810830" duration="7780000" />
+      <workItem from="1730478690656" duration="9597000" />
     </task>
+    <task id="LOCAL-00001" summary="Initial Commit">
+      <option name="closed" value="true" />
+      <created>1730470832115</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1730470832115</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Initial Commit 2">
+      <option name="closed" value="true" />
+      <created>1730470951227</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1730470951227</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Add menu and service classes">
+      <option name="closed" value="true" />
+      <created>1730475642698</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1730475642698</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Refactor structure">
+      <option name="closed" value="true" />
+      <created>1730475667247</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1730475667247</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Refactor and add TODOs">
+      <option name="closed" value="true" />
+      <created>1730477776204</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1730477776204</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Add AbstractMainMenu and Implement PatientMenu">
+      <option name="closed" value="true" />
+      <created>1730477806622</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1730477806622</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Refactor and Add PatientContext">
+      <option name="closed" value="true" />
+      <created>1730630502292</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1730630502292</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Fix error">
+      <option name="closed" value="true" />
+      <created>1730630687809</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1730630687809</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Initial Commit" />
+    <MESSAGE value="Initial Commit 2" />
+    <MESSAGE value="Add menu and service classes" />
+    <MESSAGE value="Refactor structure" />
+    <MESSAGE value="Refactor and add TODOs" />
+    <MESSAGE value="Add AbstractMainMenu and Implement PatientMenu" />
+    <MESSAGE value="Refactor and Add PatientContext" />
+    <MESSAGE value="Fix error" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix error" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/example/Main.java</url>
-          <line>13</line>
+          <url>file://$PROJECT_DIR$/src/main/java/org/hms/Main.java</url>
+          <line>15</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

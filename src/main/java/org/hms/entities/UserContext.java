@@ -1,4 +1,6 @@
-package org.hms;
+package org.hms.entities;
+
+import org.hms.UserType;
 
 public class UserContext {
     private String name;
