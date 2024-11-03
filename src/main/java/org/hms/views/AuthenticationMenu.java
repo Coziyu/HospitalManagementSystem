@@ -1,7 +1,7 @@
 package org.hms.views;
 
 import org.hms.App;
-import org.hms.UserContext;
+import org.hms.entities.UserContext;
 import org.hms.UserType;
 
 import java.util.Scanner;

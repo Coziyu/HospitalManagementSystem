@@ -1,15 +1,18 @@
 package org.hms.views;
 
 import org.hms.App;
+import org.hms.entities.PatientContext;
 
 
 import java.util.Scanner;
 
 // Consider using reflection to autogenerate options
 public class PatientMenu extends AbstractMainMenu {
+    private final PatientContext patientContext;
 
-    public PatientMenu(App app) {
+    public PatientMenu(App app, PatientContext patientContext) {
         this.app = app;
+        this.patientContext = patientContext;
     }
 
     @Override
@@ -27,7 +30,7 @@ public class PatientMenu extends AbstractMainMenu {
     }
 
     private void handleViewMedicalRecord() {
-        Integer patientID = app.getUserContext().getHospitalID();
+        Integer patientID = patientContext.getHospitalID();
         String medicalRecords = app.getMedicalRecordService().getMedicalRecords(patientID);
         System.out.println("Medical Records for " + patientID + ": " + medicalRecords);
     }
