@@ -1,6 +1,7 @@
 package org.hms.views;
 
 import org.hms.App;
+import org.hms.entities.PatientContext;
 import org.hms.entities.UserContext;
 import org.hms.UserType;
 
@@ -57,11 +58,11 @@ public class AuthenticationMenu extends AbstractMenu {
 
         // We can create contexts for other UserTypes.
         UserContext userContext = new UserContext(name, userType, ID);
-
+        PatientContext patientContext = new PatientContext(userContext, 444);
         //TODO: Remember to add assertion for UserContext to not be null.
 
         System.out.println("Switching to MainMenu");
-        app.setCurrentMenu(new PatientMenu(app));
+        app.setCurrentMenu(new PatientMenu(app, patientContext));
     }
 
 }
