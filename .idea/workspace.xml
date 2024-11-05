@@ -4,7 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a825249c-a78b-4548-99fe-be812804f47e" name="Changes" comment="Fix error" />
+    <list default="true" id="a825249c-a78b-4548-99fe-be812804f47e" name="Changes" comment="Fix error">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/hms/services/appointment/AppointmentService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/hms/services/appointment/IAppointmentDataAccess.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/hms/services/medicalrecord/IMedicalDataAccess.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/hms/services/medicalrecord/MedicalRecordService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/hms/services/storage/IStorageAccess.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/hms/services/storage/StorageService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/hms/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/hms/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/hms/UserType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/hms/UserRole.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/hms/entities/PatientContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/hms/entities/PatientContext.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/hms/entities/UserContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/hms/entities/UserContext.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/hms/services/AbstractService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/hms/services/AbstractService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/hms/services/AppointmentService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/hms/services/MedicalRecordService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/hms/views/AuthenticationMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/hms/views/AuthenticationMenu.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,6 +37,7 @@
       <list>
         <option value="Enum" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -42,8 +60,8 @@
   </component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Coziyu/HospitalManagementSystem&quot;,
-    &quot;accountId&quot;: &quot;b094e68e-574e-4847-a344-af19279018d7&quot;
+    &quot;url&quot;: &quot;https://github.com/Coziyu/HospitalManagementSystem.git&quot;,
+    &quot;accountId&quot;: &quot;2dcbd41f-4fe8-4ba8-b4ee-7449fb638802&quot;
   }
 }</component>
   <component name="ProblemsViewState">
@@ -62,16 +80,19 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Gradle.Build HospitalManagementSystem.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "refactor",
+    "git-widget-placeholder": "add-classes",
+    "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/oreo/Desktop/Programming/Official/HospitalManagementSystem",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "onboarding.tips.debug.path": "D:/Code/Projects/HospitalManagementSystem/src/main/java/org/example/Main.java",
-    "settings.editor.selected.configurable": "reference.settings.ide.settings.uml",
+    "settings.editor.selected.configurable": "Errors",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -86,8 +107,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23726.103" />
-        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23726.103" />
+        <option value="bundled-jdk-9823dce3aa75-b114ca120d71-intellij.indexing.shared.core-IU-242.20224.419" />
+        <option value="bundled-js-predefined-d6986cc7102b-410509235cf1-JavaScript-IU-242.20224.419" />
       </set>
     </attachedChunks>
   </component>
@@ -101,6 +122,7 @@
       <updated>1730470809829</updated>
       <workItem from="1730470810830" duration="7780000" />
       <workItem from="1730478690656" duration="9597000" />
+      <workItem from="1730806760161" duration="2227000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <option name="closed" value="true" />
@@ -192,7 +214,8 @@
     <MESSAGE value="Add AbstractMainMenu and Implement PatientMenu" />
     <MESSAGE value="Refactor and Add PatientContext" />
     <MESSAGE value="Fix error" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix error" />
+    <MESSAGE value="move to new branch" />
+    <option name="LAST_COMMIT_MESSAGE" value="move to new branch" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>

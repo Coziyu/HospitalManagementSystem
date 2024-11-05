@@ -1,8 +1,8 @@
 package org.hms;
 
 import org.hms.entities.UserContext;
-import org.hms.services.AppointmentService;
-import org.hms.services.MedicalRecordService;
+import org.hms.services.appointment.AppointmentService;
+import org.hms.services.medicalrecord.MedicalRecordService;
 import org.hms.views.AuthenticationMenu;
 import org.hms.views.AbstractMenu;
 
