@@ -4,24 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a825249c-a78b-4548-99fe-be812804f47e" name="Changes" comment="Fix error">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/hms/services/appointment/AppointmentService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/hms/services/appointment/IAppointmentDataAccess.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/hms/services/medicalrecord/IMedicalDataAccess.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/hms/services/medicalrecord/MedicalRecordService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/hms/services/storage/IStorageAccess.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/hms/services/storage/StorageService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/hms/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/hms/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/hms/UserType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/hms/UserRole.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/hms/entities/PatientContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/hms/entities/PatientContext.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/hms/entities/UserContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/hms/entities/UserContext.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/hms/services/AbstractService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/hms/services/AbstractService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/hms/services/AppointmentService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/hms/services/MedicalRecordService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/hms/views/AuthenticationMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/hms/views/AuthenticationMenu.java" afterDir="false" />
-    </list>
+    <list default="true" id="a825249c-a78b-4548-99fe-be812804f47e" name="Changes" comment="Fix error" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -44,10 +27,11 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="main" />
+        <entry key="$PROJECT_DIR$" value="add-classes" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -82,7 +66,7 @@
   "keyToString": {
     "Gradle.Build HospitalManagementSystem.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "add-classes",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/oreo/Desktop/Programming/Official/HospitalManagementSystem",
