@@ -1,15 +1,15 @@
 package org.hms.entities;
 
-import org.hms.UserType;
+import org.hms.UserRole;
 
 public class UserContext {
     private String name;
-    private UserType userType;
+    private UserRole userRole;
     private Integer hospitalID;
 
-    public UserContext(String name, UserType userType, Integer hospitalID) {
+    public UserContext(String name, UserRole userRole, Integer hospitalID) {
         this.name = name;
-        this.userType = userType;
+        this.userRole = userRole;
         this.hospitalID = hospitalID;
     }
 
@@ -17,8 +17,8 @@ public class UserContext {
         return name;
     }
 
-    public UserType getUserType() {
-        return userType;
+    public UserRole getUserType() {
+        return userRole;
     }
 
     public Integer getHospitalID() {

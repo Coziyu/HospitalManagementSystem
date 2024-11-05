@@ -1,6 +1,6 @@
 package org.hms;
 
-public enum UserType {
+public enum UserRole {
     PAITENT,
     DOCTOR,
     PHARMACIST,

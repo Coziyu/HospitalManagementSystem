@@ -3,7 +3,7 @@ package org.hms.views;
 import org.hms.App;
 import org.hms.entities.PatientContext;
 import org.hms.entities.UserContext;
-import org.hms.UserType;
+import org.hms.UserRole;
 
 import java.util.Scanner;
 
@@ -21,26 +21,26 @@ public class AuthenticationMenu extends AbstractMenu {
         System.out.println("Enter your name");
         String name = scanner.nextLine();
         System.out.println("Enter your user type 1) Patient, 2) Doctor, 3) Pharmacist, 4) Admin: ");
-        UserType userType = null;
+        UserRole userRole = null;
 
         while (true) {
             try {
                 int choice = scanner.nextInt();
                 switch (choice) {
                     case 1: {
-                        userType = UserType.PAITENT;
+                        userRole = UserRole.PAITENT;
                         break;
                     }
                     case 2: {
-                        userType = UserType.DOCTOR;
+                        userRole = UserRole.DOCTOR;
                         break;
                     }
                     case 3: {
-                        userType = UserType.PHARMACIST;
+                        userRole = UserRole.PHARMACIST;
                         break;
                     }
                     case 4: {
-                        userType = UserType.ADMINISTRATOR;
+                        userRole = UserRole.ADMINISTRATOR;
                         break;
                     }
                     default: {
@@ -57,7 +57,7 @@ public class AuthenticationMenu extends AbstractMenu {
         int ID = scanner.nextInt();
 
         // We can create contexts for other UserTypes.
-        UserContext userContext = new UserContext(name, userType, ID);
+        UserContext userContext = new UserContext(name, userRole, ID);
         PatientContext patientContext = new PatientContext(userContext, 444);
         //TODO: Remember to add assertion for UserContext to not be null.
 

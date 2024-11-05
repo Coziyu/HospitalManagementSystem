@@ -1,4 +1,6 @@
-package org.hms.services;
+package org.hms.services.appointment;
+
+import org.hms.services.AbstractService;
 
 public class AppointmentService extends AbstractService {
     public boolean scheduleAppointment(int date) {
