@@ -1,4 +1,6 @@
-package org.hms.entities;
+package org.hms.services.medicalrecord;
+
+import org.hms.entities.BloodType;
 
 import java.io.Serializable;
 import java.util.ArrayList;

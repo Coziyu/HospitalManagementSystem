@@ -1,13 +1,13 @@
-package org.hms.entities;
+package org.hms.services.appointment;
 
 import java.io.Serializable;
 import java.util.Date;
 
 public class AppointmentInformation implements Serializable {
-    int appointmentID;
-    String patientID;
-    String doctorID;
-    Date appointmentTimeSlot;
+    private int appointmentID;
+    private String patientID;
+    private String doctorID;
+    private Date appointmentTimeSlot;
 
 
     AppointmentStatus appointmentStatus;
