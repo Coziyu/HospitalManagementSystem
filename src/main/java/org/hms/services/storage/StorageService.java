@@ -3,6 +3,7 @@ package org.hms.services.storage;
 import org.hms.services.AbstractService;
 import org.hms.services.appointment.IAppointmentDataInterface;
 import org.hms.services.drugdispensary.DrugInventoryTable;
+import org.hms.services.drugdispensary.DrugReplenishRequestTable;
 import org.hms.services.drugdispensary.IDrugStockDataInterface;
 import org.hms.services.medicalrecord.IMedicalDataInterface;
 
@@ -18,7 +19,7 @@ public class StorageService
 
     @Override
     public ArrayList<String> getAppointmentsPendingDispensary() {
-        // TODO: Implement fetching from
+        // TODO: Implement fetching from AppointmentService
         ArrayList<String> appointmentsPendingDispensary = new ArrayList<>();
         appointmentsPendingDispensary.add("A0001");
         appointmentsPendingDispensary.add("A0002");
@@ -30,5 +31,11 @@ public class StorageService
     public DrugInventoryTable getDrugInventory() {
         // TODO: Implement loading from file
         return new DrugInventoryTable();
+    }
+
+    @Override
+    public DrugReplenishRequestTable getDrugReplenishRequestTable() {
+        // TODO: Implement loading from file
+        return new DrugReplenishRequestTable();
     }
 }

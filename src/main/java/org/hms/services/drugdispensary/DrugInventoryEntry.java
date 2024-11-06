@@ -46,7 +46,8 @@ public class DrugInventoryEntry extends AbstractTableEntry {
     @Override
     public String toCSVString() {
         return String.format("%s,%s,%s,%s",
-                getID(),name,quantity,lowStockAlertThreshold);
+                getID(),
+                preprocessCSVString(name),quantity,lowStockAlertThreshold);
     }
 
     /**
@@ -54,7 +55,7 @@ public class DrugInventoryEntry extends AbstractTableEntry {
      */
     @Override
     public void loadFromCSVString(String csvLine) {
-        String[] parts = csvLine.split(",");
+        String[] parts = parseCSVLine(csvLine);
         id = Integer.parseInt(parts[0]);
         name = parts[1];
         quantity = Integer.parseInt(parts[2]);

@@ -15,12 +15,16 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
         entries = new ArrayList<T>();
     }
 
-    public void addEntry(T entry) {
+    public void addEntry(T entry) throws Exception {
+        // If duplicate IDs, throw exception
+        if (getEntry(entry.getID()) != null){
+            throw new Exception("Duplicate ID inside the table!");
+        }
         entries.add(entry);
     }
 
-    public void removeEntry(T entry) {
-        entries.remove(entry);
+    public void removeEntry(int id) throws Exception {
+        entries.remove(searchByAttribute(AbstractTableEntry::getID, id).getFirst());
     }
 
     /**
@@ -100,17 +104,16 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
      * @return a list of entries where the extracted key matches the keyValue
      * @throws IllegalArgumentException if keyExtractor or keyValue is null
      */
-    public <U> List<T> searchByAttribute(Function<T, U> keyExtractor, U keyValue) {
+    public <U>  ArrayList<T> searchByAttribute(Function<T, U> keyExtractor, U keyValue) {
         if (keyExtractor == null || keyValue == null) {
             throw new IllegalArgumentException("Key extractor and key value cannot be null");
         }
-
-        return entries.stream()
+        List<T> temp = entries.stream()
                 .filter(entry -> {
                     U extractedValue = keyExtractor.apply(entry);
                     return keyValue.equals(extractedValue);
-                })
-                .collect(Collectors.toList());
+                }).collect(Collectors.toList());
+        return new ArrayList<>(temp);
     }
 
     // Load from CSV file
@@ -122,13 +125,29 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
 
             String line;
             while ((line = reader.readLine()) != null) {
-                T entry = createEntry();
+                T entry = createValidEntryTemplate();
                 entry.loadFromCSVString(line);
                 entries.add(entry);
             }
         }
     }
+    public int getUnusedID() {
+        // Start from 0, increment until 1 unused ID encountered.
+        sortBy(AbstractTableEntry::getID);
+        for (int i = 0; i < entries.size(); i++) {
+            if (entries.get(i).getID() != i) {
+                return i;
+            }
+        }
+        return entries.size();
+    }
 
     protected abstract String[] getHeaders();
-    protected abstract T createEntry();
+
+    /**
+     * This creates an empty T extends AbstractTableEntry object
+     * Only it's ID is set. Other fields to be instantiated.
+     * @return
+     */
+    protected abstract T createValidEntryTemplate();
 }

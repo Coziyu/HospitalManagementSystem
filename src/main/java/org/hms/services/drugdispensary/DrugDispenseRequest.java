@@ -3,12 +3,12 @@ package org.hms.services.drugdispensary;
 import org.hms.entities.AbstractTableEntry;
 
 
-public class DrugRequest extends AbstractTableEntry {
+public class DrugDispenseRequest extends AbstractTableEntry {
     String drugName;
     int quantity;
     DrugRequestStatus status;
 
-    public DrugRequest(int id, String drugName, int quantity, DrugRequestStatus status) {
+    public DrugDispenseRequest(int id, String drugName, int quantity, DrugRequestStatus status) {
         super(id);
         this.drugName = drugName;
         this.quantity = quantity;
@@ -37,12 +37,16 @@ public class DrugRequest extends AbstractTableEntry {
 
     @Override
     public String toCSVString() {
-        return String.format("%s,%s,%s,%s", getID(), drugName, quantity, status);
+        return String.format("%s,%s,%s,%s",
+                getID(),
+                preprocessCSVString(drugName),
+                quantity,
+                status);
     }
 
     @Override
-    public void loadFromCSVString(String csvString) {
-        String[] parts = csvString.split(",");
+    public void loadFromCSVString(String csvLine) {
+        String[] parts = parseCSVLine(csvLine);
         id = Integer.parseInt(parts[0]);
         drugName = parts[1];
         quantity = Integer.parseInt(parts[2]);

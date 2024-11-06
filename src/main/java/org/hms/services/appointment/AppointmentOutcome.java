@@ -1,6 +1,6 @@
 package org.hms.services.appointment;
 
-import org.hms.services.drugdispensary.DrugRequest;
+import org.hms.services.drugdispensary.DrugDispenseRequest;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,5 +10,5 @@ public class AppointmentOutcome implements Serializable {
     private String patientID;
     private String typeOfAppointment;
     private String consultationNotes;
-    private ArrayList<DrugRequest> prescribedMedication;
+    private ArrayList<DrugDispenseRequest> prescribedMedication;
 }
