@@ -3,17 +3,17 @@ package org.hms.services.drugdispensary;
 import org.hms.entities.AbstractTableEntry;
 
 
-public class DrugEntry extends AbstractTableEntry {
+public class DrugInventoryEntry extends AbstractTableEntry {
     private String name;
     private int quantity;
     private int lowStockAlertThreshold;
 
-    public DrugEntry () {
-        super();
+    public DrugInventoryEntry(){
+        super(-1);
     }
 
-    public DrugEntry(String name, int quantity, int lowStockAlertThreshold) {
-        super();
+    public DrugInventoryEntry(int id, String name, int quantity, int lowStockAlertThreshold) {
+        super(id);
         this.name = name;
         this.quantity = quantity;
         this.lowStockAlertThreshold = lowStockAlertThreshold;
@@ -46,7 +46,7 @@ public class DrugEntry extends AbstractTableEntry {
     @Override
     public String toCSVString() {
         return String.format("%s,%s,%s,%s",
-                getId(),name,quantity,lowStockAlertThreshold);
+                getID(),name,quantity,lowStockAlertThreshold);
     }
 
     /**
@@ -56,7 +56,7 @@ public class DrugEntry extends AbstractTableEntry {
     public void loadFromCSVString(String csvLine) {
         String[] parts = csvLine.split(",");
         id = Integer.parseInt(parts[0]);
-        this.name = parts[1];
+        name = parts[1];
         quantity = Integer.parseInt(parts[2]);
         lowStockAlertThreshold = Integer.parseInt(parts[3]);
     }
