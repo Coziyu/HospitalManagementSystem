@@ -58,7 +58,7 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
     }
 
     /**
-     * @return a COPY of the entries.
+     * @return A list of the entries.
      */
     public List<T> getEntries() {
         return new ArrayList<>(entries);

@@ -2,7 +2,7 @@ package org.hms.services.drugdispensary;
 
 import org.hms.entities.AbstractTable;
 
-public class DrugInventoryTable extends AbstractTable<DrugEntry> {
+public class DrugInventoryTable extends AbstractTable<DrugInventoryEntry> {
     private static final String[] HEADERS = {"ID, Name, Qty, lowStockQty"};
 
     @Override
@@ -11,7 +11,9 @@ public class DrugInventoryTable extends AbstractTable<DrugEntry> {
     }
 
     @Override
-    protected DrugEntry createEntry() {
-        return new DrugEntry();
+    protected DrugInventoryEntry createEntry() {
+        return new DrugInventoryEntry();
     }
+
+
 }
