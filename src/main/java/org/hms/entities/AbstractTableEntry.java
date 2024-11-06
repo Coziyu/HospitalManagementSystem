@@ -5,7 +5,11 @@ import java.io.Serializable;
 public abstract class AbstractTableEntry implements Serializable {
     protected int id;
 
-    public int getId() {
+    public AbstractTableEntry(int id){
+        this.id = id;
+    }
+
+    public int getID() {
         return id;
     }
 
