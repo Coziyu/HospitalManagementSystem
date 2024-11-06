@@ -2,7 +2,6 @@ package org.hms.services.drugdispensary;
 
 import org.hms.entities.AbstractTableEntry;
 
-import java.text.ParseException;
 
 public class DrugRequest extends AbstractTableEntry {
     String drugName;
