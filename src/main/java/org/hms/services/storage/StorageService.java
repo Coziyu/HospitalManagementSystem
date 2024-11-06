@@ -2,10 +2,10 @@ package org.hms.services.storage;
 
 import org.hms.services.AbstractService;
 import org.hms.services.appointment.IAppointmentDataInterface;
+import org.hms.services.drugdispensary.DrugInventoryTable;
 import org.hms.services.drugdispensary.IDrugStockDataInterface;
 import org.hms.services.medicalrecord.IMedicalDataInterface;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class StorageService
@@ -15,6 +15,8 @@ public class StorageService
         storageServiceInterface = this;
     }
 
+
+    @Override
     public ArrayList<String> getAppointmentsPendingDispensary() {
         // TODO: Implement fetching from
         ArrayList<String> appointmentsPendingDispensary = new ArrayList<>();
@@ -22,5 +24,10 @@ public class StorageService
         appointmentsPendingDispensary.add("A0002");
         appointmentsPendingDispensary.add("A0003");
         return appointmentsPendingDispensary;
+    }
+
+    @Override
+    public DrugInventoryTable getDrugInventory() {
+        // TODO: Implement loading from file
     }
 }
