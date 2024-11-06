@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class AppointmentOutcome implements Serializable {
     private String appointmentID;
+    private String patientID;
     private String typeOfAppointment;
     private String consultationNotes;
     private ArrayList<DrugRequest> prescribedMedication;
