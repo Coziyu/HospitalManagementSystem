@@ -24,6 +24,7 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
     }
 
     /**
+     * @return a COPY of the entries.
      * Replaces an existing entry with a new entry based on ID matching.
      * If no entry with the matching ID exists, the new entry is not added.
      *

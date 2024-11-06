@@ -14,6 +14,4 @@ public class DrugInventoryTable extends AbstractTable<DrugInventoryEntry> {
     protected DrugInventoryEntry createEntry() {
         return new DrugInventoryEntry();
     }
-
-
 }
