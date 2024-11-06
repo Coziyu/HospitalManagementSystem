@@ -10,4 +10,5 @@ public interface IDrugStockDataInterface extends IDataInterface {
      */
     ArrayList<String> getAppointmentsPendingDispensary();
     DrugInventoryTable getDrugInventory();
+    DrugReplenishRequestTable getDrugReplenishRequestTable();
 }

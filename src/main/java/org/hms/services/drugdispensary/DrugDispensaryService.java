@@ -2,22 +2,25 @@ package org.hms.services.drugdispensary;
 
 import org.hms.services.AbstractService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DrugDispensaryService extends AbstractService<IDrugStockDataInterface> {
 
     DrugInventoryTable drugInventory;
+    DrugReplenishRequestTable drugReplenishRequestTable;
 
     public DrugDispensaryService(IDrugStockDataInterface dataInterface) {
         this.storageServiceInterface = dataInterface;
-        // TODO: Load drugInventoryTable from storageService.
+        drugInventory = storageServiceInterface.getDrugInventory();
+        drugReplenishRequestTable = storageServiceInterface.getDrugReplenishRequestTable();
     }
 
-    boolean dispenseDrug(DrugRequest pendingRequest){
+    boolean dispenseDrug(DrugDispenseRequest pendingRequest){
         String drugRequested = pendingRequest.getDrugName();
 
         // Try finding the drug in the table.
-        List<DrugInventoryEntry> results = drugInventory.searchByAttribute(DrugInventoryEntry::getName, drugRequested);
+        ArrayList<DrugInventoryEntry> results = drugInventory.searchByAttribute(DrugInventoryEntry::getName, drugRequested);
 
         // If empty, it means Drug doesn't exist.
         // print here?
@@ -35,21 +38,75 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
             return false;
         }
 
+        // Update the Inventory with new stock
         pendingRequest.setStatus(DrugRequestStatus.DISPENSED);
         drugStock.setQuantity(quantityAvailable - quantityRequested);
-
-        // Update the Inventory with new stock
 
         return true;
     }
 
-    boolean submitReplenishRequest(String drugName, int quantity) {
+    boolean submitReplenishRequest(String drugName, int addQuantity, String notes) {
+        DrugReplenishRequest newRequest = drugReplenishRequestTable.createValidEntryTemplate();
+        newRequest.setDrugName(drugName);
+        newRequest.setAddQuantity(addQuantity);
+        newRequest.setNotes(notes);
 
-
-        //TODO: Send replenishment request to Storage Service.
-
-
+        try {
+            drugReplenishRequestTable.addEntry(newRequest);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
 
         return true;
+    }
+
+    boolean processReplenishRequest(int replenishRequestID, boolean accept){
+        // TODO: Decide if we are keeping records of past requests.
+        DrugReplenishRequest request = drugReplenishRequestTable.getEntry(replenishRequestID);
+        if (accept){
+            boolean success = addDrugStockQuantity(request.getDrugName(), request.getAddQuantity());
+            if (!success){
+                return false;
+            }
+        }
+
+        try {
+            drugReplenishRequestTable.removeEntry(request.getID());
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    //TODO: Exceptions of StockQuantity Manipulation
+    boolean setDrugStockQuantity(String drugName, int newQuantity){
+        ArrayList<DrugInventoryEntry> results = drugInventory.searchByAttribute(DrugInventoryEntry::getName, drugName);
+        if (results.isEmpty()){
+            return false;
+        }
+        DrugInventoryEntry drugStock = results.getFirst();
+        drugStock.setQuantity(newQuantity);
+        return true;
+    }
+    boolean addDrugStockQuantity(String drugName, int newQuantity){
+        ArrayList<DrugInventoryEntry> results = drugInventory.searchByAttribute(DrugInventoryEntry::getName, drugName);
+        if (results.isEmpty()){
+            return false;
+        }
+        DrugInventoryEntry drugStock = results.getFirst();
+        drugStock.setQuantity(drugStock.getQuantity() + newQuantity);
+        return true;
+    }
+    int getDrugStockQuantity(String drugName){
+        ArrayList<DrugInventoryEntry> results = drugInventory.searchByAttribute(DrugInventoryEntry::getName, drugName);
+        //TODO: This should throw and error
+        if (results.isEmpty()){
+            return -1;
+        }
+        DrugInventoryEntry drugStock = results.getFirst();
+        return drugStock.getQuantity();
     }
 }

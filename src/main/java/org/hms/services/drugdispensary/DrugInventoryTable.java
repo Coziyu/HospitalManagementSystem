@@ -11,7 +11,7 @@ public class DrugInventoryTable extends AbstractTable<DrugInventoryEntry> {
     }
 
     @Override
-    protected DrugInventoryEntry createEntry() {
-        return new DrugInventoryEntry();
+    protected DrugInventoryEntry createValidEntryTemplate() {
+        return new DrugInventoryEntry(getUnusedID(), null, -1, -1);
     }
 }
