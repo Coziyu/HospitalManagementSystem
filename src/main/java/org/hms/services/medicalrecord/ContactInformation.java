@@ -1,4 +1,4 @@
-package org.hms.entities;
+package org.hms.services.medicalrecord;
 
 import java.io.Serializable;
 

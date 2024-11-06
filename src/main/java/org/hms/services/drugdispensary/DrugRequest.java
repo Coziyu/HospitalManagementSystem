@@ -1,4 +1,4 @@
-package org.hms.entities;
+package org.hms.services.drugdispensary;
 
 import java.io.Serializable;
 

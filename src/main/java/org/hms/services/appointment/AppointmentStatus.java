@@ -1,4 +1,4 @@
-package org.hms.entities;
+package org.hms.services.appointment;
 
 public enum AppointmentStatus {
     CONFIRMED,
