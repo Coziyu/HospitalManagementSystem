@@ -30,7 +30,9 @@ public class StorageService
     @Override
     public DrugInventoryTable getDrugInventory() {
         // TODO: Implement loading from file
-        return new DrugInventoryTable();
+        DrugInventoryTable drugInventory = new DrugInventoryTable();
+//        drugInventory.loadFromFile();
+        return drugInventory;
     }
 
     @Override
