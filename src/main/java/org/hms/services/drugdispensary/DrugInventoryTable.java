@@ -6,12 +6,12 @@ public class DrugInventoryTable extends AbstractTable<DrugInventoryEntry> {
     private static final String[] HEADERS = {"ID, Name, Qty, lowStockQty"};
 
     @Override
-    protected String[] getHeaders() {
+    public String[] getHeaders() {
         return HEADERS;
     }
 
     @Override
-    protected DrugInventoryEntry createValidEntryTemplate() {
+    public DrugInventoryEntry createValidEntryTemplate() {
         return new DrugInventoryEntry(getUnusedID(), null, -1, -1);
     }
 }
