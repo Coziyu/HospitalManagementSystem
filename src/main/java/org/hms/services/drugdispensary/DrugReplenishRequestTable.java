@@ -8,7 +8,7 @@ public class DrugReplenishRequestTable extends AbstractTable<DrugReplenishReques
      * @return
      */
     @Override
-    protected String[] getHeaders() {
+    public String[] getHeaders() {
         return HEADERS;
     }
 
@@ -16,7 +16,7 @@ public class DrugReplenishRequestTable extends AbstractTable<DrugReplenishReques
      * @return
      */
     @Override
-    protected DrugReplenishRequest createValidEntryTemplate() {
+    public DrugReplenishRequest createValidEntryTemplate() {
         return new DrugReplenishRequest(getUnusedID(), null, -1, null);
     }
 }

@@ -39,6 +39,10 @@ public class DrugInventoryEntry extends AbstractTableEntry {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     /**
      * TODO
      * @return
