@@ -71,10 +71,4 @@ public class StorageService
     public DrugReplenishRequestTable getDrugReplenishRequestTable() {
         return drugReplenishRequestTable;
     }
-
-    @Override
-    public DrugReplenishRequestTable getDrugReplenishRequestTable() {
-        // TODO: Implement loading from file
-        return new DrugReplenishRequestTable();
-    }
 }
