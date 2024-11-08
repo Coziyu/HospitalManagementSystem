@@ -1,9 +1,11 @@
 package org.hms.services.appointment;
 
 import org.hms.services.AbstractService;
+import org.hms.services.drugdispensary.DrugDispenseRequest;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -172,6 +174,47 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
         if (!found) {
             System.out.println("No upcoming confirmed appointments found for doctor ID: " + doctorID);
         }
+    }
+
+    public AppointmentOutcome keyInOutcome(String appointmentID, String patientID) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Ask for type of appointment
+        System.out.print("Enter the type of appointment: ");
+        String typeOfAppointment = scanner.nextLine();
+
+        // Ask for consultation notes
+        System.out.print("Enter consultation notes: ");
+        String consultationNotes = scanner.nextLine();
+
+        // Create a list to store prescribed medications
+        ArrayList<DrugDispenseRequest> prescribedMedication = new ArrayList<>();
+        // Ask user to input drugs
+        System.out.print("Enter the number of drugs to prescribe: ");
+        int numDrugs = Integer.parseInt(scanner.nextLine());
+
+        for (int i = 0; i < numDrugs; i++) {
+            System.out.println("\nEntering details for drug " + (i + 1));
+
+            // Ask for drug name
+            System.out.print("Enter drug name: ");
+            String drugName = scanner.nextLine();
+
+            // Ask for quantity to add
+            System.out.print("Enter quantity: ");
+            int addQuantity = Integer.parseInt(scanner.nextLine());
+
+            // Ask for additional notes
+            System.out.print("Enter notes for this drug: ");
+            String notes = scanner.nextLine();
+
+            // Create a new DrugDispenseRequest object and add it to the list
+            DrugDispenseRequest drugRequest = new DrugDispenseRequest(drugName, addQuantity, notes);
+            prescribedMedication.add(drugRequest);
+        }
+
+        // Create and return the AppointmentOutcome object
+        return new AppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
     }
 
 //For admin
