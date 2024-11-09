@@ -3,7 +3,7 @@ package org.hms.services.drugdispensary;
 import org.hms.entities.AbstractTable;
 
 public class DrugInventoryTable extends AbstractTable<DrugInventoryEntry> {
-    private static final String[] HEADERS = {"ID, Name, Qty, lowStockQty"};
+    private static final String[] HEADERS = {"ID", "Name", "Qty", "lowStockQty"};
 
     @Override
     public String[] getHeaders() {
@@ -13,5 +13,10 @@ public class DrugInventoryTable extends AbstractTable<DrugInventoryEntry> {
     @Override
     public DrugInventoryEntry createValidEntryTemplate() {
         return new DrugInventoryEntry(getUnusedID(), null, -1, -1);
+    }
+
+    @Override
+    protected AbstractTable<DrugInventoryEntry> createEmpty() {
+        return new DrugInventoryTable();
     }
 }
