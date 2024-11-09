@@ -2,6 +2,7 @@ package org.hms.services.appointment;
 
 import org.hms.services.AbstractService;
 import org.hms.services.drugdispensary.DrugDispenseRequest;
+import org.hms.services.storage.StorageService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,15 +13,13 @@ import java.util.Scanner;
 
 public class AppointmentService extends AbstractService<IAppointmentDataInterface> {
 
-    private String filePath = "/E:/Appointments.csv/";
     private List<AppointmentInformation> appointments;
     private AppointmentSchedule appointmentSchedule;
 
-    public AppointmentService(String filePath) {
-        this.filePath=filePath;
-        AppointmentCsvTool csvTool = new AppointmentCsvTool(filePath);
-        this.appointments = csvTool.readAppointments();
-
+    public AppointmentService(IAppointmentDataInterface dataInterface) {
+        this.storageServiceInterface = dataInterface;
+        StorageService storageService = new StorageService();
+        appointments = storageService.readAppointments();
     }
 
     public void displayOneAppointment(AppointmentInformation appointment) {
@@ -34,7 +33,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
 //For patient
 public void scheduleAppointment(String patientID, String doctorID,String Date, String timeSlot, AppointmentSchedule schedule) {
-    //Need to initilize the Appointmentschedule of the input Date, here we use a dummy schedule
+    //before calling any function related to schedule/reschedule appointment, use storageservice to get schedule of wanted date first;
 
     int doctorCol = -1;  // Find doctor column
     int timeSlotRow = -1;
@@ -231,7 +230,7 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
         }
     }
 
-    public AppointmentOutcome keyInOutcome(String appointmentID, String patientID) {
+    /*public AppointmentOutcome keyInOutcome(String appointmentID, String patientID) {
         Scanner scanner = new Scanner(System.in);
 
         // Ask for type of appointment
@@ -264,13 +263,14 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
             String notes = scanner.nextLine();
 
             // Create a new DrugDispenseRequest object and add it to the list
-            DrugDispenseRequest drugRequest = new DrugDispenseRequest(drugName, addQuantity, notes);
+            int dummyID = 1000;
+            DrugDispenseRequest drugRequest = new DrugDispenseRequest(dummyID,drugName, addQuantity, notes);
             prescribedMedication.add(drugRequest);
         }
 
         // Create and return the AppointmentOutcome object
         return new AppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
-    }
+    }*/
 
     public void setDoctorSchedule(String doctorID,String Date, String timeSlot, AppointmentSchedule schedule){
         int doctorCol = -1;  // Find doctor column
