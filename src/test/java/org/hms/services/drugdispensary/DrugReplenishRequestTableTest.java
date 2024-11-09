@@ -46,4 +46,12 @@ class DrugReplenishRequestTableTest {
         System.out.println(results);
         assertEquals(3, results.size());
     }
+
+    @Test
+    void getHeaders() {
+        String[] expected = {"ID", "Name", "Qty", "Notes"};
+        String[] actual = drugReplenishRequestTable.getHeaders();
+
+        assertArrayEquals(expected, actual);
+    }
 }
