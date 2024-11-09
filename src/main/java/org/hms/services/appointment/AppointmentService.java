@@ -6,6 +6,7 @@ import org.hms.services.drugdispensary.DrugDispenseRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -66,6 +67,60 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
         System.out.println("The selected time slot is not available.");
     }
 }
+
+    public void rescheduleAppointment(String patientID, String doctorID,String date, String timeSlot, AppointmentSchedule schedule) {
+
+        int doctorCol = -1;  // Find doctor column
+        int timeSlotRow = -1;
+        String[][] matrix = schedule.getMatrix();
+
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        boolean found = false;
+        for (AppointmentInformation appointment : appointments) {
+            if (appointment.getPatientID().equals(patientID)) {
+                found = true;
+                //setDoctorSchedule(doctorID, date, timeSlot, schedule);  //need to interact with previous date schedule, settle later
+                try {
+                    // Combine date and timeSlot into a single Date object
+                    Date newTimeSlot = dateTimeFormat.parse(date + " " + timeSlot);
+
+                    // Update the appointment's time slot
+                    appointment.setAppointmentTimeSlot(newTimeSlot);}catch (ParseException e) {
+                    System.out.println("Failed to parse the new time slot: " + e.getMessage());
+                }
+                appointment.setDoctorID(doctorID);
+
+                for (int col = 1; col < matrix[0].length; col++) {
+                    if (matrix[0][col] != null && matrix[0][col].equals(doctorID)) {
+                        doctorCol = col - 1;
+                        break;
+                    }
+                }
+
+                for (int row = 1; row < matrix.length; row++) {
+                    if (matrix[row][0] != null && matrix[row][0].equals(timeSlot)) {
+                        timeSlotRow = row - 1;
+                        break;
+                    }
+                }
+
+                String slotValue = schedule.getSlot(timeSlotRow, doctorCol);
+                if ("1".equals(slotValue)) {  // If slot is available (1)
+                    schedule.setSlot(timeSlotRow, doctorCol, patientID);  // Occupy the slot with patientID
+                    System.out.println("Appointment scheduled successfully for patient " + patientID + " with doctor " + doctorID + " at " + timeSlot + " on " + "2024-11-01" + ".");//hard code the date here,need change
+
+
+                } else {
+                    System.out.println("The selected time slot is already occupied.");
+                }
+
+            }
+        }
+
+        if (!found) {
+            System.out.println("No appointments found for patient ID: " + patientID);
+        }
+    }
 
     public void viewAppointmentStatus(String patientID) {
         boolean found = false;
@@ -215,6 +270,68 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
 
         // Create and return the AppointmentOutcome object
         return new AppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
+    }
+
+    public void setDoctorSchedule(String doctorID,String Date, String timeSlot, AppointmentSchedule schedule){
+        int doctorCol = -1;  // Find doctor column
+        int timeSlotRow = -1;
+        String[][] matrix = schedule.getMatrix();
+
+        for (int col = 1; col < matrix[0].length; col++) {
+            if (matrix[0][col] != null && matrix[0][col].equals(doctorID)) {
+                doctorCol = col - 1;
+                break;
+            }
+        }
+
+        for (int row = 1; row < matrix.length; row++) {
+            if (matrix[row][0] != null && matrix[row][0].equals(timeSlot)) {
+                timeSlotRow = row - 1;
+                break;
+            }
+        }
+
+        String slotValue = schedule.getSlot(timeSlotRow, doctorCol);
+
+        if ("0".equals(slotValue)) {  // If slot is available (1)
+            schedule.setSlot(timeSlotRow, doctorCol, "1");  // Occupy the slot with patientID
+            //System.out.println("Schedule set successful for doctor " + doctorID + " at " + timeSlot + " on " + "2024-11-01" + ".");//hard code the date here,need change
+
+        } else {
+            System.out.println("Fail to change schedule");
+        }
+
+    }
+
+    public void cancelDoctorSchedule(String doctorID,String Date, String timeSlot, AppointmentSchedule schedule){
+        int doctorCol = -1;  // Find doctor column
+        int timeSlotRow = -1;
+        String[][] matrix = schedule.getMatrix();
+
+        for (int col = 1; col < matrix[0].length; col++) {
+            if (matrix[0][col] != null && matrix[0][col].equals(doctorID)) {
+                doctorCol = col - 1;
+                break;
+            }
+        }
+
+        for (int row = 1; row < matrix.length; row++) {
+            if (matrix[row][0] != null && matrix[row][0].equals(timeSlot)) {
+                timeSlotRow = row - 1;
+                break;
+            }
+        }
+
+        String slotValue = schedule.getSlot(timeSlotRow, doctorCol);
+
+        if ("1".equals(slotValue)) {  // If slot is available (1)
+            schedule.setSlot(timeSlotRow, doctorCol, "0");  // Occupy the slot with patientID
+            //System.out.println("Schedule disabled successfully for doctor " + doctorID + " at " + timeSlot + " on " + "2024-11-01" + ".");//hard code the date here,need change
+
+        } else {
+            System.out.println("Fail to change schedule");
+        }
+
     }
 
 //For admin
