@@ -1,23 +1,21 @@
 package org.hms.services.staffmanagement;
 
-import org.hms.services.AbstractService;
-
-import java.util.ArrayList;
 import java.util.List;
 
-public class StaffManagementService extends AbstractService<IStaffManagementDataInterface> {
+public class StaffManagementService {
 
     private final StaffTable staffTable;
 
-    public StaffManagementService(IStaffManagementDataInterface dataInterface) {
-        this.storageServiceInterface = dataInterface;
-        staffTable = storageServiceInterface.getStaffTable();
+    public StaffManagementService() {
+        this.staffTable = new StaffTable();
+        loadFromFile(); // Optionally load from file on initialization
     }
 
     // Adds a new staff entry
-    boolean addStaff(Staff staff) {
+    public boolean addStaff(Staff staff) {
         try {
             staffTable.addEntry(staff);
+            staffTable.saveToFile(); // Save after adding
         } catch (Exception e) {
             System.err.println("Error adding staff: " + e.getMessage());
             return false;
@@ -26,7 +24,7 @@ public class StaffManagementService extends AbstractService<IStaffManagementData
     }
 
     // Updates an existing staff entry
-    boolean updateStaff(int staffId, Staff updatedStaff) {
+    public boolean updateStaff(int staffId, Staff updatedStaff) {
         Staff existingStaff = staffTable.getEntry(staffId);
         if (existingStaff == null) {
             System.err.println("Staff ID not found.");
@@ -34,6 +32,7 @@ public class StaffManagementService extends AbstractService<IStaffManagementData
         }
         try {
             staffTable.replaceEntry(updatedStaff);
+            staffTable.saveToFile(); // Save after updating
         } catch (Exception e) {
             System.err.println("Error updating staff: " + e.getMessage());
             return false;
@@ -42,23 +41,17 @@ public class StaffManagementService extends AbstractService<IStaffManagementData
     }
 
     // Retrieves a specific staff entry
-    Staff getStaff(int staffId) {
+    public Staff getStaff(int staffId) {
         return staffTable.getEntry(staffId);
     }
 
     // Lists all active staff entries
-    List<Staff> listAllActiveStaff() {
-        List<Staff> activeStaff = new ArrayList<>();
-        for (Staff staff : staffTable.getEntries()) {
-            if ("active".equalsIgnoreCase(staff.getStatus())) {
-                activeStaff.add(staff);
-            }
-        }
-        return activeStaff;
+    public List<Staff> listAllActiveStaff() {
+        return staffTable.filterByAttribute(Staff::getStatus, "active").getEntries();
     }
 
     // Soft or hard delete a staff entry
-    boolean removeStaff(int staffId, boolean softDelete) {
+    public boolean removeStaff(int staffId, boolean softDelete) {
         Staff staff = getStaff(staffId);
         if (staff == null) {
             System.err.println("Staff ID not found.");
@@ -70,6 +63,7 @@ public class StaffManagementService extends AbstractService<IStaffManagementData
         } else {
             try {
                 staffTable.removeEntry(staffId);
+                staffTable.saveToFile(); // Save after removal
             } catch (Exception e) {
                 System.err.println("Error removing staff: " + e.getMessage());
                 return false;
@@ -79,7 +73,7 @@ public class StaffManagementService extends AbstractService<IStaffManagementData
     }
 
     // Assigns a specific role to the staff member
-    boolean assignRole(int staffId, String role) {
+    public boolean assignRole(int staffId, String role) {
         Staff staff = getStaff(staffId);
         if (staff == null) {
             System.err.println("Staff ID not found.");
@@ -90,7 +84,7 @@ public class StaffManagementService extends AbstractService<IStaffManagementData
     }
 
     // Changes the status (active/inactive) of a staff member
-    boolean changeStatus(int staffId, String status) {
+    public boolean changeStatus(int staffId, String status) {
         Staff staff = getStaff(staffId);
         if (staff == null) {
             System.err.println("Staff ID not found.");
@@ -101,14 +95,14 @@ public class StaffManagementService extends AbstractService<IStaffManagementData
     }
 
     // Archives a staff member’s data
-    boolean archiveStaff(int staffId) {
+    public boolean archiveStaff(int staffId) {
         return changeStatus(staffId, "archived");
     }
 
-    // Save the staff table to a CSV file
-    boolean saveToFile() {
+    // Save and load methods
+    public boolean saveToFile() {
         try {
-            staffTable.saveToFile("staff.csv");
+            staffTable.saveToFile();
         } catch (Exception e) {
             System.err.println("Error saving to file: " + e.getMessage());
             return false;
@@ -116,10 +110,9 @@ public class StaffManagementService extends AbstractService<IStaffManagementData
         return true;
     }
 
-    // Load the staff table from a CSV file
-    boolean loadFromFile() {
+    public boolean loadFromFile() {
         try {
-            staffTable.loadFromFile("staff.csv");
+            staffTable.loadFromFile();
         } catch (Exception e) {
             System.err.println("Error loading from file: " + e.getMessage());
             return false;
@@ -129,6 +122,5 @@ public class StaffManagementService extends AbstractService<IStaffManagementData
 
     public StaffTable getStaffTable() {
         return staffTable;
-
     }
 }
