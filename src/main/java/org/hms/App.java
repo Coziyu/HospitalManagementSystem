@@ -57,7 +57,7 @@ public class App {
         return appointmentService;
     }
 
-    public AuthenticationService getLoginManager() {
+    public AuthenticationService getAuthenticationService() {
         return authenticationService;
     }
 
