@@ -337,6 +337,20 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
 
     }
 
+    public AppointmentOutcome keyInOutcome(String appointmentID, String patientID, String typeOfAppointment, String consultationNotes, ArrayList<DrugDispenseRequest> prescribedMedication) {
+
+        int dummyID = 1000;
+        // Create and return the AppointmentOutcome object
+        return new AppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
+    }
+
+
+    //incompleted
+    public void addAppointmentOutcome(AppointmentOutcome outcome) {
+        appointmentOutcomes.add(outcome);
+        //Need to add a function to write the new outcome to last row of CSV
+    }
+
 //For admin
     public void displayAllAppointments() {
         for (AppointmentInformation appointment : appointments) {

@@ -13,6 +13,7 @@ import org.hms.services.medicalrecord.IMedicalDataInterface;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -187,5 +188,28 @@ public class StorageService
         }
 
         return schedule;
+    }
+
+    public void writeScheduleToCSV(AppointmentSchedule schedule, String date) {
+        String[][] matrix = schedule.getMatrix();  // Retrieve the matrix from the AppointmentSchedule object
+        //String fileName = date + ".csv";  // Use the date to create the file name
+        String filePath = dataRoot + date + ".csv";
+
+        try (FileWriter writer = new FileWriter(filePath)) {
+            for (String[] row : matrix) {
+                for (int i = 0; i < row.length; i++) {
+                    if (row[i] != null) {
+                        writer.write(row[i]);
+                    }
+                    if (i < row.length - 1) {
+                        writer.write(",");  // Add a comma between columns
+                    }
+                }
+                writer.write("\n");  // Newline after each row
+            }
+            System.out.println("Matrix written to " + filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
