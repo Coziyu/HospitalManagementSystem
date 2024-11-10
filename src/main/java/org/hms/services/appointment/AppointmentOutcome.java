@@ -19,4 +19,46 @@ public class AppointmentOutcome implements Serializable {
         this.consultationNotes = consultationNotes;
         this.prescribedMedication = prescribedMedication;
     }
+  
+    public String getAppointmentID() {
+        return appointmentID;
+    }
+
+    public void setAppointmentID(String appointmentID) {
+        this.appointmentID = appointmentID;
+    }
+
+    public String getPatientID() {
+        return patientID;
+    }
+
+    public void setPatientID(String patientID) {
+        this.patientID = patientID;
+    }
+
+    public String getTypeOfAppointment() {
+        return typeOfAppointment;
+    }
+
+    public void setTypeOfAppointment(String typeOfAppointment) {
+        this.typeOfAppointment = typeOfAppointment;
+    }
+
+    public String getConsultationNotes() {
+        return consultationNotes;
+    }
+
+    public void setConsultationNotes(String consultationNotes) {
+        this.consultationNotes = consultationNotes;
+    }
+
+    public ArrayList<DrugDispenseRequest> getPrescribedMedication() {
+        return prescribedMedication;
+    }
+
+    public void setPrescribedMedication(ArrayList<DrugDispenseRequest> prescribedMedication) {
+        this.prescribedMedication = prescribedMedication;
+    }
 }
+
+

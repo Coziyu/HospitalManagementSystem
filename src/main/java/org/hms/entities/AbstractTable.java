@@ -27,6 +27,7 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
         entries.remove(searchByAttribute(AbstractTableEntry::getID, id).getFirst());
     }
 
+
     /**
      * @return a COPY of the entries.
      * Replaces an existing entry with a new entry based on ID matching.
@@ -104,7 +105,7 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
      * @return a list of entries where the extracted key matches the keyValue
      * @throws IllegalArgumentException if keyExtractor or keyValue is null
      */
-    public <U>  ArrayList<T> searchByAttribute(Function<T, U> keyExtractor, U keyValue) {
+    public <U> ArrayList<T> searchByAttribute(Function<T, U> keyExtractor, U keyValue) {
         if (keyExtractor == null || keyValue == null) {
             throw new IllegalArgumentException("Key extractor and key value cannot be null");
         }
@@ -114,6 +115,46 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
                     return keyValue.equals(extractedValue);
                 }).collect(Collectors.toList());
         return new ArrayList<>(temp);
+    }
+
+    /**
+     * <p>
+     * Filters the table entries by a specified attribute using a key extractor function.
+     * Returns a new table containing only entries where the extracted key matches the provided value.
+     * </p>
+     * <p>
+     * Adding or deleting the entries in the result table will not affect the original table.
+     * However, mutating the entries in the result table  <b>WILL MUTATE THE ENTRIES IN THE ORIGINAL TABLE</b>.
+     * </p>
+     *
+     * @param keyExtractor a function that extracts the search key from an entry
+     * @param keyValue the value to match against
+     * @param <U> the type of the key used for searching
+     * @return a new table containing only entries where the extracted key matches the keyValue
+     * @throws IllegalArgumentException if keyExtractor or keyValue is null
+     * @throws RuntimeException if an error occurs while creating the new table
+     */
+    public <U> AbstractTable<T> filterByAttribute(Function<T, U> keyExtractor, U keyValue) {
+        if (keyExtractor == null || keyValue == null) {
+            throw new IllegalArgumentException("Key extractor and key value cannot be null");
+        }
+
+        AbstractTable<T> results = createEmpty();
+
+        entries.stream()
+                .filter(entry -> {
+                    U extractedValue = keyExtractor.apply(entry);
+                    return keyValue.equals(extractedValue);
+                })
+                .forEach(entry -> {
+                    try {
+                        results.addEntry(entry);
+                    } catch (Exception e) {
+                        // This shouldn't happen as we are copying from a valid table.
+                        throw new RuntimeException("Error adding entry to result table.", e);
+                    }
+                });
+        return results;
     }
 
     // Load from CSV file
@@ -150,4 +191,12 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
      * @return
      */
     protected abstract T createValidEntryTemplate();
+
+    /**
+     * Creates a new instance of the concrete table type.
+     * This method must be implemented by concrete subclasses.
+     *
+     * @return a new empty table of the same concrete type
+     */
+    protected abstract AbstractTable<T> createEmpty();
 }

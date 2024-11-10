@@ -3,7 +3,7 @@ package org.hms.services.drugdispensary;
 import org.hms.entities.AbstractTable;
 
 public class DrugReplenishRequestTable extends AbstractTable<DrugReplenishRequest> {
-    private static final String[] HEADERS = {"ID, Name, Qty, Notes"};
+    private static final String[] HEADERS = {"ID", "Name", "Qty", "Notes"};
     /**
      * @return
      */
@@ -19,4 +19,11 @@ public class DrugReplenishRequestTable extends AbstractTable<DrugReplenishReques
     public DrugReplenishRequest createValidEntryTemplate() {
         return new DrugReplenishRequest(getUnusedID(), null, -1, null);
     }
+
+    @Override
+    protected AbstractTable<DrugReplenishRequest> createEmpty() {
+        return new DrugReplenishRequestTable();
+    }
+
+
 }
