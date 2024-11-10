@@ -97,10 +97,40 @@ public class StaffManagementServiceTestWithSwitch {
 
                 case 8:
                     System.out.print("Enter Staff ID to change status: ");
-                    int statusId;
+                    int statusId = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline
+                    System.out.print("Enter new Status: ");
+                    String newStatusChange = scanner.nextLine();
+                    boolean statusChangeSuccess = service.changeStatus(statusId, newStatusChange);
+                    System.out.println("Change Status: " + (statusChangeSuccess ? "Success" : "Failed"));
+                    break;
 
+                case 9:
+                    System.out.print("Enter Staff ID to archive: ");
+                    int archiveId = scanner.nextInt();
+                    boolean archiveSuccess = service.archiveStaff(archiveId);
+                    System.out.println("Archive Staff: " + (archiveSuccess ? "Success" : "Failed"));
+                    break;
+
+                case 10:
+                    boolean saveSuccess = service.saveToFile();
+                    System.out.println("Save to File: " + (saveSuccess ? "Success" : "Failed"));
+                    break;
+
+                case 11:
+                    boolean loadSuccess = service.loadFromFile();
+                    System.out.println("Load from File: " + (loadSuccess ? "Success" : "Failed"));
+                    break;
+
+                case 0:
+                    running = false;
+                    System.out.println("Exiting...");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
             }
         }
+        scanner.close();
     }
 }
-

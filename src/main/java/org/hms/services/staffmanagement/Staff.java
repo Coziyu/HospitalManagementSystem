@@ -3,7 +3,6 @@ package org.hms.services.staffmanagement;
 import org.hms.entities.AbstractTableEntry;
 
 public class Staff extends AbstractTableEntry {
-    private int staffId; // Unique identifier for the staff member
     private int age; // Age of the staff member
     private String name; // Name of the staff member
     private String role; // Role of the staff member
