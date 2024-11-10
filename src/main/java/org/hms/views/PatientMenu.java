@@ -25,7 +25,7 @@ public class PatientMenu extends AbstractMainMenu {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter date for appointment (e.g., 20231031): ");
         int date = scanner.nextInt();
-        app.getAppointmentService().scheduleAppointment(date);
+        //app.getAppointmentService().scheduleAppointment(date);
         System.out.println("Appointment scheduled on date: " + date);
     }
 
