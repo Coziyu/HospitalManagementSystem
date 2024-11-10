@@ -1,6 +1,7 @@
 package org.hms.services.staffmanagement;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StaffManagementService {
 
@@ -97,6 +98,25 @@ public class StaffManagementService {
     // Archives a staff member’s data
     public boolean archiveStaff(int staffId) {
         return changeStatus(staffId, "archived");
+    }
+
+    // Searches for staff based on role, gender, or status
+    public List<Staff> searchStaff(String criteria, String value) {
+        return staffTable.getEntries().stream()
+                .filter(staff -> {
+                    switch (criteria.toLowerCase()) {
+                        case "role":
+                            return staff.getRole().equalsIgnoreCase(value);
+                        case "gender":
+                            return staff.getGender().equalsIgnoreCase(value);
+                        case "status":
+                            return staff.getStatus().equalsIgnoreCase(value);
+                        default:
+                            System.err.println("Invalid search criteria: " + criteria);
+                            return false;
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     // Save and load methods
