@@ -2,6 +2,7 @@ package org.hms.services.appointment;
 
 import org.hms.services.AbstractService;
 import org.hms.services.drugdispensary.DrugDispenseRequest;
+import org.hms.services.drugdispensary.DrugRequestStatus;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -264,7 +265,9 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
             String notes = scanner.nextLine();
 
             // Create a new DrugDispenseRequest object and add it to the list
-            DrugDispenseRequest drugRequest = new DrugDispenseRequest(drugName, addQuantity, notes);
+            // DrugDispenseRequest drugRequest = new DrugDispenseRequest(drugName, addQuantity, notes);
+            DrugDispenseRequest drugRequest = new DrugDispenseRequest(drugName, addQuantity, DrugRequestStatus.PENDING);
+
             prescribedMedication.add(drugRequest);
         }
 

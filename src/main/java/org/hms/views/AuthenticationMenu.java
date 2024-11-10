@@ -3,7 +3,7 @@ package org.hms.views;
 import org.hms.App;
 import org.hms.entities.PatientContext;
 import org.hms.entities.UserContext;
-import org.hms.UserRole;
+import org.hms.entities.UserRole;
 
 import java.util.Scanner;
 
@@ -28,7 +28,7 @@ public class AuthenticationMenu extends AbstractMenu {
                 int choice = scanner.nextInt();
                 switch (choice) {
                     case 1: {
-                        userRole = UserRole.PAITENT;
+                        userRole = UserRole.PATIENT;
                         break;
                     }
                     case 2: {
