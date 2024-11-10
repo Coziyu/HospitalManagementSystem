@@ -1,33 +1,38 @@
+// File: Staff.java
 package org.hms.services.staffmanagement;
 
 import org.hms.entities.AbstractTableEntry;
+import org.hms.entities.Person;
 
 public class Staff extends AbstractTableEntry {
-    private int age; // Age of the staff member
-    private String name; // Name of the staff member
-    private String role; // Role of the staff member
-    private String status; // Employment status (active/inactive)
-    private String gender; // gender of the staff member
+    private Person person;  // Composition: Staff "has-a" Person
+    private int age;
+    private String name;
+    private String role;
+    private String status;
+    private String gender;
 
     // Constructor
     public Staff(int staffId, int age, String name, String role, String status, String gender) {
         super(staffId);
+        this.person = new Person(staffId);  // Initialize Person with staffId
+        this.age = age;
         this.name = name;
         this.role = role;
         this.status = status;
         this.gender = gender;
-        this.age = age;
     }
 
-    // Getters and Setters
+    // Delegate methods to person
     public int getStaffId() {
-        return staffId;
+        return person.getStaffId();
     }
 
     public void setStaffId(int staffId) {
-        this.staffId = staffId;
+        person.setStaffId(staffId);
     }
 
+    // Getters and setters for other fields
     public int getAge() {
         return age;
     }
@@ -71,7 +76,7 @@ public class Staff extends AbstractTableEntry {
     @Override
     public String toCSVString() {
         return String.format("%d,%d,%s,%s,%s,%s",
-                getStaffId(), // Assuming getID() returns the same value as staffId
+                getStaffId(),  // Access staffId from Person
                 age,
                 preprocessCSVString(name),
                 preprocessCSVString(role),
@@ -79,17 +84,20 @@ public class Staff extends AbstractTableEntry {
                 preprocessCSVString(gender));
     }
 
-    /**
-     * @param csvLine comma-separated entry values.
-     */
     @Override
     public void loadFromCSVString(String csvLine) {
         String[] parts = parseCSVLine(csvLine);
-        this.staffId = Integer.parseInt(parts[0]);
+        this.setStaffId(Integer.parseInt(parts[0]));  // Set ID in Person
         this.age = Integer.parseInt(parts[1]);
         this.name = parts[2];
         this.role = parts[3];
         this.status = parts[4];
         this.gender = parts[5];
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Staff ID: %d, Name: %s, Age: %d, Role: %s, Status: %s, Gender: %s",
+                getStaffId(), name, age, role, status, gender);
     }
 }

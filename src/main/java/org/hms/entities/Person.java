@@ -1,13 +1,13 @@
-package org.hms.services.staffmanagement;
+// File: Person.java for staff superclass
+package org.hms.entities;
 
 public class Person {
-    protected int staffId;
+    private int staffId;
 
     public Person(int staffId) {
         this.staffId = staffId;
     }
 
-    // Getter and setter for staffId
     public int getStaffId() {
         return staffId;
     }
