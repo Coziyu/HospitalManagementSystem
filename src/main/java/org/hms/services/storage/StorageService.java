@@ -81,7 +81,6 @@ public class StorageService
         return drugReplenishRequestTable;
     }
 
-
     /**
      * Initializes the Array of AppointmentInfo by loading data from a CSV file.
      * The CSV file path is absolute address for now

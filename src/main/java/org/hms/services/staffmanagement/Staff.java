@@ -1,16 +1,18 @@
 package org.hms.services.staffmanagement;
 
-public class Staff {
+import org.hms.entities.AbstractTableEntry;
+
+public class Staff extends AbstractTableEntry {
     private int staffId; // Unique identifier for the staff member
     private int age; // Age of the staff member
     private String name; // Name of the staff member
     private String role; // Role of the staff member
     private String status; // Employment status (active/inactive)
-    private String gender; // Contact details of the staff member
+    private String gender; // gender of the staff member
 
     // Constructor
     public Staff(int staffId, int age, String name, String role, String status, String gender) {
-        this.staffId = staffId;
+        super(staffId);
         this.name = name;
         this.role = role;
         this.status = status;
@@ -26,6 +28,7 @@ public class Staff {
     public void setStaffId(int staffId) {
         this.staffId = staffId;
     }
+
     public int getAge() {
         return age;
     }
@@ -67,26 +70,27 @@ public class Staff {
     }
 
     @Override
-    public String toString() {
-        return "Staff{" +
-                "staffId=" + staffId +
-                ", name='" + name + '\'' +
-                ", role='" + role + '\'' +
-                ", status='" + status + '\'' +
-                ", gender='" + gender + '\'' +
-                '}';
+    public String toCSVString() {
+        return String.format("%d,%d,%s,%s,%s,%s",
+                getStaffId(), // Assuming getID() returns the same value as staffId
+                age,
+                preprocessCSVString(name),
+                preprocessCSVString(role),
+                preprocessCSVString(status),
+                preprocessCSVString(gender));
     }
 
+    /**
+     * @param csvLine comma-separated entry values.
+     */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Staff)) return false;
-        Staff staff = (Staff) o;
-        return staffId == staff.staffId;
-    }
-
-    @Override
-    public int hashCode() {
-        return Integer.hashCode(staffId);
+    public void loadFromCSVString(String csvLine) {
+        String[] parts = parseCSVLine(csvLine);
+        this.staffId = Integer.parseInt(parts[0]);
+        this.age = Integer.parseInt(parts[1]);
+        this.name = parts[2];
+        this.role = parts[3];
+        this.status = parts[4];
+        this.gender = parts[5];
     }
 }
