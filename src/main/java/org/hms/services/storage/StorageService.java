@@ -5,10 +5,14 @@ import org.hms.services.appointment.IAppointmentDataInterface;
 import org.hms.services.drugdispensary.DrugInventoryTable;
 import org.hms.services.drugdispensary.DrugReplenishRequestTable;
 import org.hms.services.drugdispensary.IDrugStockDataInterface;
+import org.hms.services.medicalrecord.ContactInformation;
 import org.hms.services.medicalrecord.IMedicalDataInterface;
+import org.hms.services.medicalrecord.MedicalEntry;
+import org.hms.services.medicalrecord.MedicalRecord;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class StorageService
         extends AbstractService<IDataInterface>
@@ -70,5 +74,25 @@ public class StorageService
     @Override
     public DrugReplenishRequestTable getDrugReplenishRequestTable() {
         return drugReplenishRequestTable;
+    }
+
+    @Override
+    public Optional<MedicalRecord> getMedicalRecord(String patientID) {
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean saveMedicalRecord(MedicalRecord record) {
+        return false;
+    }
+
+    @Override
+    public boolean updateContactInformation(String patientID, ContactInformation contact) {
+        return false;
+    }
+
+    @Override
+    public boolean addMedicalEntry(String patientID, MedicalEntry entry) {
+        return false;
     }
 }
