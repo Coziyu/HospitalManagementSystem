@@ -2,9 +2,7 @@ package org.hms.services.storage;
 
 import org.hms.services.AbstractService;
 import org.hms.services.appointment.IAppointmentDataInterface;
-import org.hms.services.drugdispensary.DrugInventoryTable;
-import org.hms.services.drugdispensary.DrugReplenishRequestTable;
-import org.hms.services.drugdispensary.IDrugStockDataInterface;
+import org.hms.services.drugdispensary.*;
 import org.hms.services.medicalrecord.IMedicalDataInterface;
 
 import java.io.IOException;
@@ -17,6 +15,10 @@ public class StorageService
     private static final String dataRoot = System.getProperty("user.dir") + "/data/";
     private DrugInventoryTable drugInventoryTable;
     private DrugReplenishRequestTable drugReplenishRequestTable;
+
+    // TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
+    private static int drugDispenseRequestCounter = 0;
+
     public StorageService() {
         storageServiceInterface = this;
         initializeDrugInventoryTable();
@@ -70,5 +72,13 @@ public class StorageService
     @Override
     public DrugReplenishRequestTable getDrugReplenishRequestTable() {
         return drugReplenishRequestTable;
+    }
+
+    @Override
+    public DrugDispenseRequest createNewDrugDispenseRequest(String drugName, int addQuantity){
+        // TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
+        DrugDispenseRequest newDispenseRequest = new DrugDispenseRequest(drugDispenseRequestCounter, drugName, addQuantity, DrugRequestStatus.PENDING);
+        drugDispenseRequestCounter += 1;
+        return newDispenseRequest;
     }
 }
