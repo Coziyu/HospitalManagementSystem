@@ -36,6 +36,8 @@ public class AppointmentInformation implements Serializable {
         return doctorID;
     }
 
+    public void setDoctorID(String doctorID) {this.doctorID = doctorID;}
+
     public Date getAppointmentTimeSlot() {
         return appointmentTimeSlot;
     }
