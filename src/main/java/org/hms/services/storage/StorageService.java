@@ -118,7 +118,7 @@ public class StorageService
         int numCols = 0;
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader("/E:/" + date + ".csv"));
+            BufferedReader br = new BufferedReader(new FileReader(dataRoot + date + ".csv"));
 
             String line;
             try {
@@ -148,7 +148,7 @@ public class StorageService
         AppointmentSchedule schedule = new AppointmentSchedule(numCols - 1, numRows - 1);
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader("/E:/" + date + ".csv"));
+            BufferedReader br = new BufferedReader(new FileReader(dataRoot + date + ".csv"));
 
             String line;
             try {

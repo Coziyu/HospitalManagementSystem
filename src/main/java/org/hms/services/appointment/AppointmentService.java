@@ -2,6 +2,7 @@ package org.hms.services.appointment;
 
 import org.hms.services.AbstractService;
 import org.hms.services.drugdispensary.DrugDispenseRequest;
+import org.hms.services.drugdispensary.DrugRequestStatus;
 import org.hms.services.storage.StorageService;
 
 import java.text.ParseException;
@@ -14,12 +15,14 @@ import java.util.Scanner;
 public class AppointmentService extends AbstractService<IAppointmentDataInterface> {
 
     private List<AppointmentInformation> appointments;
+    private List<AppointmentOutcome> appointmentOutcomes;
     private AppointmentSchedule appointmentSchedule;
 
     public AppointmentService(IAppointmentDataInterface dataInterface) {
         this.storageServiceInterface = dataInterface;
         StorageService storageService = new StorageService();
         appointments = storageService.readAppointments();
+        //appointmentOutcomes = get from storage service
     }
 
     public void displayOneAppointment(AppointmentInformation appointment) {
@@ -230,47 +233,21 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
         }
     }
 
-    /*public AppointmentOutcome keyInOutcome(String appointmentID, String patientID) {
-        Scanner scanner = new Scanner(System.in);
+    public AppointmentOutcome keyInOutcome(String appointmentID, String patientID, String typeOfAppointment, String consultationNotes, ArrayList<DrugDispenseRequest> prescribedMedication) {
 
-        // Ask for type of appointment
-        System.out.print("Enter the type of appointment: ");
-        String typeOfAppointment = scanner.nextLine();
-
-        // Ask for consultation notes
-        System.out.print("Enter consultation notes: ");
-        String consultationNotes = scanner.nextLine();
-
-        // Create a list to store prescribed medications
-        ArrayList<DrugDispenseRequest> prescribedMedication = new ArrayList<>();
-        // Ask user to input drugs
-        System.out.print("Enter the number of drugs to prescribe: ");
-        int numDrugs = Integer.parseInt(scanner.nextLine());
-
-        for (int i = 0; i < numDrugs; i++) {
-            System.out.println("\nEntering details for drug " + (i + 1));
-
-            // Ask for drug name
-            System.out.print("Enter drug name: ");
-            String drugName = scanner.nextLine();
-
-            // Ask for quantity to add
-            System.out.print("Enter quantity: ");
-            int addQuantity = Integer.parseInt(scanner.nextLine());
-
-            // Ask for additional notes
-            System.out.print("Enter notes for this drug: ");
-            String notes = scanner.nextLine();
-
-            // Create a new DrugDispenseRequest object and add it to the list
-            int dummyID = 1000;
-            DrugDispenseRequest drugRequest = new DrugDispenseRequest(dummyID,drugName, addQuantity, notes);
-            prescribedMedication.add(drugRequest);
-        }
-
+        int dummyID = 1000;
         // Create and return the AppointmentOutcome object
         return new AppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
-    }*/
+    }
+
+
+    //incompleted
+    public void addAppointmentOutcome(AppointmentOutcome outcome) {
+        appointmentOutcomes.add(outcome);
+        //Need to add a function to write the new outcome to last row of CSV
+    }
+
+
 
     public void setDoctorSchedule(String doctorID,String Date, String timeSlot, AppointmentSchedule schedule){
         int doctorCol = -1;  // Find doctor column
@@ -343,16 +320,50 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
 
 
 
-    public AppointmentService(IAppointmentDataInterface dataInterface) {
-        this.storageServiceInterface = dataInterface;
-    }
-    public boolean scheduleAppointment(int date) {
-        return true;
-    }
 
 
+//For pharmacist
 
     public boolean updatePrescriptionStatus(String appointmentID) {
+        boolean updated = false;
+
+        for (AppointmentOutcome outcome : appointmentOutcomes) {
+            if (outcome.getAppointmentID().equals(appointmentID)) {
+                for (DrugDispenseRequest drugRequest : outcome.getPrescribedMedication()) {
+                    if (drugRequest.getStatus() == DrugRequestStatus.PENDING) {
+                        //add condition here if don't want to dispense all
+                        drugRequest.setStatus(DrugRequestStatus.DISPENSED);
+                        updated = true;  // Mark as updated if any status changes
+                    }
+                }
+                break;
+            }
+        }
+
         return true;
+    }
+
+    public void displayPendingPrescriptions() {
+        System.out.println("Pending Prescriptions:");
+        int havePendingDrug = 0;
+        for (AppointmentOutcome outcome : appointmentOutcomes) {
+            System.out.println("Appointment ID: " + outcome.getAppointmentID());
+            System.out.println("Patient ID: " + outcome.getPatientID());
+            for (DrugDispenseRequest drugRequest : outcome.getPrescribedMedication()) {
+                if (drugRequest.getStatus() == DrugRequestStatus.PENDING) {
+                    havePendingDrug = 1;
+                    System.out.println("Drug Name: " + drugRequest.getDrugName());
+                    System.out.println("Quantity: " + drugRequest.getQuantity());
+                    System.out.println("Status: " + drugRequest.getStatus());
+                    System.out.println();
+                }
+            }
+            if(havePendingDrug == 0){
+                System.out.println("No Pending Drug");
+
+            }
+            System.out.println("------------------------");
+            havePendingDrug = 0;
+        }
     }
 }
