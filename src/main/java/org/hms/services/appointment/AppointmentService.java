@@ -342,10 +342,6 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
     }
 
 
-
-    public AppointmentService(IAppointmentDataInterface dataInterface) {
-        this.storageServiceInterface = dataInterface;
-    }
     public boolean scheduleAppointment(int date) {
         return true;
     }
