@@ -15,8 +15,8 @@ import java.util.Scanner;
 public class AppointmentService extends AbstractService<IAppointmentDataInterface> {
 
     private List<AppointmentInformation> appointments;
-    private List<AppointmentOutcome> appointmentOutcomes;
     private AppointmentSchedule appointmentSchedule;
+    private List<AppointmentOutcome> appointmentOutcomes;
 
     public AppointmentService(IAppointmentDataInterface dataInterface) {
         this.storageServiceInterface = dataInterface;
@@ -233,21 +233,47 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
         }
     }
 
-    public AppointmentOutcome keyInOutcome(String appointmentID, String patientID, String typeOfAppointment, String consultationNotes, ArrayList<DrugDispenseRequest> prescribedMedication) {
+    /*public AppointmentOutcome keyInOutcome(String appointmentID, String patientID) {
+        Scanner scanner = new Scanner(System.in);
 
-        int dummyID = 1000;
+        // Ask for type of appointment
+        System.out.print("Enter the type of appointment: ");
+        String typeOfAppointment = scanner.nextLine();
+
+        // Ask for consultation notes
+        System.out.print("Enter consultation notes: ");
+        String consultationNotes = scanner.nextLine();
+
+        // Create a list to store prescribed medications
+        ArrayList<DrugDispenseRequest> prescribedMedication = new ArrayList<>();
+        // Ask user to input drugs
+        System.out.print("Enter the number of drugs to prescribe: ");
+        int numDrugs = Integer.parseInt(scanner.nextLine());
+
+        for (int i = 0; i < numDrugs; i++) {
+            System.out.println("\nEntering details for drug " + (i + 1));
+
+            // Ask for drug name
+            System.out.print("Enter drug name: ");
+            String drugName = scanner.nextLine();
+
+            // Ask for quantity to add
+            System.out.print("Enter quantity: ");
+            int addQuantity = Integer.parseInt(scanner.nextLine());
+
+            // Ask for additional notes
+            System.out.print("Enter notes for this drug: ");
+            String notes = scanner.nextLine();
+
+            // Create a new DrugDispenseRequest object and add it to the list
+            int dummyID = 1000;
+            DrugDispenseRequest drugRequest = new DrugDispenseRequest(dummyID,drugName, addQuantity, notes);
+            prescribedMedication.add(drugRequest);
+        }
+
         // Create and return the AppointmentOutcome object
         return new AppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
-    }
-
-
-    //incompleted
-    public void addAppointmentOutcome(AppointmentOutcome outcome) {
-        appointmentOutcomes.add(outcome);
-        //Need to add a function to write the new outcome to last row of CSV
-    }
-
-
+    }*/
 
     public void setDoctorSchedule(String doctorID,String Date, String timeSlot, AppointmentSchedule schedule){
         int doctorCol = -1;  // Find doctor column
@@ -322,6 +348,8 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
 
 
 
+
+
 //For pharmacist
 
     public boolean updatePrescriptionStatus(String appointmentID) {
@@ -343,7 +371,7 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
         return true;
     }
 
-    public void displayPendingPrescriptions() {
+    /*public void displayPendingPrescriptions() {
         System.out.println("Pending Prescriptions:");
         int havePendingDrug = 0;
         for (AppointmentOutcome outcome : appointmentOutcomes) {
@@ -364,6 +392,5 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
             }
             System.out.println("------------------------");
             havePendingDrug = 0;
-        }
+        }*/
     }
-}

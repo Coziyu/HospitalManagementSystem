@@ -61,3 +61,5 @@ public class AppointmentOutcome implements Serializable {
         this.prescribedMedication = prescribedMedication;
     }
 }
+
+
