@@ -51,6 +51,11 @@ public class StaffManagementService {
         return staffTable.filterByAttribute(Staff::getStatus, "active").getEntries();
     }
 
+    // Lists all staff entries without filtering
+    public List<Staff> listAllStaff() {
+        return staffTable.getEntries();
+    }
+
     // Soft or hard delete a staff entry
     public boolean removeStaff(int staffId, boolean softDelete) {
         Staff staff = getStaff(staffId);
