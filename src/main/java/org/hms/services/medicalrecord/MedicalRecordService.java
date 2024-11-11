@@ -2,13 +2,11 @@ package org.hms.services.medicalrecord;
 
 import org.hms.entities.UserContext;
 import org.hms.entities.PatientContext;
-import org.hms.UserRole;
-import org.hms.entities.BloodType;
+import org.hms.entities.UserRole;
 import org.hms.services.AbstractService;
 
 import java.io.*;
 import java.nio.file.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class MedicalRecordService extends AbstractService<IMedicalDataInterface> {
@@ -210,8 +208,14 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
     }
 
     // Required by AbstractService
-
-    public Optional<MedicalRecord> getMedicalRecord(String patientID) {
+    //TODO: For Elijah to reimplement this part.
+    // For now, I have added patentID as an argument to your code.
+    // make sure to ensure that your implementation is correct
+    // Also note that patientID eventually would be stored as a String
+//    public Optional<MedicalRecord> getMedicalRecord() {
+//        return Optional.ofNullable(medicalRecordsMap.get(patientID));
+//    }
+    public Optional<MedicalRecord> getMedicalRecord(int patientID) {
         return Optional.ofNullable(medicalRecordsMap.get(patientID));
     }
 }

@@ -3,8 +3,11 @@ package org.hms.views;
 import org.hms.App;
 import org.hms.entities.UserContext;
 import org.hms.entities.UserRole;
+import org.hms.services.medicalrecord.MedicalRecord;
+
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class DoctorMenu extends AbstractMainMenu {
@@ -85,7 +88,16 @@ public class DoctorMenu extends AbstractMainMenu {
                 return;
             }
 
-            String records = app.getMedicalRecordService().getMedicalRecords(patientId);
+            //TODO: For Elijah to refactor this part. Since his method was refactored to use Optional<>
+            // Also, is this meant to be `records` or `record` singular? If it's singular, consider
+            // somemthing like this line below:
+            // Optional<MedicalRecord> record = app.getMedicalRecordService().getMedicalRecord();
+            // If it's all the records, then you have to implement the method / declare the method in
+            // the DataInterface
+
+            // String records = app.getMedicalRecordService().getMedicalRecords(patientId);
+            String records = "placeholder";
+
             System.out.println(records);
             logDoctorAction("Accessed medical records for patient: " + patientId);
         } catch (NumberFormatException e) {

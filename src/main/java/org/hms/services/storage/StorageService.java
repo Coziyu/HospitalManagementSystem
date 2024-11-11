@@ -110,6 +110,7 @@ public class StorageService
     @Override
     public boolean addMedicalEntry(String patientID, MedicalEntry entry) {
         return false;
+    }
 
     public DrugDispenseRequest createNewDrugDispenseRequest(String drugName, int addQuantity){
         // TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
