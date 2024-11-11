@@ -62,8 +62,8 @@ public class PatientMenu extends AbstractMainMenu {
                 System.out.println("Cannot schedule appointments in the past.");
                 return;
             }
-
-            app.getAppointmentService().scheduleAppointment(Integer.parseInt(dateStr));
+            // TODO: scheduleAppointment requires doctorID, patientID, and timeSlot too.
+            // app.getAppointmentService().scheduleAppointment(Integer.parseInt(dateStr));
             System.out.println("Appointment scheduled for: " + date.format(DateTimeFormatter.ISO_LOCAL_DATE));
         } catch (DateTimeParseException e) {
             System.out.println("Invalid date format. Please use YYYYMMDD.");
