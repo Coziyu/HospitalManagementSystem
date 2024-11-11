@@ -266,8 +266,10 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
             String notes = scanner.nextLine();
 
             // Create a new DrugDispenseRequest object and add it to the list
-            int dummyID = 1000;
-            DrugDispenseRequest drugRequest = new DrugDispenseRequest(dummyID,drugName, addQuantity, notes);
+            // DrugDispenseRequest drugRequest = new DrugDispenseRequest(drugName, addQuantity, notes);
+            // TODO: Consider adding a drugNotes field to the DrugDispenseRequest
+            DrugDispenseRequest drugRequest = storageServiceInterface.createNewDrugDispenseRequest(drugName, addQuantity);
+
             prescribedMedication.add(drugRequest);
         }
 

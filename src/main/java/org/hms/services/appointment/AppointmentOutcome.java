@@ -12,15 +12,14 @@ public class AppointmentOutcome implements Serializable {
     private String consultationNotes;
     private ArrayList<DrugDispenseRequest> prescribedMedication;
 
-    public AppointmentOutcome(String appointmentID, String patientID, String typeOfAppointment,
-                              String consultationNotes, ArrayList<DrugDispenseRequest> prescribedMedication) {
+    public AppointmentOutcome(String appointmentID, String patientID, String typeOfAppointment, String consultationNotes, ArrayList<DrugDispenseRequest> prescribedMedication) {
         this.appointmentID = appointmentID;
         this.patientID = patientID;
         this.typeOfAppointment = typeOfAppointment;
         this.consultationNotes = consultationNotes;
         this.prescribedMedication = prescribedMedication;
     }
-
+  
     public String getAppointmentID() {
         return appointmentID;
     }
