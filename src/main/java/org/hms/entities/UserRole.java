@@ -1,7 +1,7 @@
-package org.hms;
+package org.hms.entities;
 
 public enum UserRole {
-    PAITENT,
+    PATIENT,
     DOCTOR,
     PHARMACIST,
     ADMINISTRATOR

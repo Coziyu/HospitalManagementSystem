@@ -1,7 +1,5 @@
 package org.hms.entities;
 
-import org.hms.UserRole;
-
 public class UserContext {
     private String name;
     private UserRole userRole;

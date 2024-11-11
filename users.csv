@@ -1,0 +1,5 @@
+id,password,role,isFirstLogin
+PAT001,password,PATIENT,true
+ADMIN001,password,ADMINISTRATOR,true
+DOC001,password,DOCTOR,true
+PHARM001,password,PHARMACIST,true
