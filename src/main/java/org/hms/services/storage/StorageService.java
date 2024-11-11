@@ -9,7 +9,11 @@ import org.hms.services.drugdispensary.DrugInventoryTable;
 import org.hms.services.drugdispensary.DrugReplenishRequestTable;
 import org.hms.services.drugdispensary.IDrugStockDataInterface;
 import org.hms.services.drugdispensary.*;
+
+import org.hms.services.medicalrecord.ContactInformation;
 import org.hms.services.medicalrecord.IMedicalDataInterface;
+import org.hms.services.medicalrecord.MedicalEntry;
+import org.hms.services.medicalrecord.MedicalRecord;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -18,6 +22,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Date;
 import java.util.List;
 
@@ -88,6 +93,25 @@ public class StorageService
     }
 
     @Override
+    public Optional<MedicalRecord> getMedicalRecord(String patientID) {
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean saveMedicalRecord(MedicalRecord record) {
+        return false;
+    }
+
+    @Override
+    public boolean updateContactInformation(String patientID, ContactInformation contact) {
+        return false;
+    }
+
+    @Override
+    public boolean addMedicalEntry(String patientID, MedicalEntry entry) {
+        return false;
+    }
+
     public DrugDispenseRequest createNewDrugDispenseRequest(String drugName, int addQuantity){
         // TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
         DrugDispenseRequest newDispenseRequest = new DrugDispenseRequest(drugDispenseRequestCounter, drugName, addQuantity, DrugRequestStatus.PENDING);

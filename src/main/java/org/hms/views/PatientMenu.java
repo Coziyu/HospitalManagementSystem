@@ -73,7 +73,16 @@ public class PatientMenu extends AbstractMainMenu {
     private void handleViewMedicalRecord() {
         System.out.println("\n=== Medical Records ===");
         Integer patientID = patientContext.getHospitalID();
-        String medicalRecords = app.getMedicalRecordService().getMedicalRecords(patientID);
+
+        //TODO: For Elijah to refactor this part. Since his method was refactored to use Optional<>
+        // Also, is this meant to be `records` or `record` singular? If it's singular, consider
+        // somemthing like this line below:
+        // Optional<MedicalRecord> record = app.getMedicalRecordService().getMedicalRecord();
+        // If it's all the records, then you have to implement the method / declare the method in
+        // the DataInterface
+//        String medicalRecords = app.getMedicalRecordService().getMedicalRecords(patientID);
+        String medicalRecords = "placeholder";
+
         System.out.println(medicalRecords);
     }
 
