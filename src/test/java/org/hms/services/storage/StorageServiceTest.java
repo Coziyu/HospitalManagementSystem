@@ -85,7 +85,7 @@ class StorageServiceTest {
         try {
             drugInventoryTable.saveToFile("data/drugInventory.csv");
 
-            drugInventoryTable.removeEntry(entry.getID());
+            drugInventoryTable.removeEntry(entry.getTableEntryID());
 
             drugInventoryTable.saveToFile("data/drugInventory.csv");
         } catch (Exception e) {

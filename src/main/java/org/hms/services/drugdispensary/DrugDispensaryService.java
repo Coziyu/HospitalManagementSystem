@@ -71,7 +71,7 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         }
 
         try {
-            drugReplenishRequestTable.removeEntry(request.getID());
+            drugReplenishRequestTable.removeEntry(request.getTableEntryID());
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return false;

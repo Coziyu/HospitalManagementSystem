@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractTableEntry implements Serializable {
-    protected int id;
+    protected int tableEntryID;
 
-    public AbstractTableEntry(int id){
-        this.id = id;
+    public AbstractTableEntry(int tableEntryID){
+        this.tableEntryID = tableEntryID;
     }
 
-    public int getID() {
-        return id;
+    public int getTableEntryID() {
+        return tableEntryID;
     }
 
     /**

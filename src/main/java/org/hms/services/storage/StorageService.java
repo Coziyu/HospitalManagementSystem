@@ -26,6 +26,8 @@ import java.util.Optional;
 import java.util.Date;
 import java.util.List;
 
+//TODO: Rename var from var to something meaningful
+
 public class StorageService
         extends AbstractService<IDataInterface>
         implements IMedicalDataInterface, IAppointmentDataInterface, IDrugStockDataInterface {
