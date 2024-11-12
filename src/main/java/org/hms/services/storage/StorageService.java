@@ -152,36 +152,23 @@ public class StorageService
         return appointments;
     }
 
-    public AppointmentSchedule loadschedule(String date) {
+    public AppointmentSchedule loadSchedule(String date) {
         int numRows = 0;
         int numCols = 0;
 
+        String filePath = dataRoot + date + ".csv";
+
         try {
-            BufferedReader br = new BufferedReader(new FileReader(dataRoot + date + ".csv"));
-
+            BufferedReader br = new BufferedReader(new FileReader(filePath));
             String line;
-            try {
-                while((line = br.readLine()) != null) {
-                    ++numRows;
-                    String[] values = line.split(",");
-                    if (numCols < values.length) {
-                        numCols = values.length;
-                    }
-                }
-            } catch (Throwable var14) {
-                try {
-                    br.close();
-                } catch (Throwable var11) {
-                    var14.addSuppressed(var11);
-                }
-
-                throw var14;
+            while ((line = br.readLine()) != null) {
+                numRows++;
+                String[] values = line.split(",");
+                numCols = Math.max(values.length, numCols);
             }
-
             br.close();
-        } catch (IOException var15) {
-            IOException e = var15;
-            e.printStackTrace();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
         }
 
         AppointmentSchedule schedule = new AppointmentSchedule(numCols - 1, numRows - 1);
@@ -190,27 +177,18 @@ public class StorageService
             BufferedReader br = new BufferedReader(new FileReader(dataRoot + date + ".csv"));
 
             String line;
-            try {
-                for(int row = 0; (line = br.readLine()) != null; ++row) {
-                    String[] values = line.split(",");
 
-                    for(int col = 0; col < values.length; ++col) {
-                        schedule.getMatrix()[row][col] = values[col];
-                    }
-                }
-            } catch (Throwable var12) {
-                try {
-                    br.close();
-                } catch (Throwable var10) {
-                    var12.addSuppressed(var10);
-                }
+            for(int row = 0; (line = br.readLine()) != null; ++row) {
+                String[] values = line.split(",");
 
-                throw var12;
+                for(int col = 0; col < values.length; ++col) {
+                    schedule.getMatrix()[row][col] = values[col];
+                }
             }
 
             br.close();
-        } catch (IOException var13) {
-            var13.printStackTrace();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
         }
 
         return schedule;
