@@ -11,6 +11,8 @@ class DrugDispensaryServiceTest {
 
     private DrugDispensaryService drugDispensaryService;
     private DrugInventoryTable drugInventory;
+    private DrugReplenishRequestTable drugReplenishRequestTable;
+
 
     @Nested
     class TestDispense {
@@ -60,6 +62,38 @@ class DrugDispensaryServiceTest {
 
             assertFalse(result);
             assertEquals(DrugRequestStatus.PENDING, request.getStatus());
+        }
+    }
+
+
+    @Nested
+    class TestToString{
+        @BeforeEach
+        void setUp() {
+            drugReplenishRequestTable = new DrugReplenishRequestTable();
+            try {
+                drugReplenishRequestTable.addEntry(new DrugReplenishRequest(0, "Ibuprofen", 5, "Out of stock"));
+                drugReplenishRequestTable.addEntry(new DrugReplenishRequest(1, "Aspirin", 10, "Out of stock?"));
+                drugReplenishRequestTable.addEntry(new DrugReplenishRequest(2, "Paracetamol", 15, "Out ,of, \"stock\""));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            drugDispensaryService = new DrugDispensaryService(new StorageService());
+            drugDispensaryService.drugReplenishRequestTable = drugReplenishRequestTable;
+        }
+        @Test
+        void getDrugReplenishRequestsAsString() {
+            System.out.println(drugDispensaryService.getDrugReplenishRequestsAsString());
+            String expected = """
+                                 ┌─────┬────────────────┬──────┬───────────────────────────────┐
+                                 │ ID  │ Name           │ Qty  │ Notes                         │
+                                 ├─────┼────────────────┼──────┼───────────────────────────────┤
+                                 │ 0   │ Ibuprofen      │ 5    │ Out of stock                  │
+                                 │ 1   │ Aspirin        │ 10   │ Out of stock?                 │
+                                 │ 2   │ Paracetamol    │ 15   │ Out ,of, "stock"              │
+                                 └─────┴────────────────┴──────┴───────────────────────────────┘
+                                 """;
+            assertEquals(expected, drugDispensaryService.getDrugReplenishRequestsAsString());
         }
     }
 
