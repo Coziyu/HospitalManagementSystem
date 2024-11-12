@@ -64,26 +64,20 @@ public class PharmacistMenu extends AbstractMainMenu {
     }
 
 
-    // TODO: For Nich to implement
+    // TODO: For Nich to finish implementation. Work with Yingjie on this
+    // TODO: Think, do we need to get patient info here? If so, we must add fields to DrugDispenseRequest for patientID
     private void handleDispenseDrug() {
-        System.out.println("\n=== Dispense Medication ===");
-        System.out.println("Pharmacist: " + userContext.getName());
-        System.out.println("Hospital ID: " + userContext.getHospitalID());
+        System.out.println("Feature coming soon");
 
-        try {
-            System.out.print("Enter prescription ID: ");
-            String prescriptionId = scanner.nextLine();
+        // Show all requests pending dispensary
+        System.out.println("=== Drug Dispense Requests ===");
+        // Add code here.
+//        String requestTableString = app.getDrugDispensaryService().getDrugDispensaryRequestsAsString();
+//        System.out.println(requestTableString);
 
-            System.out.print("Enter patient ID: ");
-            int patientId = Integer.parseInt(scanner.nextLine());
+        // Make user select the request they want to honor
 
-            logPharmacistAction("Dispensed medication for prescription ID: " + prescriptionId +
-                    " to patient ID: " + patientId);
-            // Implementation would handle medication dispensing
-            System.out.println("Feature coming soon...");
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input format.");
-        }
+
     }
 
     // TODO: For Nich to implement

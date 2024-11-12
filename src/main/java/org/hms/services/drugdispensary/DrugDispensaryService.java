@@ -15,7 +15,11 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         drugReplenishRequestTable = storageServiceInterface.getDrugReplenishRequestTable();
     }
 
-    boolean dispenseDrug(DrugDispenseRequest pendingRequest){
+    public String getDrugReplenishRequestsAsString(){
+        return drugReplenishRequestTable.toPrintString();
+    }
+
+    public boolean dispenseDrug(DrugDispenseRequest pendingRequest){
         String drugRequested = pendingRequest.getDrugName();
 
         // Try finding the drug in the table.
@@ -44,7 +48,7 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         return true;
     }
 
-    boolean submitReplenishRequest(String drugName, int addQuantity, String notes) {
+    public boolean submitReplenishRequest(String drugName, int addQuantity, String notes) {
         DrugReplenishRequest newRequest = drugReplenishRequestTable.createValidEntryTemplate();
         newRequest.setDrugName(drugName);
         newRequest.setAddQuantity(addQuantity);
@@ -60,7 +64,7 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         return true;
     }
 
-    boolean processReplenishRequest(int replenishRequestID, boolean accept){
+    public boolean processReplenishRequest(int replenishRequestID, boolean accept){
         // TODO: Decide if we are keeping records of past requests.
         DrugReplenishRequest request = drugReplenishRequestTable.getEntry(replenishRequestID);
         if (accept){
@@ -81,7 +85,7 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
     }
 
     //TODO: Exceptions of StockQuantity Manipulation
-    boolean setDrugStockQuantity(String drugName, int newQuantity){
+    public boolean setDrugStockQuantity(String drugName, int newQuantity){
         ArrayList<DrugInventoryEntry> results = drugInventory.searchByAttribute(DrugInventoryEntry::getName, drugName);
         if (results.isEmpty()){
             return false;
@@ -90,7 +94,7 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         drugStock.setQuantity(newQuantity);
         return true;
     }
-    boolean addDrugStockQuantity(String drugName, int newQuantity){
+    public boolean addDrugStockQuantity(String drugName, int newQuantity){
         ArrayList<DrugInventoryEntry> results = drugInventory.searchByAttribute(DrugInventoryEntry::getName, drugName);
         if (results.isEmpty()){
             return false;
@@ -99,7 +103,7 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         drugStock.setQuantity(drugStock.getQuantity() + newQuantity);
         return true;
     }
-    int getDrugStockQuantity(String drugName){
+    public int getDrugStockQuantity(String drugName){
         ArrayList<DrugInventoryEntry> results = drugInventory.searchByAttribute(DrugInventoryEntry::getName, drugName);
         //TODO: This should throw an error
         if (results.isEmpty()){

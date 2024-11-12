@@ -66,4 +66,15 @@ public class DrugReplenishRequest extends AbstractTableEntry {
         addQuantity = Integer.parseInt(parts[2]);
         notes = parts[3];
     }
+
+    public String toPrintString(String formatString){
+        // TODO: Consider adding print string's escape method
+        String printString = String.format(formatString,
+                getTableEntryID(),
+                drugName,
+                addQuantity,
+                notes
+        );
+        return printString;
+    }
 }
