@@ -49,7 +49,7 @@ public class DrugReplenishRequest extends AbstractTableEntry {
     @Override
     public String toCSVString() {
         return String.format("%s,%s,%s,%s",
-                getID(),
+                getTableEntryID(),
                 preprocessCSVString(drugName),
                 addQuantity,
                 preprocessCSVString(notes));
@@ -61,7 +61,7 @@ public class DrugReplenishRequest extends AbstractTableEntry {
     @Override
     public void loadFromCSVString(String csvLine) {
         String[] parts = parseCSVLine(csvLine);
-        id = Integer.parseInt(parts[0]);
+        tableEntryID = Integer.parseInt(parts[0]);
         drugName = parts[1];
         addQuantity = Integer.parseInt(parts[2]);
         notes = parts[3];

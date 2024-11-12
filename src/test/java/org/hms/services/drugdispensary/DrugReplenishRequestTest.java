@@ -28,7 +28,7 @@ class DrugReplenishRequestTest {
         request.loadFromCSVString(csvLine);
 
         // Then
-        assertEquals(2, request.getID());
+        assertEquals(2, request.getTableEntryID());
         assertEquals("Paracetamol", request.getDrugName());
         assertEquals(100, request.getAddQuantity());
         assertEquals("Regular Replenish", request.getNotes());
@@ -56,7 +56,7 @@ class DrugReplenishRequestTest {
         request.loadFromCSVString(csvLine);
 
         // Then
-        assertEquals(6, request.getID());
+        assertEquals(6, request.getTableEntryID());
         assertEquals("Ibuprofen", request.getDrugName());
         assertEquals(75, request.getAddQuantity());
         assertEquals("Handle with care, keep dry", request.getNotes());
@@ -72,7 +72,7 @@ class DrugReplenishRequestTest {
         request.loadFromCSVString(csvLine);
 
         // Then
-        assertEquals(3, request.getID());
+        assertEquals(3, request.getTableEntryID());
         assertEquals("", request.getDrugName()); // Expecting empty string
         assertEquals(50, request.getAddQuantity());
         assertEquals("", request.getNotes()); // Expecting empty string

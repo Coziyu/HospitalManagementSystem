@@ -17,14 +17,14 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
 
     public void addEntry(T entry) throws Exception {
         // If duplicate IDs, throw exception
-        if (getEntry(entry.getID()) != null){
+        if (getEntry(entry.getTableEntryID()) != null){
             throw new Exception("Duplicate ID inside the table!");
         }
         entries.add(entry);
     }
 
-    public void removeEntry(int id) throws Exception {
-        entries.remove(searchByAttribute(AbstractTableEntry::getID, id).getFirst());
+    public void removeEntry(int tableEntryID) throws Exception {
+        entries.remove(searchByAttribute(AbstractTableEntry::getTableEntryID, tableEntryID).getFirst());
     }
 
 
@@ -42,9 +42,9 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
             throw new IllegalArgumentException("New entry cannot be null");
         }
 
-        int replacedID = newEntry.getID();
+        int replacedTableEntryID = newEntry.getTableEntryID();
         for (int i = 0; i < entries.size(); i++) {
-            if (entries.get(i).getID() == replacedID) {
+            if (entries.get(i).getTableEntryID() == replacedTableEntryID) {
                 entries.set(i, newEntry);
                 return true;
             }
@@ -53,10 +53,10 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
     }
 
 
-    public T getEntry(int id) {
+    public T getEntry(int tableEntryID) {
         // id's are unique, so only the 1st entry is required.
         for (T entry : entries) {
-            if (entry.getID() == id) {
+            if (entry.getTableEntryID() == tableEntryID) {
                 return entry;
             }
         }
@@ -174,9 +174,9 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
     }
     public int getUnusedID() {
         // Start from 0, increment until 1 unused ID encountered.
-        sortBy(AbstractTableEntry::getID);
+        sortBy(AbstractTableEntry::getTableEntryID);
         for (int i = 0; i < entries.size(); i++) {
-            if (entries.get(i).getID() != i) {
+            if (entries.get(i).getTableEntryID() != i) {
                 return i;
             }
         }

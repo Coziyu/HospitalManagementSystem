@@ -45,7 +45,7 @@
 
             request.loadFromCSVString(csvString);
 
-            assertEquals(1, request.getID());
+            assertEquals(1, request.getTableEntryID());
             assertEquals("\"Ass\"p,i\"rin", request.getDrugName());
             assertEquals(10, request.getQuantity());
             assertEquals(DrugRequestStatus.PENDING, request.getStatus());
@@ -58,7 +58,7 @@
 
             request.loadFromCSVString(csvString);
 
-            assertEquals(2, request.getID(), "ID should be parsed correctly from CSV.");
+            assertEquals(2, request.getTableEntryID(), "ID should be parsed correctly from CSV.");
             assertEquals("Ibuprofen", request.getDrugName(), "Drug name should be parsed correctly from CSV.");
             assertEquals(5, request.quantity, "Quantity should be parsed correctly from CSV.");
             assertEquals(DrugRequestStatus.DISPENSED, request.getStatus(), "Status should be parsed correctly from CSV.");
