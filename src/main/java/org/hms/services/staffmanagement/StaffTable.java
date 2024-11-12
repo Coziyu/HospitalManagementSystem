@@ -6,7 +6,8 @@ import java.io.IOException;
 
 public class StaffTable extends AbstractTable<Staff> {
 
-    private static final String DEFAULT_FILENAME = "staff.csv";
+    private static final String dataRoot = System.getProperty("user.dir") + "/data/";
+    private static final String DEFAULT_FILENAME = dataRoot + "staff.csv";
 
     @Override
     protected String[] getHeaders() {
