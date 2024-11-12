@@ -30,23 +30,21 @@ public class PharmacistMenu extends AbstractMainMenu {
             System.out.println("\n=== Pharmacist Menu ===");
             System.out.println("Pharmacist: " + userContext.getName());
             System.out.println("Hospital ID: " + userContext.getHospitalID());
-            System.out.println("1. View Prescriptions");
-            System.out.println("2. Dispense Medication");
-            System.out.println("3. Check Medication Stock");
-            System.out.println("4. Update Inventory");
-            System.out.println("5. View Patient History");
-            System.out.println("6. Logout");
+            System.out.println("1. View Appointment Outcome Records");
+            System.out.println("2. Dispense Drug for Prescription");
+            System.out.println("3. Check Drug Stock");
+            System.out.println("4. Request Drug Replenishment");
+            System.out.println("5. Logout");
             System.out.print("Select an option: ");
 
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
                 switch (choice) {
-                    case 1 -> handleViewPrescriptions();
-                    case 2 -> handleDispenseMedication();
-                    case 3 -> handleCheckStock();
-                    case 4 -> handleUpdateInventory();
-                    case 5 -> handleViewPatientHistory();
-                    case 6 -> {
+                    case 1 -> handleViewAppointmentOutcomes();
+                    case 2 -> handleDispenseDrug();
+                    case 3 -> handleCheckDrugStock();
+                    case 4 -> handleDrugReplenishRequest();
+                    case 5 -> {
                         logPharmacistAction("Logged out");
                         app.getAuthenticationService().logout();
                         app.setCurrentMenu(new AuthenticationMenu(app));
@@ -60,23 +58,14 @@ public class PharmacistMenu extends AbstractMainMenu {
         }
     }
 
-    private void handleViewPrescriptions() {
-        System.out.println("\n=== View Prescriptions ===");
-        System.out.println("Pharmacist: " + userContext.getName());
-        System.out.println("Hospital ID: " + userContext.getHospitalID());
-
-        System.out.print("Enter patient ID: ");
-        try {
-            int patientId = Integer.parseInt(scanner.nextLine());
-            logPharmacistAction("Viewed prescriptions for patient ID: " + patientId);
-            // Implementation would show patient's prescriptions
-            System.out.println("Feature coming soon...");
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid patient ID format.");
-        }
+    // TODO: For Nich & Yingjie to work on.
+    private void handleViewAppointmentOutcomes() {
+        System.out.println("Feature coming soon");
     }
 
-    private void handleDispenseMedication() {
+
+    // TODO: For Nich to implement
+    private void handleDispenseDrug() {
         System.out.println("\n=== Dispense Medication ===");
         System.out.println("Pharmacist: " + userContext.getName());
         System.out.println("Hospital ID: " + userContext.getHospitalID());
@@ -97,50 +86,20 @@ public class PharmacistMenu extends AbstractMainMenu {
         }
     }
 
-    private void handleCheckStock() {
-        System.out.println("\n=== Medication Stock Levels ===");
+    // TODO: For Nich to implement
+    private void handleCheckDrugStock() {
+        System.out.println("\n=== Drug Stock Levels ===");
         System.out.println("Pharmacist: " + userContext.getName());
         System.out.println("Hospital ID: " + userContext.getHospitalID());
 
-        logPharmacistAction("Checked medication stock levels");
+        logPharmacistAction("Checked drug stock levels");
         // Implementation would show current inventory
         System.out.println("Feature coming soon...");
     }
 
-    private void handleUpdateInventory() {
-        System.out.println("\n=== Update Inventory ===");
-        System.out.println("Pharmacist: " + userContext.getName());
-        System.out.println("Hospital ID: " + userContext.getHospitalID());
+    // TODO: For Nich to implement
+    private void handleDrugReplenishRequest() {
 
-        System.out.print("Enter medication ID: ");
-        try {
-            String medicationId = scanner.nextLine();
-            System.out.print("Enter quantity change (+/-): ");
-            int quantityChange = Integer.parseInt(scanner.nextLine());
-
-            logPharmacistAction("Updated inventory for medication ID: " + medicationId +
-                    " by " + quantityChange + " units");
-            // Implementation would allow updating medication stock
-            System.out.println("Feature coming soon...");
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid quantity format.");
-        }
-    }
-
-    private void handleViewPatientHistory() {
-        System.out.println("\n=== Patient Medication History ===");
-        System.out.println("Pharmacist: " + userContext.getName());
-        System.out.println("Hospital ID: " + userContext.getHospitalID());
-
-        System.out.print("Enter patient ID: ");
-        try {
-            int patientId = Integer.parseInt(scanner.nextLine());
-            logPharmacistAction("Viewed medication history for patient ID: " + patientId);
-            // Implementation would show patient's medication history
-            System.out.println("Feature coming soon...");
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid patient ID format.");
-        }
     }
 
     private void logPharmacistAction(String action) {
