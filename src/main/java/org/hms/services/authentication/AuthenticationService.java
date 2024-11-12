@@ -9,7 +9,8 @@ import java.nio.file.*;
 import java.util.*;
 
 public class AuthenticationService {
-    private static final String USER_DB_FILE = "users.csv";
+    private static final String dataRoot = System.getProperty("user.dir") + "/data/";
+    private static final String USER_DB_FILE = dataRoot + "users.csv";
     private Map<String, User> users;
     private User currentUser;
 
