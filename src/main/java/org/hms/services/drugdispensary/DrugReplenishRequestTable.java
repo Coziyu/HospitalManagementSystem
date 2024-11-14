@@ -26,10 +26,18 @@ public class DrugReplenishRequestTable extends AbstractTable<DrugReplenishReques
         return new DrugReplenishRequestTable();
     }
 
+
+    /**
+     * This method will call each entry's toPrintString method to generate table contents.
+     * It will then add box drawing characters to create an ASCII table.
+     * @return A string representation of the table in an ASCII table format.
+     *         This string is meant to be printed to the console.
+     */
     public String toPrintString(){
         StringBuilder printStringBuilder = new StringBuilder(entries.size() * 100);
         printStringBuilder.append("┌─────┬────────────────┬──────┬───────────────────────────────┐\n");
-        printStringBuilder.append(String.format(formatString, "ID", "Name", "Qty", "Notes"));
+//        printStringBuilder.append(String.format(formatString, "ID", "Name", "Qty", "Notes"));
+        printStringBuilder.append(String.format(formatString, (Object[]) HEADERS));
         printStringBuilder.append("├─────┼────────────────┼──────┼───────────────────────────────┤\n");
         for (DrugReplenishRequest entry : getEntries()){
             printStringBuilder.append(entry.toPrintString(formatString));

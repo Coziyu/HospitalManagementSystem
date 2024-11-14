@@ -19,6 +19,10 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         return drugReplenishRequestTable.toPrintString();
     }
 
+    public String getDrugInventoryAsString(){
+        return drugInventory.toPrintString();
+    }
+
     public boolean dispenseDrug(DrugDispenseRequest pendingRequest){
         String drugRequested = pendingRequest.getDrugName();
 
@@ -50,6 +54,26 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
 
     public boolean submitReplenishRequest(String drugName, int addQuantity, String notes) {
         DrugReplenishRequest newRequest = drugReplenishRequestTable.createValidEntryTemplate();
+        newRequest.setDrugName(drugName);
+        newRequest.setAddQuantity(addQuantity);
+        newRequest.setNotes(notes);
+
+        try {
+            drugReplenishRequestTable.addEntry(newRequest);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean submitReplenishRequest(int inventoryEntryID, int addQuantity, String notes) {
+        DrugReplenishRequest newRequest = drugReplenishRequestTable.createValidEntryTemplate();
+
+        // Get drug name from inventoryEntryID
+        String drugName = drugInventory.getEntry(inventoryEntryID).getName();
+
         newRequest.setDrugName(drugName);
         newRequest.setAddQuantity(addQuantity);
         newRequest.setNotes(notes);
@@ -111,5 +135,14 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         }
         DrugInventoryEntry drugStock = results.getFirst();
         return drugStock.getQuantity();
+    }
+
+    /**
+     * Checks if the entryID is valid
+     * @param entryID
+     * @return
+     */
+    public boolean isValidDrugEntryID(int entryID){
+         return !drugInventory.searchByAttribute(DrugInventoryEntry::getTableEntryID, entryID).isEmpty();
     }
 }

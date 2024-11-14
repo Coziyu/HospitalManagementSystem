@@ -67,6 +67,12 @@ public class DrugReplenishRequest extends AbstractTableEntry {
         notes = parts[3];
     }
 
+    /**
+     * Generate a string representation of the object with the given format string.
+     * Meant to be printed to the console.
+     * @param formatString The format string to use. Must contain 4 placeholders for the entry's ID, drugName, addQuantity and notes.
+     * @return A string representation of the object.
+     */
     public String toPrintString(String formatString){
         // TODO: Consider adding print string's escape method
         String printString = String.format(formatString,
