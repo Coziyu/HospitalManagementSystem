@@ -1,9 +1,11 @@
 package org.hms.views;
 
 import org.hms.App;
+import org.hms.entities.Colour;
 import org.hms.entities.UserContext;
 import org.hms.entities.UserRole;
 import org.hms.entities.User;
+import org.hms.services.drugdispensary.DrugInventoryTable;
 
 import java.util.Scanner;
 import java.time.LocalDateTime;
@@ -28,8 +30,9 @@ public class AdminMenu extends AbstractMainMenu {
 
     @Override
     public void displayAndExecute() {
+        printLowStockAlertMessage();
         while (true) {
-            System.out.println("\n=== Administrator Menu ===");
+            System.out.println("=== Administrator Menu ===");
             System.out.println("Logged in as: " + userContext.getName());
             System.out.println("Hospital ID: " + userContext.getHospitalID());
             System.out.println("1. View and Manage Users");
@@ -62,7 +65,11 @@ public class AdminMenu extends AbstractMainMenu {
 
     // TODO: For Nich to implement
     private void printLowStockAlertMessage() {
-
+        DrugInventoryTable lowStockView = app.getDrugDispensaryService().getLowStockDrugs();
+        if (!lowStockView.getEntries().isEmpty()) {
+            System.out.println(Colour.YELLOW + "Low stock alert: The following drugs are running low in stock: ");
+            System.out.println(lowStockView.toPrintString() + Colour.RESET);
+        }
     }
 
     // TODO: For Yingjie to implement
