@@ -3,6 +3,8 @@ package org.hms.services.drugdispensary;
 import org.hms.services.AbstractService;
 
 import java.util.ArrayList;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 public class DrugDispensaryService extends AbstractService<IDrugStockDataInterface> {
 
@@ -21,6 +23,20 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
 
     public String getDrugInventoryAsString(){
         return drugInventory.toPrintString();
+    }
+
+    /**
+     * Looks through drugInventory, and returns a table of drugs with
+     * quantity < lowStockAlertThreshold
+     * @return READ-ONLY copy of DrugInventoryTable filtered by threshold
+     */
+    public DrugInventoryTable getLowStockDrugs(){
+        BiPredicate<Integer, Integer> smallerThanOrEquals = (i, j) -> (i <= j);
+
+        return (DrugInventoryTable) drugInventory.filterByCondition(
+                DrugInventoryEntry::getQuantity,
+                DrugInventoryEntry::getLowStockAlertThreshold,
+                smallerThanOrEquals);
     }
 
     public boolean dispenseDrug(DrugDispenseRequest pendingRequest){
