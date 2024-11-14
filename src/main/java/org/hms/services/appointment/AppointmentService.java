@@ -16,13 +16,14 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
     private List<AppointmentInformation> appointments;
     private AppointmentSchedule appointmentSchedule;
-    private List<AppointmentOutcome> appointmentOutcomes;
+    private ArrayList<AppointmentOutcome> appointmentOutcomes;
+
 
     public AppointmentService(IAppointmentDataInterface dataInterface) {
         this.storageServiceInterface = dataInterface;
         StorageService storageService = new StorageService();
         appointments = storageService.readAppointments();
-        //appointmentOutcomes = get from storage service
+        appointmentOutcomes = storageService.readAppointmentOutcomesFromCSV();
     }
 
     public void displayOneAppointment(AppointmentInformation appointment) {
@@ -34,43 +35,43 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         System.out.println("--------------------------------------------------");
     }
 
-//For patient
-public void scheduleAppointment(String patientID, String doctorID,String Date, String timeSlot, AppointmentSchedule schedule) {
-    //before calling any function related to schedule/reschedule appointment, use storageservice to get schedule of wanted date first;
+    //For patient
+    public void scheduleAppointment(String patientID, String doctorID, String Date, String timeSlot, AppointmentSchedule schedule) {
+        //before calling any function related to schedule/reschedule appointment, use storageservice to get schedule of wanted date first;
 
-    int doctorCol = -1;  // Find doctor column
-    int timeSlotRow = -1;
-    String[][] matrix = schedule.getMatrix();
+        int doctorCol = -1;  // Find doctor column
+        int timeSlotRow = -1;
+        String[][] matrix = schedule.getMatrix();
 
-    for (int col = 1; col < matrix[0].length; col++) {
-        if (matrix[0][col] != null && matrix[0][col].equals(doctorID)) {
-            doctorCol = col - 1;
-            break;
+        for (int col = 1; col < matrix[0].length; col++) {
+            if (matrix[0][col] != null && matrix[0][col].equals(doctorID)) {
+                doctorCol = col - 1;
+                break;
+            }
+        }
+
+        for (int row = 1; row < matrix.length; row++) {
+            if (matrix[row][0] != null && matrix[row][0].equals(timeSlot)) {
+                timeSlotRow = row - 1;
+                break;
+            }
+        }
+
+        String slotValue = schedule.getSlot(timeSlotRow, doctorCol);
+        if ("1".equals(slotValue)) {  // If slot is available (1)
+            schedule.setSlot(timeSlotRow, doctorCol, patientID);  // Occupy the slot with patientID
+            System.out.println("Appointment scheduled successfully for patient " + patientID + " with doctor " + doctorID + " at " + timeSlot + " on " + "2024-11-01" + ".");//hard code the date here,need change
+
+            String timeSlotString = Date + " " + timeSlot + "-" + timeSlot;
+            int appointmentID = appointments.size() + 100;
+            addAppointment(timeSlotString, appointmentID, patientID, doctorID);
+
+        } else {
+            System.out.println("The selected time slot is not available.");
         }
     }
 
-    for (int row = 1; row < matrix.length; row++) {
-        if (matrix[row][0] != null && matrix[row][0].equals(timeSlot)) {
-            timeSlotRow = row - 1;
-            break;
-        }
-    }
-
-    String slotValue = schedule.getSlot(timeSlotRow, doctorCol);
-    if ("1".equals(slotValue)) {  // If slot is available (1)
-        schedule.setSlot(timeSlotRow, doctorCol, patientID);  // Occupy the slot with patientID
-        System.out.println("Appointment scheduled successfully for patient " + patientID + " with doctor " + doctorID + " at " + timeSlot + " on " + "2024-11-01" + ".");//hard code the date here,need change
-
-        String timeSlotString = Date + " " + timeSlot + "-" + timeSlot;
-        int appointmentID = appointments.size() + 100;
-        addAppointment(timeSlotString, appointmentID, patientID, doctorID);
-
-    } else {
-        System.out.println("The selected time slot is not available.");
-    }
-}
-
-    public void rescheduleAppointment(String patientID, String doctorID,String date, String timeSlot, AppointmentSchedule schedule) {
+    public void rescheduleAppointment(String patientID, String doctorID, String date, String timeSlot, AppointmentSchedule schedule) {
 
         int doctorCol = -1;  // Find doctor column
         int timeSlotRow = -1;
@@ -87,7 +88,8 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
                     Date newTimeSlot = dateTimeFormat.parse(date + " " + timeSlot);
 
                     // Update the appointment's time slot
-                    appointment.setAppointmentTimeSlot(newTimeSlot);}catch (ParseException e) {
+                    appointment.setAppointmentTimeSlot(newTimeSlot);
+                } catch (ParseException e) {
                     System.out.println("Failed to parse the new time slot: " + e.getMessage());
                 }
                 appointment.setDoctorID(doctorID);
@@ -166,7 +168,7 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
     }
 
 
-//For doctor
+    //For doctor
     public void viewRequest(String doctorID) {
         boolean found = false;
         for (AppointmentInformation appointment : appointments) {
@@ -277,7 +279,7 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
         return new AppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
     }*/
 
-    public void setDoctorSchedule(String doctorID,String Date, String timeSlot, AppointmentSchedule schedule){
+    public void setDoctorSchedule(String doctorID, String Date, String timeSlot, AppointmentSchedule schedule) {
         int doctorCol = -1;  // Find doctor column
         int timeSlotRow = -1;
         String[][] matrix = schedule.getMatrix();
@@ -308,7 +310,7 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
 
     }
 
-    public void cancelDoctorSchedule(String doctorID,String Date, String timeSlot, AppointmentSchedule schedule){
+    public void cancelDoctorSchedule(String doctorID, String Date, String timeSlot, AppointmentSchedule schedule) {
         int doctorCol = -1;  // Find doctor column
         int timeSlotRow = -1;
         String[][] matrix = schedule.getMatrix();
@@ -353,7 +355,7 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
         //Need to add a function to write the new outcome to last row of CSV
     }
 
-//For admin
+    //For admin
     public void displayAllAppointments() {
         for (AppointmentInformation appointment : appointments) {
             displayOneAppointment(appointment);
@@ -361,12 +363,27 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
     }
 
 
+    //For pharmacist
+    //These three methods will be used together to create a new appointment outcome
+    public AppointmentOutcome createNewAppointmentOutcome(String appointmentID, String patientID, String typeOfAppointment, String consultationNotes, ArrayList<DrugDispenseRequest> prescribedMedication) {
+        AppointmentOutcome outcome = new AppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
+        appointmentOutcomes.add(outcome);
 
+        return outcome;
+    }
 
+    public ArrayList<DrugDispenseRequest> createNewArrayOfDrugDispenseRequest() {
+        ArrayList<DrugDispenseRequest> newList = new ArrayList<>();
+        return newList;
+    }
 
+    public void addDrugDispenseRequest(ArrayList<DrugDispenseRequest> list, String drugName, int addQuantity) {
+        // Create a new DrugDispenseRequest instance
+        DrugDispenseRequest drugRequest = storageServiceInterface.createNewDrugDispenseRequest(drugName, addQuantity);
+        list.add(drugRequest);
+    }
+    //
 
-
-//For pharmacist
 
     public boolean updatePrescriptionStatus(String appointmentID) {
         boolean updated = false;
@@ -387,7 +404,15 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
         return true;
     }
 
-    /*public void displayPendingPrescriptions() {
+    public boolean updateAppointmentOutcometoCSV(){
+        boolean updated = false;
+        storageServiceInterface.writeAllAppointmentOutcomesToCSV(appointmentOutcomes);
+        updated = true;
+        return updated;
+
+    }
+
+    public void displayPendingPrescriptions() {
         System.out.println("Pending Prescriptions:");
         int havePendingDrug = 0;
         for (AppointmentOutcome outcome : appointmentOutcomes) {
@@ -402,11 +427,13 @@ public void scheduleAppointment(String patientID, String doctorID,String Date, S
                     System.out.println();
                 }
             }
-            if(havePendingDrug == 0){
+            if (havePendingDrug == 0) {
                 System.out.println("No Pending Drug");
 
             }
             System.out.println("------------------------");
             havePendingDrug = 0;
-        }*/
+        }
     }
+
+}
