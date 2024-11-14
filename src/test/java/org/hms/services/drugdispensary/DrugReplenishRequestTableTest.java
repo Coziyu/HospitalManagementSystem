@@ -4,6 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,7 +31,7 @@ class DrugReplenishRequestTableTest {
             drugReplenishRequestTable.addEntry(req2);
         DrugReplenishRequest req3 = drugReplenishRequestTable.createValidEntryTemplate();
         req3.setDrugName("Bruggy");
-        req3.setAddQuantity(5);
+        req3.setAddQuantity(8);
         req3.setNotes("Lol");
             drugReplenishRequestTable.addEntry(req3);
         DrugReplenishRequest req4 = drugReplenishRequestTable.createValidEntryTemplate();
@@ -44,7 +47,7 @@ class DrugReplenishRequestTableTest {
     void searchByAttribute() {
         ArrayList<DrugReplenishRequest> results = drugReplenishRequestTable.searchByAttribute(DrugReplenishRequest::getAddQuantity, 5);
         System.out.println(results);
-        assertEquals(3, results.size());
+        assertEquals(2, results.size());
     }
 
     @Test
@@ -53,5 +56,13 @@ class DrugReplenishRequestTableTest {
         String[] actual = drugReplenishRequestTable.getHeaders();
 
         assertArrayEquals(expected, actual);
+    }
+    @Test
+    void filterByCondition(){
+        BiPredicate<Integer, Integer> smaller = (i, j) -> (i < j);
+        DrugReplenishRequestTable filtered = (DrugReplenishRequestTable) drugReplenishRequestTable.filterByCondition(DrugReplenishRequest::getAddQuantity, smaller, 8);
+        List<DrugReplenishRequest> result = filtered.getEntries();
+        System.out.println(filtered.toPrintString());
+        assertEquals(2, result.size());
     }
 }

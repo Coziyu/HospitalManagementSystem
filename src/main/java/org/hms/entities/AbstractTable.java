@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -221,7 +222,7 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
      * @throws IllegalArgumentException if keyExtractor, pred, or predValue is null
      * @throws RuntimeException        if an error occurs while creating the new table
      */
-    public <U> AbstractTable<T> filterByCondition(Function<T, U> keyExtractor, Predicate<U> pred, U predValue) {
+    public <U> AbstractTable<T> filterByCondition(Function<T, U> keyExtractor, BiPredicate<U, U> pred, U predValue) {
         if (keyExtractor == null || pred == null || predValue == null) {
             throw new IllegalArgumentException("Key extractor, predicate, and predicate value cannot be null");
         }
@@ -231,7 +232,32 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
         entries.stream()
                 .filter(entry -> {
                     U extractedValue = keyExtractor.apply(entry);
-                    return pred.test(extractedValue);
+                    return pred.test(extractedValue, predValue);
+                })
+                .forEach(entry -> {
+                    try {
+                        results.addEntry(entry);
+                    } catch (Exception e) {
+                        // This shouldn't happen as we are copying from a valid table.
+                        throw new RuntimeException("Error adding entry to result table.", e);
+                    }
+                });
+
+        return results;
+    }
+
+    public <U, V> AbstractTable<T> filterByCondition(Function<T, U> keyExtractorA, Function<T, V> keyExtractorB, BiPredicate<U,V> pred) {
+        if (keyExtractorA == null || keyExtractorB == null || pred == null) {
+            throw new IllegalArgumentException("Key extractors and predicate cannot be null");
+        }
+
+        AbstractTable<T> results = createEmpty();
+
+        entries.stream()
+                .filter(entry ->{
+                    U extractedValueA = keyExtractorA.apply(entry);
+                    V extractedValueB = keyExtractorB.apply(entry);
+                    return pred.test(extractedValueA, extractedValueB);
                 })
                 .forEach(entry -> {
                     try {
