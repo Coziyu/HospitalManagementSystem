@@ -71,7 +71,20 @@ public class PatientMenu extends AbstractMainMenu {
     }
 
     private void handleViewAvailableAppointmentSlot() {
-        System.out.println("Feature coming soon...");
+        System.out.println("\n=== Schedule Appointment ===");
+        System.out.print("Enter date (YYYYMMDD): ");
+        try {
+            String dateStr = scanner.nextLine();
+            LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.BASIC_ISO_DATE);
+
+            if (date.isBefore(LocalDate.now())) {
+                System.out.println("Cannot view appointment slots in the past.");
+                return;
+            }
+            dateStr = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString();
+            app.getAppointmentService().displayMatrix(dateStr);
+            System.out.println("Feature coming soon...");
+        }catch (DateTimeParseException e) {}
     }
 
     // TODO: For implementation
@@ -87,8 +100,14 @@ public class PatientMenu extends AbstractMainMenu {
                 System.out.println("Cannot schedule appointments in the past.");
                 return;
             }
+
+            dateStr = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString();
+            app.getAppointmentService().displayMatrix(dateStr);
+            String patientID = Integer.toString(patientContext.getPatientID());
+            String doctorID = scanner.nextLine();
+            String timeslot = scanner.nextLine();
             // TODO: scheduleAppointment requires doctorID, patientID, and timeSlot too.
-            // app.getAppointmentService().scheduleAppointment(Integer.parseInt(dateStr));
+            app.getAppointmentService().scheduleAppointment(patientID, doctorID, dateStr,timeslot, app.getAppointmentService().getAppointmentSchedule(dateStr));
             System.out.println("Appointment scheduled for: " + date.format(DateTimeFormatter.ISO_LOCAL_DATE));
 
         } catch (DateTimeParseException e) {
@@ -116,6 +135,8 @@ public class PatientMenu extends AbstractMainMenu {
     private void handleViewUpcomingAppointments() {
         System.out.println("\n=== Upcoming Appointments ===");
         // Implementation would use AppointmentService to get appointments
+        String patienID = Integer.toString(patientContext.getPatientID());
+        app.getAppointmentService().viewAppointmentStatus(patienID);
         System.out.println("Feature coming soon...");
     }
 

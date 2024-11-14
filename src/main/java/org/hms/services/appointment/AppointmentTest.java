@@ -126,11 +126,11 @@ public class AppointmentTest {
                     // View upcoming confirmed appointments for a specific doctor
                     System.out.print("Enter doctor ID: ");
                     doctorID = scanner.nextLine();
-                    appointmentService.viewDoctorSchedule(doctorID);
+                    //appointmentService.viewDoctorSchedule(doctorID);
                     break;
 
                 case 8:
-                    appointmentService.displayMatrix(newschedule);
+                    //appointmentService.displayMatrix(newschedule);
                     break;
 
                 case 9:

@@ -35,6 +35,10 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         System.out.println("--------------------------------------------------");
     }
 
+    public AppointmentSchedule getAppointmentSchedule(String date) {
+        return storageServiceInterface.loadSchedule(date);
+    }
+
     //For patient
     public void scheduleAppointment(String patientID, String doctorID, String Date, String timeSlot, AppointmentSchedule schedule) {
         //before calling any function related to schedule/reschedule appointment, use storageservice to get schedule of wanted date first;
@@ -59,7 +63,8 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
         String slotValue = schedule.getSlot(timeSlotRow, doctorCol);
         if ("1".equals(slotValue)) {  // If slot is available (1)
-            schedule.setSlot(timeSlotRow, doctorCol, patientID);  // Occupy the slot with patientID
+            schedule.setSlot(timeSlotRow, doctorCol, patientID);
+            storageServiceInterface.writeScheduleToCSV(schedule, Date);// Occupy the slot with patientID
             System.out.println("Appointment scheduled successfully for patient " + patientID + " with doctor " + doctorID + " at " + timeSlot + " on " + "2024-11-01" + ".");//hard code the date here,need change
 
             String timeSlotString = Date + " " + timeSlot + "-" + timeSlot;
@@ -157,8 +162,9 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
-    public void displayMatrix(AppointmentSchedule appointmentSchedule) {
-        String[][] matrix = appointmentSchedule.getMatrix();
+    public void displayMatrix(String date) {
+        AppointmentSchedule schedule = storageServiceInterface.loadSchedule(date);
+        String[][] matrix = schedule.getMatrix();
         for (String[] row : matrix) {
             for (String cell : row) {
                 System.out.print((cell != null ? cell : "") + "\t");
@@ -219,7 +225,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
-    public void viewDoctorSchedule(String doctorID) {
+    public void viewDoctorSchedule(String doctorID, String date) {
         boolean found = false;
         for (AppointmentInformation appointment : appointments) {
             // Check if the appointment's doctor ID matches and the status is CONFIRMED
