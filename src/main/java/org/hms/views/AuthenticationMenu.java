@@ -20,7 +20,7 @@ public class AuthenticationMenu extends AbstractMenu {
 
     @Override
     public void displayAndExecute() {
-        System.out.println(Colour.BLUE + "\n=== Hospital Management System ===" + Colour.RESET);
+        System.out.println(Colour.BLUE + "=== Hospital Management System ===" + Colour.RESET);
         System.out.println("1. Login");
         System.out.println("2. Exit");
         System.out.print("Select an option: ");
@@ -75,7 +75,7 @@ public class AuthenticationMenu extends AbstractMenu {
     }
 
     private boolean handlePasswordChange(User user) {
-        System.out.println("\n=== First Time Login - Password Change Required ===");
+        System.out.println("=== First Time Login - Password Change Required ===");
 
         while (true) {
             System.out.print("Enter current password: ");
