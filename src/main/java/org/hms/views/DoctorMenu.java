@@ -89,6 +89,7 @@ public class DoctorMenu extends AbstractMainMenu {
         System.out.println("Doctor: Dr. " + userContext.getName());
         logDoctorAction("Viewed today's appointments");
         // Implementation would show today's appointments
+
         System.out.println("Feature coming soon...");
     }
 
