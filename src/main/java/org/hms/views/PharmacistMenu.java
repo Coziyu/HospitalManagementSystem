@@ -43,7 +43,7 @@ public class PharmacistMenu extends AbstractMainMenu {
                     case 1 -> handleViewAppointmentOutcomes();
                     case 2 -> handleDispenseDrug();
                     case 3 -> handleCheckDrugStock();
-                    case 4 -> handleDrugReplenishRequest();
+                    case 4 -> handleSubmitDrugReplenishRequest();
                     case 5 -> {
                         logPharmacistAction("Logged out");
                         app.getAuthenticationService().logout();
@@ -80,20 +80,53 @@ public class PharmacistMenu extends AbstractMainMenu {
 
     }
 
-    // TODO: For Nich to implement
+    /**
+     * Displays the current drug stock levels by retrieving the drug inventory
+     * as a formatted string from the DrugDispensaryService and printing it
+     * to the console.
+     */
     private void handleCheckDrugStock() {
         System.out.println("\n=== Drug Stock Levels ===");
-        System.out.println("Pharmacist: " + userContext.getName());
-        System.out.println("Hospital ID: " + userContext.getHospitalID());
-
-        logPharmacistAction("Checked drug stock levels");
-        // Implementation would show current inventory
-        System.out.println("Feature coming soon...");
+        String drugInventoryString = app.getDrugDispensaryService().getDrugInventoryAsString();
+        System.out.println(drugInventoryString);
     }
 
-    // TODO: For Nich to implement
-    private void handleDrugReplenishRequest() {
+    // TODO: For Nich to TEST CORRECTNESS
+    private void handleSubmitDrugReplenishRequest() {
+        // Display
+        handleCheckDrugStock();
 
+        // Select drug to replenish
+        System.out.println("Enter the ID of the drug you want to replenish: ");
+        int entryID = -1;
+        while (entryID == -1) {
+            try {
+                entryID = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+            // Check if drug exists
+            if (!app.getDrugDispensaryService().isValidDrugEntryID(entryID)) {
+                entryID = -1;
+            }
+        }
+        // Enter quantity to add
+        System.out.println("Enter the quantity to add: ");
+        int quantity = -1;
+        while (quantity == -1) {
+            try {
+                quantity = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
+        // Enter replenishment notes
+        System.out.println("Enter replenishment notes: ");
+        String notes = scanner.nextLine();
+        // Submit request
+        app.getDrugDispensaryService().submitReplenishRequest(entryID, quantity, notes);
+
+        System.out.println("Successfully submitted replenishment request.");
     }
 
     private void logPharmacistAction(String action) {

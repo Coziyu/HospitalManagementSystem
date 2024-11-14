@@ -48,9 +48,9 @@ public class StorageService
      * If an IOException occurs during loading, a RuntimeException is thrown.
      */
     private void initializeDrugReplenishRequestTable() {
-        drugReplenishRequestTable = new DrugReplenishRequestTable();
+        drugReplenishRequestTable = new DrugReplenishRequestTable(dataRoot + "drugReplenishRequests.csv");
         try {
-            drugReplenishRequestTable.loadFromFile(dataRoot + "drugReplenishRequests.csv");
+            drugReplenishRequestTable.loadFromFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -62,9 +62,9 @@ public class StorageService
      * If an IOException occurs during loading, a RuntimeException is thrown.
      */
     private void initializeDrugInventoryTable() {
-        drugInventoryTable = new DrugInventoryTable();
+        drugInventoryTable = new DrugInventoryTable(dataRoot + "drugInventory.csv");
         try {
-            drugInventoryTable.loadFromFile(dataRoot + "drugInventory.csv");
+            drugInventoryTable.loadFromFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
