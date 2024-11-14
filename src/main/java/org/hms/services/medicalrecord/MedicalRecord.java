@@ -40,4 +40,8 @@ public class MedicalRecord implements Serializable {
     public BloodType getBloodType() {
         return bloodType;
     }
+
+    public String getPatientID() {
+        return patientID;
+    }
 }

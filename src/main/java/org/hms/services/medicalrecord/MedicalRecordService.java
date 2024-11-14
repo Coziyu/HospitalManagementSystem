@@ -118,7 +118,10 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
 
     // === PATIENT METHODS ===
     public MedicalRecord viewOwnRecord(PatientContext patientContext) {
-        return medicalRecordsMap.get(patientContext.getPatientID());
+        String patientIDString = patientContext.getPatientID().toString();
+        System.out.println("Looking up record with ID: " + patientIDString);
+        // Use the medicalRecordsMap that's loaded from CSV instead of storageServiceInterface
+        return medicalRecordsMap.get(patientIDString);
     }
 
     public boolean updateOwnContactInfo(PatientContext patientContext,
@@ -209,7 +212,7 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
 
     // Required by AbstractService
     //TODO: For Elijah to reimplement this part.
-    // For now, I have added patentID as an argument to your code.
+    // For now, I have added patientID as an argument to your code.
     // make sure to ensure that your implementation is correct
     // Also note that patientID eventually would be stored as a String
 //    public Optional<MedicalRecord> getMedicalRecord() {
