@@ -1,6 +1,7 @@
 package org.hms.views;
 
 import org.hms.App;
+import org.hms.entities.Colour;
 import org.hms.entities.PatientContext;
 import org.hms.entities.UserContext;
 import org.hms.services.authentication.AuthenticationResult;
@@ -19,7 +20,7 @@ public class AuthenticationMenu extends AbstractMenu {
 
     @Override
     public void displayAndExecute() {
-        System.out.println("\n=== Hospital Management System ===");
+        System.out.println(Colour.BLUE + "\n=== Hospital Management System ===" + Colour.RESET);
         System.out.println("1. Login");
         System.out.println("2. Exit");
         System.out.print("Select an option: ");
@@ -63,14 +64,14 @@ public class AuthenticationMenu extends AbstractMenu {
                 navigateToAppropriateMenu(user);
                 return;
             } else {
-                System.out.println("Login failed: " + result.getMessage());
+                System.out.println(Colour.RED + "Login failed: " + result.getMessage() + Colour.RESET);
                 attempts++;
                 if (attempts < MAX_LOGIN_ATTEMPTS) {
                     System.out.println("Attempts remaining: " + (MAX_LOGIN_ATTEMPTS - attempts));
                 }
             }
         }
-        System.out.println("Maximum login attempts exceeded. Please try again later.");
+        System.out.println(Colour.RED + "Maximum login attempts exceeded. Please try again later." + Colour.RESET);
     }
 
     private boolean handlePasswordChange(User user) {
@@ -87,7 +88,7 @@ public class AuthenticationMenu extends AbstractMenu {
             String confirmPassword = scanner.nextLine();
 
             if (!newPassword.equals(confirmPassword)) {
-                System.out.println("New passwords do not match. Please try again.");
+                System.out.println(Colour.RED + "New passwords do not match. Please try again." + Colour.RESET);
                 continue;
             }
 
@@ -132,6 +133,6 @@ public class AuthenticationMenu extends AbstractMenu {
                 return;
         }
 
-        System.out.println("Welcome, " + user.getRole() + " " + user.getId());
+        System.out.println(Colour.GREEN +"Welcome, " + user.getRole() + " " + user.getId() + Colour.RESET);
     }
 }
