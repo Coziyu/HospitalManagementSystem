@@ -40,7 +40,7 @@ public class DrugReplenishRequestTable extends AbstractTable<DrugReplenishReques
 
     @Override
     protected AbstractTable<DrugReplenishRequest> createEmpty() {
-        return new DrugReplenishRequestTable(filePath);
+        return new DrugReplenishRequestTable();
     }
 
 

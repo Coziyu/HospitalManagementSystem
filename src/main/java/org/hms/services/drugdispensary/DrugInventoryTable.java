@@ -34,7 +34,7 @@ public class DrugInventoryTable extends AbstractTable<DrugInventoryEntry> {
 
     @Override
     protected AbstractTable<DrugInventoryEntry> createEmpty() {
-        return new DrugInventoryTable(filePath);
+        return new DrugInventoryTable();
     }
 
     /**

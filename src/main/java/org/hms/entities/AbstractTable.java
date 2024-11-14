@@ -263,7 +263,7 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
     /**
      * Creates a new instance of the concrete table type.
      * This method must be implemented by concrete subclasses.
-     *
+     * Create empty SHOULD NOT inherit the same file link!
      * @return a new empty table of the same concrete type
      */
     protected abstract AbstractTable<T> createEmpty();
