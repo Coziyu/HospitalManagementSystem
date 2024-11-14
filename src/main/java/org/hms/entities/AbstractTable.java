@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public abstract class AbstractTable<T extends AbstractTableEntry> implements Serializable {
@@ -205,6 +206,42 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
                         throw new RuntimeException("Error adding entry to result table.", e);
                     }
                 });
+        return results;
+    }
+
+    /**
+     * Filters the table entries by a specified condition using a key extractor function and a predicate.
+     * Returns a new table containing only entries where the condition is met.
+     *
+     * @param <U>           the type of the key used for filtering
+     * @param keyExtractor  a function that extracts the key from an entry
+     * @param pred          the predicate function to test the extracted key against the provided value
+     * @param predValue     the value to match against using the predicate
+     * @return              a new table containing only entries where the condition is met
+     * @throws IllegalArgumentException if keyExtractor, pred, or predValue is null
+     * @throws RuntimeException        if an error occurs while creating the new table
+     */
+    public <U> AbstractTable<T> filterByCondition(Function<T, U> keyExtractor, Predicate<U> pred, U predValue) {
+        if (keyExtractor == null || pred == null || predValue == null) {
+            throw new IllegalArgumentException("Key extractor, predicate, and predicate value cannot be null");
+        }
+
+        AbstractTable<T> results = createEmpty();
+
+        entries.stream()
+                .filter(entry -> {
+                    U extractedValue = keyExtractor.apply(entry);
+                    return pred.test(extractedValue);
+                })
+                .forEach(entry -> {
+                    try {
+                        results.addEntry(entry);
+                    } catch (Exception e) {
+                        // This shouldn't happen as we are copying from a valid table.
+                        throw new RuntimeException("Error adding entry to result table.", e);
+                    }
+                });
+
         return results;
     }
 
