@@ -9,12 +9,10 @@ import java.util.List;
 
 public class MedicalRecord implements Serializable {
     private String patientID;
-    private BloodType bloodType;
     private List<MedicalEntry> medicalHistory;
 
-    public MedicalRecord(String patientID, BloodType bloodType) {
+    public MedicalRecord(String patientID) {
         this.patientID = patientID;
-        this.bloodType = bloodType;
         this.medicalHistory = new ArrayList<>();
     }
 
@@ -35,10 +33,6 @@ public class MedicalRecord implements Serializable {
     // Getters
     public List<MedicalEntry> getMedicalHistory() {
         return medicalHistory;
-    }
-
-    public BloodType getBloodType() {
-        return bloodType;
     }
 
     public String getPatientID() {

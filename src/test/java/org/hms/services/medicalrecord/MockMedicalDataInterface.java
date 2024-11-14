@@ -9,7 +9,7 @@ class MockMedicalDataInterface implements IMedicalDataInterface {
 
     public MockMedicalDataInterface() {
         // Create and store a test record for ID 1001
-        MedicalRecord testRecord = new MedicalRecord("1001", BloodType.POSITIVE_A);
+        MedicalRecord testRecord = new MedicalRecord("1001");
         records.put("1001", testRecord);
         System.out.println("Mock: Created test record for ID 1001");
     }

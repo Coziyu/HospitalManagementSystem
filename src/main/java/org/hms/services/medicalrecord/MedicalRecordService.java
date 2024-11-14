@@ -1,5 +1,6 @@
 package org.hms.services.medicalrecord;
 
+import org.hms.entities.BloodType;
 import org.hms.entities.UserContext;
 import org.hms.entities.PatientContext;
 import org.hms.entities.UserRole;
@@ -100,9 +101,12 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
                 String[] parts = line.split(",");
                 String patientId = parts[0].trim();
 
+                // Fetch the blood type from PersonalParticulars
+                BloodType bloodType = personalParticularsMap.get(patientId).getBloodType();
+
                 MedicalRecord record = medicalRecordsMap.computeIfAbsent(
                         patientId,
-                        k -> new MedicalRecord(patientId, personalParticularsMap.get(patientId).getBloodType())
+                        k -> new MedicalRecord(patientId)
                 );
 
                 record.addMedicalEntry(
