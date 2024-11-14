@@ -1,5 +1,6 @@
 package org.hms.services.medicalrecord;
 
+import org.hms.entities.BloodType;
 import org.hms.entities.UserContext;
 import org.hms.entities.PatientContext;
 import org.hms.entities.UserRole;
@@ -26,16 +27,17 @@ public class MedicalRecordCSVTest {
 
         System.out.println("Looking up medical record for patient ID: " + patient.getPatientID());
 
-
         // Test record retrieval
         MedicalRecord record = service.viewOwnRecord(patient);
+        // Fetch Personal Particulars
+        PersonalParticulars particulars = service.getPersonalParticulars(patient.getPatientID().toString());
 
         // Print results
         if (record == null) {
             System.out.println("Test failed: No record found in CSV");
         } else {
             System.out.println("Test passed: Found record for patient " + record.getPatientID());
-            System.out.println("Blood Type: " + record.getBloodType());
+            System.out.println("Blood Type: " + particulars.getBloodType());
             System.out.println("Number of medical entries: " + record.getMedicalHistory().size());
         }
     }

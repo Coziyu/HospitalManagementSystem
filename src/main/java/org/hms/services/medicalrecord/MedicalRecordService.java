@@ -128,6 +128,10 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
         return medicalRecordsMap.get(patientIDString);
     }
 
+    public PersonalParticulars getPersonalParticulars(String patientID) {
+        return personalParticularsMap.get(patientID);
+    }
+
     public boolean updateOwnContactInfo(PatientContext patientContext,
                                         String phone, String email, String address) {
         try {
@@ -202,12 +206,12 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
             for (MedicalRecord record : medicalRecordsMap.values()) {
                 for (MedicalEntry entry : record.getMedicalHistory()) {
                     writer.write(String.format("%s,%s,%s,%s,%s,%s\n",
-                            record.getBloodType(),
                             entry.getDate(),
                             entry.getDiagnosis(),
                             entry.getTreatmentPlan(),
                             entry.getConsultationNotes(),
                             "D001" // Placeholder for doctor ID
+                            // TODO: How should this be handled? Perhaps taking from AppointmentOutcome
                     ));
                 }
             }
