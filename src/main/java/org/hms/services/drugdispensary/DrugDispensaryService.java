@@ -129,7 +129,6 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
     }
     public int getDrugStockQuantity(String drugName){
         ArrayList<DrugInventoryEntry> results = drugInventory.searchByAttribute(DrugInventoryEntry::getName, drugName);
-        //TODO: This should throw an error
         if (results.isEmpty()){
             return -1;
         }
