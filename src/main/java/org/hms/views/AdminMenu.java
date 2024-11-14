@@ -68,7 +68,7 @@ public class AdminMenu extends AbstractMainMenu {
         DrugInventoryTable lowStockView = app.getDrugDispensaryService().getLowStockDrugs();
         if (!lowStockView.getEntries().isEmpty()) {
             System.out.println(Colour.YELLOW + "Low stock alert: The following drugs are running low in stock: ");
-            System.out.println(lowStockView.toPrintString() + Colour.RESET);
+            System.out.print(lowStockView.toPrintString() + Colour.RESET);
         }
     }
 
