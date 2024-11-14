@@ -4,27 +4,40 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class AbstractTable<T extends AbstractTableEntry> implements Serializable {
     protected List<T> entries;
     protected String[] headers;
+    protected String filePath;
 
     public AbstractTable() {
         entries = new ArrayList<T>();
+        filePath = "";
     }
 
+    /**
+     * Adds an entry to the table. Note that this will update the file associated with the table automatically.
+     * @param entry the entry to add
+     * @throws Exception if the table already contains an entry with the same ID
+     */
     public void addEntry(T entry) throws Exception {
         // If duplicate IDs, throw exception
         if (getEntry(entry.getTableEntryID()) != null){
             throw new Exception("Duplicate ID inside the table!");
         }
         entries.add(entry);
+        saveToFile();
+    }
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
     public void removeEntry(int tableEntryID) throws Exception {
         entries.remove(searchByAttribute(AbstractTableEntry::getTableEntryID, tableEntryID).getFirst());
+        saveToFile();
     }
 
 
@@ -37,7 +50,7 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
      * @return true if the entry was replaced, false if no matching entry was found
      * @throws IllegalArgumentException if newEntry is null
      */
-    public boolean replaceEntry(T newEntry) {
+    public boolean replaceEntry(T newEntry) throws Exception{
         if (newEntry == null) {
             throw new IllegalArgumentException("New entry cannot be null");
         }
@@ -46,6 +59,7 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
         for (int i = 0; i < entries.size(); i++) {
             if (entries.get(i).getTableEntryID() == replacedTableEntryID) {
                 entries.set(i, newEntry);
+                saveToFile();
                 return true;
             }
         }
@@ -81,7 +95,14 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
         entries.sort(Comparator.comparing(keyExtractor));
     }
 
+    /**
+     * TODO. Fill in
+     * Note that saveToFile will always sort the tableEntries by TableEntryID before saving.
+     * @param filename
+     * @throws IOException
+     */
     public void saveToFile(String filename) throws IOException {
+        sortBy(AbstractTableEntry::getTableEntryID);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             // Write headers
             writer.write(String.join(",", getHeaders()));
@@ -91,6 +112,36 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
             for (T entry : entries) {
                 writer.write(entry.toCSVString());
                 writer.newLine();
+            }
+        }
+        catch (Exception e){
+            if(!Objects.equals(filePath, "")){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * TODO: Fill in
+     * Note that saveToFile will always sort the tableEntries by TableEntryID before saving.
+     * @throws IOException
+     */
+    public void saveToFile() throws IOException {
+        sortBy(AbstractTableEntry::getTableEntryID);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            // Write headers
+            writer.write(String.join(",", getHeaders()));
+            writer.newLine();
+
+            // Write entries
+            for (T entry : entries) {
+                writer.write(entry.toCSVString());
+                writer.newLine();
+            }
+        }
+        catch (FileNotFoundException e) {
+            if(!Objects.equals(filePath, "")){
+                e.printStackTrace();
             }
         }
     }
@@ -172,6 +223,22 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
             }
         }
     }
+
+    public void loadFromFile() throws IOException {
+        entries.clear();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            // Skip header line
+            reader.readLine();
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                T entry = createValidEntryTemplate();
+                entry.loadFromCSVString(line);
+                entries.add(entry);
+            }
+        }
+    }
+
     public int getUnusedID() {
         // Start from 0, increment until 1 unused ID encountered.
         sortBy(AbstractTableEntry::getTableEntryID);
@@ -188,6 +255,7 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
     /**
      * This creates an empty T extends AbstractTableEntry object
      * Only it's ID is set. Other fields to be instantiated.
+     * Note that this SHOULD NOT ADD the entry. Call addEntry() for that.
      * @return
      */
     protected abstract T createValidEntryTemplate();
