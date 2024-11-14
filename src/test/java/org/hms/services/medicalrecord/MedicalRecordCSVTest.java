@@ -32,6 +32,8 @@ public class MedicalRecordCSVTest {
         // Fetch Personal Particulars
         PersonalParticulars particulars = service.getPersonalParticulars(patient.getPatientID().toString());
 
+        // TODO: Get Bloodtype is really messed up, I need to find a better way to simplify this, I could consider revamping MedicalRecordService or inheriting some things
+
         // Print results
         if (record == null) {
             System.out.println("Test failed: No record found in CSV");
