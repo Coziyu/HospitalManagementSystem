@@ -112,7 +112,8 @@ public class StorageService
     }
 
     public DrugDispenseRequest createNewDrugDispenseRequest(String drugName, int addQuantity){
-        // TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
+        //TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
+        // Requires cooperation with Yingjie for this
         DrugDispenseRequest newDispenseRequest = new DrugDispenseRequest(drugDispenseRequestCounter, drugName, addQuantity, DrugRequestStatus.PENDING);
         drugDispenseRequestCounter += 1;
         return newDispenseRequest;
