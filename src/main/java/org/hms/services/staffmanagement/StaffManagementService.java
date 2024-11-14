@@ -3,16 +3,29 @@ package org.hms.services.staffmanagement;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * StaffManagementService provides a set of operations for managing staff
+ * members, including adding, updating, removing, searching, and changing
+ * staff details and roles.
+ */
 public class StaffManagementService {
 
     private final StaffTable staffTable;
-
+    /**
+     * Initializes the StaffManagementService with a StaffTable instance and
+     * optionally loads data from a file.
+     */
     public StaffManagementService() {
         this.staffTable = new StaffTable();
         loadFromFile(); // Optionally load from file on initialization
     }
+    /**
+     * Adds a new staff entry to the staff table and saves the changes to a file.
+     *
+     * @param staff the Staff object to be added
+     * @return true if the staff was added successfully, false otherwise
+     */
 
-    // Adds a new staff entry
     public boolean addStaff(Staff staff) {
         try {
             staffTable.addEntry(staff);
@@ -23,8 +36,13 @@ public class StaffManagementService {
         }
         return true;
     }
-
-    // Updates an existing staff entry
+    /**
+     * Updates an existing staff entry in the staff table and saves the changes to a file.
+     *
+     * @param staffId the ID of the staff to update
+     * @param updatedStaff the updated Staff object
+     * @return true if the update was successful, false if the staff was not found
+     */
     public boolean updateStaff(int staffId, Staff updatedStaff) {
         Staff existingStaff = staffTable.getEntry(staffId);
         if (existingStaff == null) {
@@ -41,22 +59,38 @@ public class StaffManagementService {
         return true;
     }
 
-    // Retrieves a specific staff entry
+    /**
+     * Retrieves a specific staff entry based on staff ID.
+     *
+     * @param staffId the ID of the staff to retrieve
+     * @return the Staff object if found, otherwise null
+     */
     public Staff getStaff(int staffId) {
         return staffTable.getEntry(staffId);
     }
-
-    // Lists all active staff entries
+    /**
+     * Lists all active staff entries.
+     *
+     * @return a List of Staff objects with a status of "active"
+     */
     public List<Staff> listAllActiveStaff() {
         return staffTable.filterByAttribute(Staff::getStatus, "active").getEntries();
     }
-
-    // Lists all staff entries without filtering
+    /**
+     * Lists all staff entries without filtering.
+     *
+     * @return a List of all Staff objects in the staff table
+     */
     public List<Staff> listAllStaff() {
         return staffTable.getEntries();
     }
-
-    // Soft or hard delete a staff entry
+    /**
+     * Removes a staff entry based on staff ID. Supports both soft and hard deletion.
+     *
+     * @param staffId the ID of the staff to remove
+     * @param softDelete true for soft delete (mark as inactive), false for hard delete
+     * @return true if the removal was successful, false otherwise
+     */
     public boolean removeStaff(int staffId, boolean softDelete) {
         Staff staff = getStaff(staffId);
         if (staff == null) {
@@ -78,7 +112,13 @@ public class StaffManagementService {
         return true;
     }
 
-    // Assigns a specific role to the staff member
+    /**
+     * Assigns a specific role to the staff member.
+     *
+     * @param staffId the ID of the staff to assign the role to
+     * @param role the role to be assigned to the staff member
+     * @return true if the role was assigned successfully, false otherwise
+     */
     public boolean assignRole(int staffId, String role) {
         Staff staff = getStaff(staffId);
         if (staff == null) {
@@ -88,8 +128,13 @@ public class StaffManagementService {
         staff.setRole(role);
         return updateStaff(staffId, staff);
     }
-
-    // Changes the status (active/inactive) of a staff member
+    /**
+     * Changes the status (e.g., active/inactive) of a staff member.
+     *
+     * @param staffId the ID of the staff to change the status
+     * @param status the new status to be assigned to the staff member
+     * @return true if the status was changed successfully, false otherwise
+     */
     public boolean changeStatus(int staffId, String status) {
         Staff staff = getStaff(staffId);
         if (staff == null) {
@@ -99,13 +144,23 @@ public class StaffManagementService {
         staff.setStatus(status);
         return updateStaff(staffId, staff);
     }
-
-    // Archives a staff member’s data
+    /**
+     * Archives a staff member’s data by changing their status to "archived".
+     *
+     * @param staffId the ID of the staff to archive
+     * @return true if the archiving was successful, false otherwise
+     */
     public boolean archiveStaff(int staffId) {
         return changeStatus(staffId, "archived");
     }
 
-    // Searches for staff based on role, gender, or status
+    /**
+     * Searches for staff based on a specified criterion such as role, gender, or status.
+     *
+     * @param criteria the criterion to filter by ("role", "gender", or "status")
+     * @param value the value to match for the specified criterion
+     * @return a List of Staff objects that match the search criteria
+     */
     public List<Staff> searchStaff(String criteria, String value) {
         return staffTable.getEntries().stream()
                 .filter(staff -> {
@@ -124,7 +179,11 @@ public class StaffManagementService {
                 .collect(Collectors.toList());
     }
 
-    // Save and load methods
+    /**
+     * Saves the current staff data to a file.
+     *
+     * @return true if the save operation was successful, false otherwise
+     */
     public boolean saveToFile() {
         try {
             staffTable.saveToFile();
@@ -135,6 +194,11 @@ public class StaffManagementService {
         return true;
     }
 
+    /**
+     * Loads staff data from a file.
+     *
+     * @return true if the load operation was successful, false otherwise
+     */
     public boolean loadFromFile() {
         try {
             staffTable.loadFromFile();
@@ -144,7 +208,11 @@ public class StaffManagementService {
         }
         return true;
     }
-
+    /**
+     * Retrieves the StaffTable instance used by this service.
+     *
+     * @return the StaffTable instance
+     */
     public StaffTable getStaffTable() {
         return staffTable;
     }
