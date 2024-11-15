@@ -2,6 +2,8 @@ package org.hms.views;
 
 import org.hms.App;
 import org.hms.entities.PatientContext;
+import org.hms.services.appointment.AppointmentStatus;
+import org.w3c.dom.ls.LSOutput;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -59,24 +61,57 @@ public class PatientMenu extends AbstractMainMenu {
 
     // TODO: For implementation
     private void handleViewPastAppointmentOutcome() {
-        System.out.println("Feature coming soon...");
+
+
     }
 
     private void handleCancelAppointment() {
-        System.out.println("Feature coming soon...");
+        String patientID = Integer.toString(app.getUserContext().getHospitalID());
+        AppointmentStatus status = app.getAppointmentService().getCurrentAppointmentStatus(patientID);
+        if (status != AppointmentStatus.CONFIRMED && status != AppointmentStatus.PENDING) {
+            System.out.println("No appointment can be canceled");
+            return;
+        }
+
+
+
+        String doctorID = app.getAppointmentService().getDoctorID(patientID);
+        String[] DateAndSlot = app.getAppointmentService().getAppointmentDateTime(patientID);
+        app.getAppointmentService().setAppointmentToCanceled(patientID);
+
+        app.getAppointmentService().resumeDoctorSchedule(doctorID, DateAndSlot[0], DateAndSlot[1]);
+        System.out.println("Appointment Canceled");
+        //
+
+
+
     }
 
     private void handleRescheduleAppointment() {
-        System.out.println("Feature coming soon...");
+        handleCancelAppointment();
+        handleScheduleAppointment();
     }
 
     private void handleViewAvailableAppointmentSlot() {
-        System.out.println("Feature coming soon...");
+        //System.out.println("\n=== Schedule Appointment ===");
+        System.out.print("Enter date (YYYYMMDD): ");
+        try {
+            String dateStr = scanner.nextLine();
+            LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.BASIC_ISO_DATE);
+
+            if (date.isBefore(LocalDate.now())) {
+                System.out.println("Cannot view appointment slots in the past.");
+                return;
+            }
+
+            app.getAppointmentService().displaySchedule(dateStr);
+            System.out.println("Feature coming soon...");
+        }catch (DateTimeParseException e) {}
     }
 
     // TODO: For implementation
     private void handleScheduleAppointment() {
-        System.out.println("Feature coming soon...");
+        //System.out.println("Feature coming soon...");
         System.out.println("\n=== Schedule Appointment ===");
         System.out.print("Enter date (YYYYMMDD): ");
         try {
@@ -87,9 +122,20 @@ public class PatientMenu extends AbstractMainMenu {
                 System.out.println("Cannot schedule appointments in the past.");
                 return;
             }
+
+            //dateStr = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString();
+            app.getAppointmentService().displaySchedule(dateStr);
+            String patientID = Integer.toString(app.getUserContext().getHospitalID());
+            System.out.println("Enter doctor ID : ");
+            String doctorID = scanner.nextLine();
+            System.out.println("Enter time slot : ");
+            String timeslot = scanner.nextLine();
             // TODO: scheduleAppointment requires doctorID, patientID, and timeSlot too.
-            // app.getAppointmentService().scheduleAppointment(Integer.parseInt(dateStr));
-            System.out.println("Appointment scheduled for: " + date.format(DateTimeFormatter.ISO_LOCAL_DATE));
+            if(app.getAppointmentService().checkExistingAppointment(patientID)){
+            app.getAppointmentService().scheduleAppointment(patientID, doctorID, dateStr,timeslot, app.getAppointmentService().getAppointmentSchedule(dateStr));
+            System.out.println("Appointment scheduled for: " + date.format(DateTimeFormatter.ISO_LOCAL_DATE));}
+            else{
+                System.out.println("can not schedule more than 1 appointment");}
 
         } catch (DateTimeParseException e) {
             System.out.println("Invalid date format. Please use YYYYMMDD.");
@@ -115,8 +161,9 @@ public class PatientMenu extends AbstractMainMenu {
     // TODO: For Yingjie to implement
     private void handleViewUpcomingAppointments() {
         System.out.println("\n=== Upcoming Appointments ===");
-        // Implementation would use AppointmentService to get appointments
-        System.out.println("Feature coming soon...");
+        String patienID = Integer.toString(app.getUserContext().getHospitalID());
+        app.getAppointmentService().viewAppointmentStatus(patienID);
+
     }
 
     // TODO: For Amos to implement

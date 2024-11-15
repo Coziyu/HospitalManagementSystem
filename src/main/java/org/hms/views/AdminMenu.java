@@ -1,9 +1,11 @@
 package org.hms.views;
 
 import org.hms.App;
+import org.hms.entities.Colour;
 import org.hms.entities.UserContext;
 import org.hms.entities.UserRole;
 import org.hms.entities.User;
+import org.hms.services.drugdispensary.DrugInventoryTable;
 
 import java.util.Scanner;
 import java.time.LocalDateTime;
@@ -28,27 +30,26 @@ public class AdminMenu extends AbstractMainMenu {
 
     @Override
     public void displayAndExecute() {
+        printLowStockAlertMessage();
         while (true) {
-            System.out.println("\n=== Administrator Menu ===");
+            System.out.println("=== Administrator Menu ===");
             System.out.println("Logged in as: " + userContext.getName());
             System.out.println("Hospital ID: " + userContext.getHospitalID());
-            System.out.println("1. Manage Users");
-            System.out.println("2. View System Logs");
-            System.out.println("3. Configure System Settings");
-            System.out.println("4. Generate Reports");
-            System.out.println("5. Manage Departments");
-            System.out.println("6. Logout");
+            System.out.println("1. View and Manage Users");
+            System.out.println("2. View Scheduled Appointment Details");
+            System.out.println("3. View and Manage Drug Inventory");
+            System.out.println("4. Approve Replenishment Requests");
+            System.out.println("5. Logout");
             System.out.print("Select an option: ");
 
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
                 switch (choice) {
                     case 1 -> handleManageUsers();
-                    case 2 -> handleViewLogs();
-                    case 3 -> handleConfigureSettings();
-                    case 4 -> handleGenerateReports();
-                    case 5 -> handleManageDepartments();
-                    case 6 -> {
+                    case 2 -> handleViewAppointments();
+                    case 3 -> handleManageDrugInventory();
+                    case 4 -> handleApproveReplenishmentRequests();
+                    case 5 -> {
                         logAdminAction("Logged out");
                         app.getAuthenticationService().logout();
                         app.setCurrentMenu(new AuthenticationMenu(app));
@@ -62,6 +63,29 @@ public class AdminMenu extends AbstractMainMenu {
         }
     }
 
+    // TODO: For Nich to implement
+    private void printLowStockAlertMessage() {
+        DrugInventoryTable lowStockView = app.getDrugDispensaryService().getLowStockDrugs();
+        if (!lowStockView.getEntries().isEmpty()) {
+            System.out.println(Colour.YELLOW + "Low stock alert: The following drugs are running low in stock: ");
+            System.out.print(lowStockView.toPrintString() + Colour.RESET);
+        }
+    }
+
+    // TODO: For Yingjie to implement
+    private void handleViewAppointments() {
+        app.getAppointmentService().displayAllAppointments();
+    }
+    // TODO: For Nich to implement
+    private void handleManageDrugInventory() {
+
+    }
+    // TODO: For Nich to implement
+    private void handleApproveReplenishmentRequests() {
+
+    }
+
+    // TODO: For Amos to implement Staff related methods.
     private void handleManageUsers() {
         while (true) {
             System.out.println("\n=== User Management ===");
@@ -149,34 +173,6 @@ public class AdminMenu extends AbstractMainMenu {
         System.out.println("\n=== User List ===");
         System.out.println("Listing users for Hospital: " + userContext.getHospitalID());
         logAdminAction("Viewed user list");
-        System.out.println("Feature coming soon...");
-    }
-
-    private void handleViewLogs() {
-        System.out.println("\n=== System Logs ===");
-        System.out.println("Viewing logs for Hospital: " + userContext.getHospitalID());
-        logAdminAction("Viewed system logs");
-        System.out.println("Feature coming soon...");
-    }
-
-    private void handleConfigureSettings() {
-        System.out.println("\n=== System Configuration ===");
-        System.out.println("Configuring settings for Hospital: " + userContext.getHospitalID());
-        logAdminAction("Accessed system configuration");
-        System.out.println("Feature coming soon...");
-    }
-
-    private void handleGenerateReports() {
-        System.out.println("\n=== Generate Reports ===");
-        System.out.println("Generating reports for Hospital: " + userContext.getHospitalID());
-        logAdminAction("Generated reports");
-        System.out.println("Feature coming soon...");
-    }
-
-    private void handleManageDepartments() {
-        System.out.println("\n=== Department Management ===");
-        System.out.println("Managing departments for Hospital: " + userContext.getHospitalID());
-        logAdminAction("Accessed department management");
         System.out.println("Feature coming soon...");
     }
 

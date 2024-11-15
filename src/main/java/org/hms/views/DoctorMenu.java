@@ -3,10 +3,13 @@ package org.hms.views;
 import org.hms.App;
 import org.hms.entities.UserContext;
 import org.hms.entities.UserRole;
+import org.hms.services.appointment.AppointmentOutcome;
+import org.hms.services.drugdispensary.DrugDispenseRequest;
 import org.hms.services.medicalrecord.MedicalRecord;
 
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -71,17 +74,90 @@ public class DoctorMenu extends AbstractMainMenu {
 
     private void handleRecordAppointmentOutcome() {
         // TODO: For Yingjie to implement
-        System.out.println("Feature coming soon");
+
+        ArrayList<DrugDispenseRequest> prescribedMedication = app.getAppointmentService().createNewArrayOfDrugDispenseRequest();
+
+        System.out.print("Enter number of medications to prescribe: ");
+        int medicationCount = Integer.parseInt(scanner.nextLine());
+
+        for (int i = 1; i <= medicationCount; i++) {
+            System.out.print("Enter name of drug " + i + ": ");
+            String drugName = scanner.nextLine();
+
+            System.out.print("Enter quantity for " + drugName + ": ");
+            int quantity = Integer.parseInt(scanner.nextLine());
+
+            // Use the addDrugDispenseRequest method to add each DrugDispenseRequest to the list
+            app.getAppointmentService().addDrugDispenseRequest(prescribedMedication, drugName, quantity);
+        }
+
+        // Step 3: Collect data for the AppointmentOutcome fields
+        System.out.print("Enter Appointment ID: ");
+        String appointmentID = scanner.nextLine();
+
+        System.out.print("Enter Patient ID: ");
+        String patientID = scanner.nextLine();
+
+        System.out.print("Enter Type of Appointment: ");
+        String typeOfAppointment = scanner.nextLine();
+
+        System.out.print("Enter Consultation Notes (use ',' and '/' if needed): ");
+        String consultationNotes = scanner.nextLine();
+
+        // Use createNewAppointmentOutcome to create an AppointmentOutcome object
+        AppointmentOutcome newOutcome = app.getAppointmentService().createNewAppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
+
+        System.out.println("AppointmentOutcome has been written to the CSV file.");
     }
 
     private void handleAppointmentRequests() {
         // TODO: For Yingjie to implement
         System.out.println("Feature coming soon");
+
+        String doctorID = Integer.toString(app.getUserContext().getHospitalID());
+        //doctorID = "D1001" ;  //remove this line after real doctor ID have appointments
+        app.getAppointmentService().viewRequest(doctorID);
+        System.out.println("key in appointment ID");
+        int appointmentID = Integer.parseInt(scanner.nextLine());
+
+        app.getAppointmentService().manageAppointmentRequests(appointmentID, doctorID);
     }
 
     private void handleSetAppointmentAvailability() {
         // TODO: For Yingjie to implement
-        System.out.println("Feature coming soon");
+        String doctorID = Integer.toString(app.getUserContext().getHospitalID());
+
+        System.out.println("Do you want to set the schedule as:");
+        System.out.println("1. Available");
+        System.out.println("2. Unavailable");
+
+        int choice;
+        try {
+            choice = Integer.parseInt(scanner.nextLine());
+
+            if (choice != 1 && choice != 2) {
+                System.out.println("Invalid choice. Please select 1 or 2.");
+                return;
+            }
+
+            System.out.print("Enter the date (YYYYMMDD): ");
+            String date = scanner.nextLine();
+
+            System.out.print("Enter the time slot (e.g., 12:00): ");
+            String timeSlot = scanner.nextLine();
+
+            if (choice == 1) {
+                app.getAppointmentService().setDoctorSchedule(doctorID, date, timeSlot);
+                System.out.println("Schedule set to 'Available' successfully.");
+            } else if (choice == 2) {
+                app.getAppointmentService().cancelDoctorSchedule(doctorID, date, timeSlot);
+                System.out.println("Schedule set to 'Unavailable' successfully.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a numeric value for the choice.");
+        }
+
+
     }
 
     private void handleViewAppointments() {
@@ -89,6 +165,7 @@ public class DoctorMenu extends AbstractMainMenu {
         System.out.println("Doctor: Dr. " + userContext.getName());
         logDoctorAction("Viewed today's appointments");
         // Implementation would show today's appointments
+
         System.out.println("Feature coming soon...");
     }
 
@@ -151,7 +228,7 @@ public class DoctorMenu extends AbstractMainMenu {
 
     private void handleViewSchedule() {
         // TODO: Implement this.
-        System.out.println("\n=== Weekly Schedule ===");
+        System.out.println("\n=== Daily Schedule ===");
         System.out.println("Schedule for: Dr. " + userContext.getName());
         System.out.println("Hospital ID: " + userContext.getHospitalID());
         logDoctorAction("Viewed weekly schedule");

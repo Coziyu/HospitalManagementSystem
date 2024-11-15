@@ -126,11 +126,11 @@ public class AppointmentTest {
                     // View upcoming confirmed appointments for a specific doctor
                     System.out.print("Enter doctor ID: ");
                     doctorID = scanner.nextLine();
-                    appointmentService.viewDoctorSchedule(doctorID);
+                    //appointmentService.viewDoctorSchedule(doctorID);
                     break;
 
                 case 8:
-                    appointmentService.displayMatrix(newschedule);
+                    //appointmentService.displayMatrix(newschedule);
                     break;
 
                 case 9:
@@ -140,7 +140,7 @@ public class AppointmentTest {
 
                 case 10:
 
-                    appointmentService.rescheduleAppointment("P1000", "DoctorC","2024-11-01", "10:00", schedule);
+                    //appointmentService.rescheduleAppointment("P1000", "DoctorC","2024-11-01", "10:00", schedule);
                     break;
 
                 case 11:

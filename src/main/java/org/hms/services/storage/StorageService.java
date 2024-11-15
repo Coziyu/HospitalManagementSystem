@@ -48,9 +48,9 @@ public class StorageService
      * If an IOException occurs during loading, a RuntimeException is thrown.
      */
     private void initializeDrugReplenishRequestTable() {
-        drugReplenishRequestTable = new DrugReplenishRequestTable();
+        drugReplenishRequestTable = new DrugReplenishRequestTable(dataRoot + "drugReplenishRequests.csv");
         try {
-            drugReplenishRequestTable.loadFromFile(dataRoot + "drugReplenishRequests.csv");
+            drugReplenishRequestTable.loadFromFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -62,9 +62,9 @@ public class StorageService
      * If an IOException occurs during loading, a RuntimeException is thrown.
      */
     private void initializeDrugInventoryTable() {
-        drugInventoryTable = new DrugInventoryTable();
+        drugInventoryTable = new DrugInventoryTable(dataRoot + "drugInventory.csv");
         try {
-            drugInventoryTable.loadFromFile(dataRoot + "drugInventory.csv");
+            drugInventoryTable.loadFromFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -112,7 +112,8 @@ public class StorageService
     }
 
     public DrugDispenseRequest createNewDrugDispenseRequest(String drugName, int addQuantity){
-        // TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
+        //TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
+        // Requires cooperation with Yingjie for this
         DrugDispenseRequest newDispenseRequest = new DrugDispenseRequest(drugDispenseRequestCounter, drugName, addQuantity, DrugRequestStatus.PENDING);
         drugDispenseRequestCounter += 1;
         return newDispenseRequest;
@@ -147,6 +148,32 @@ public class StorageService
         }
 
         return appointments;
+    }
+
+    public void writeAppointmentsToCsv(List<AppointmentInformation> appointments) {
+        String filePath = dataRoot + "Appointments.csv";
+        SimpleDateFormat timeSlotFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm-HH:mm");
+
+        try (FileWriter writer = new FileWriter(filePath)) {
+            // Write the header row
+            writer.write("appointmentID,patientID,doctorID,appointmentTimeSlot,appointmentStatus\n");
+
+            // Write each appointment's details
+            for (AppointmentInformation appointment : appointments) {
+                // Format the appointment time slot correctly
+                String formattedTimeSlot = timeSlotFormat.format(appointment.getAppointmentTimeSlot());
+
+                writer.write(appointment.getAppointmentID() + "," +
+                        appointment.getPatientID() + "," +
+                        appointment.getDoctorID() + "," +
+                        formattedTimeSlot + "," +
+                        appointment.getAppointmentStatus() + "\n");
+            }
+
+            System.out.println("Appointments successfully written to " + filePath);
+        } catch (IOException e) {
+            System.err.println("Error writing to CSV file: " + e.getMessage());
+        }
     }
 
     public AppointmentSchedule loadSchedule(String date) {

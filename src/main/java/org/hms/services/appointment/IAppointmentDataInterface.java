@@ -5,6 +5,7 @@ import org.hms.services.drugdispensary.DrugRequestStatus;
 import org.hms.services.storage.IDataInterface;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface IAppointmentDataInterface extends IDataInterface {
     /**
@@ -15,6 +16,21 @@ public interface IAppointmentDataInterface extends IDataInterface {
      */
     public DrugDispenseRequest createNewDrugDispenseRequest(String drugName, int addQuantity);
 
+    public ArrayList<AppointmentOutcome> readAppointmentOutcomesFromCSV();
+
+    public void writeAppointmentsToCsv(List<AppointmentInformation> appointments);
+
+    public void writeAppointmentOutcomeToCSV(AppointmentOutcome outcome);
+
     public void writeAllAppointmentOutcomesToCSV(ArrayList<AppointmentOutcome> appointmentOutcomes);
+
+    public List<AppointmentInformation> readAppointments();
+
+
+    public AppointmentSchedule loadSchedule(String date) ;
+
+    public void writeScheduleToCSV(AppointmentSchedule schedule, String date);
+
+
 
 }

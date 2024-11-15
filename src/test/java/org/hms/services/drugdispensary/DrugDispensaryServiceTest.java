@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class DrugDispensaryServiceTest {
@@ -71,15 +73,19 @@ class DrugDispensaryServiceTest {
         @BeforeEach
         void setUp() {
             drugReplenishRequestTable = new DrugReplenishRequestTable();
+            drugInventory = new DrugInventoryTable();
             try {
                 drugReplenishRequestTable.addEntry(new DrugReplenishRequest(0, "Ibuprofen", 5, "Out of stock"));
                 drugReplenishRequestTable.addEntry(new DrugReplenishRequest(1, "Aspirin", 10, "Out of stock?"));
                 drugReplenishRequestTable.addEntry(new DrugReplenishRequest(2, "Paracetamol", 15, "Out ,of, \"stock\""));
+                drugInventory.addEntry(new DrugInventoryEntry(1, "Aspirin", 50, 10));
+                drugInventory.addEntry(new DrugInventoryEntry(2, "Ibuprofen", 20, 5));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
             drugDispensaryService = new DrugDispensaryService(new StorageService());
             drugDispensaryService.drugReplenishRequestTable = drugReplenishRequestTable;
+            drugDispensaryService.drugInventory = drugInventory;
         }
         @Test
         void getDrugReplenishRequestsAsString() {
@@ -95,6 +101,19 @@ class DrugDispensaryServiceTest {
                                  """;
             assertEquals(expected, drugDispensaryService.getDrugReplenishRequestsAsString());
         }
+        @Test
+        void getDrugInventoryTableAsString(){
+            System.out.println(drugDispensaryService.getDrugInventoryAsString());
+            String expected = """
+                    ┌─────┬────────────────┬──────┬─────────────┐
+                    │ ID  │ Name           │ Qty  │ lowStockQty │
+                    ├─────┼────────────────┼──────┼─────────────┤
+                    │ 1   │ Aspirin        │ 50   │ 10          │
+                    │ 2   │ Ibuprofen      │ 20   │ 5           │
+                    └─────┴────────────────┴──────┴─────────────┘
+                    """;
+            assertEquals(expected, drugDispensaryService.getDrugInventoryAsString());
+        }
     }
 
     @Nested
@@ -107,6 +126,32 @@ class DrugDispensaryServiceTest {
         @Test
         void submitReplenishRequest() {
 
+        }
+    }
+
+    @Nested
+    class TestLowStockAlert {
+        @BeforeEach
+        void setUp() {
+            drugInventory = new DrugInventoryTable();
+            try {
+                drugInventory.addEntry(new DrugInventoryEntry(0, "Paracetamol", 15, 16));
+                drugInventory.addEntry(new DrugInventoryEntry(1, "Aspirin", 50, 49));
+                drugInventory.addEntry(new DrugInventoryEntry(2, "Ibuprofen", 20, 20));
+                drugInventory.addEntry(new DrugInventoryEntry(3, "Metformin", 0, 5));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            drugDispensaryService = new DrugDispensaryService(new StorageService());
+            drugDispensaryService.drugInventory = drugInventory;
+        }
+
+        @Test
+        void getLowStockDrugs() {
+            DrugInventoryTable lowStockDrugsTable = drugDispensaryService.getLowStockDrugs();
+            List<DrugInventoryEntry> lowStockDrugs = lowStockDrugsTable.getEntries();
+            System.out.println(lowStockDrugsTable.toPrintString());
+            assertEquals(3, lowStockDrugs.size());
         }
     }
 }
