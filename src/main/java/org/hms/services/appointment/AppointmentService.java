@@ -62,7 +62,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
 
         String slotValue = schedule.getSlot(timeSlotRow, doctorCol);
-        if ("1".equals(slotValue)) {  // If slot is available (1)
+        if ("available".equals(slotValue)) {  // If slot is available (1)
             schedule.setSlot(timeSlotRow, doctorCol, patientID);
             storageServiceInterface.writeScheduleToCSV(schedule, Date);// Occupy the slot with patientID
             System.out.println("Appointment scheduled successfully for patient " + patientID + " with doctor " + doctorID + " at " + timeSlot + " on " + "2024-11-01" + ".");//hard code the date here,need change
@@ -82,7 +82,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         int timeSlotRow = -1;
         String[][] matrix = schedule.getMatrix();
 
-        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyyMMdd HH:mm");
         boolean found = false;
         for (AppointmentInformation appointment : appointments) {
             if (appointment.getPatientID().equals(patientID)) {
@@ -115,7 +115,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
                 }
 
                 String slotValue = schedule.getSlot(timeSlotRow, doctorCol);
-                if ("1".equals(slotValue)) {  // If slot is available (1)
+                if ("available".equals(slotValue)) {  // If slot is available (1)
                     schedule.setSlot(timeSlotRow, doctorCol, patientID);  // Occupy the slot with patientID
                     System.out.println("Appointment scheduled successfully for patient " + patientID + " with doctor " + doctorID + " at " + timeSlot + " on " + "2024-11-01" + ".");//hard code the date here,need change
 
@@ -197,7 +197,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
             // For the rest of the columns
             for (int j = 1; j < row.length; j++) {
                 // Only add a tab and print header if the cell contains "1"
-                if ("1".equals(row[j])) {
+                if ("available".equals(row[j])) {
                     System.out.print("\t" + headers[j]);
                 }
             }
@@ -339,8 +339,8 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
         String slotValue = schedule.getSlot(timeSlotRow, doctorCol);
 
-        if ("0".equals(slotValue)) {  // If slot is available (1)
-            schedule.setSlot(timeSlotRow, doctorCol, "1");  // Occupy the slot with patientID
+        if ("unavailable".equals(slotValue)) {  // If slot is available (1)
+            schedule.setSlot(timeSlotRow, doctorCol, "available");  // Occupy the slot with patientID
             //System.out.println("Schedule set successful for doctor " + doctorID + " at " + timeSlot + " on " + "2024-11-01" + ".");//hard code the date here,need change
 
         } else {
@@ -370,8 +370,8 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
         String slotValue = schedule.getSlot(timeSlotRow, doctorCol);
 
-        if ("1".equals(slotValue)) {  // If slot is available (1)
-            schedule.setSlot(timeSlotRow, doctorCol, "0");  // Occupy the slot with patientID
+        if ("available".equals(slotValue)) {  // If slot is available (1)
+            schedule.setSlot(timeSlotRow, doctorCol, "unavailable");  // Occupy the slot with patientID
             //System.out.println("Schedule disabled successfully for doctor " + doctorID + " at " + timeSlot + " on " + "2024-11-01" + ".");//hard code the date here,need change
 
         } else {
