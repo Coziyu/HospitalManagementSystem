@@ -5,6 +5,7 @@ import org.hms.entities.PatientContext;
 import org.hms.entities.UserRole;
 import org.hms.entities.BloodType;
 import org.hms.services.medicalrecord.*;
+import org.hms.services.storage.StorageService;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MedicalRecordServicePatientTest {
     @Test
     public void testViewOwnRecord() {
-        MockMedicalDataInterface mockStorage = new MockMedicalDataInterface();
+        StorageService mockStorage = new StorageService();
         MedicalRecordService service = new MedicalRecordService(mockStorage);
 
         UserContext userContext = new UserContext("Alice", UserRole.PATIENT, 1001);

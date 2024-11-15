@@ -9,8 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MedicalRecord extends AbstractTable<MedicalEntry> {
-
     private static final String[] HEADERS = {"EntryID","PatientID","DoctorID", "Date","Diagnosis","Treatment Plan", "ConsultationNotes"};
+
+
+    public MedicalRecord() {
+        super();
+    }
+
+    public MedicalRecord(String filePath){
+        super();
+        this.filePath = filePath;
+    }
 
     @Override
     public String[] getHeaders() {

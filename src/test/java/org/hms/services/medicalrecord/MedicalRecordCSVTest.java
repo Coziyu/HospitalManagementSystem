@@ -4,6 +4,7 @@ import org.hms.entities.BloodType;
 import org.hms.entities.UserContext;
 import org.hms.entities.PatientContext;
 import org.hms.entities.UserRole;
+import org.hms.services.storage.StorageService;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,7 +21,7 @@ public class MedicalRecordCSVTest {
         createTestFiles(testDirectory);
 
         // Create storage service and medical record service
-        IMedicalDataInterface storageService = new MockMedicalDataInterface();  // Added this line
+        IMedicalDataInterface storageService = new StorageService();  // Added this line
         MedicalRecordService service = new MedicalRecordService(storageService);
 
         // Create test patient
@@ -41,9 +42,9 @@ public class MedicalRecordCSVTest {
         if (record == null) {
             System.out.println("Test failed: No record found in CSV");
         } else {
-            System.out.println("Test passed: Found record for patient " + record.getPatientID());
-            System.out.println("Blood Type: " + particulars.getBloodType());
-            System.out.println("Number of medical entries: " + record.getMedicalHistory().size());
+//            System.out.println("Test passed: Found record for patient " + record.getPatientID());
+//            System.out.println("Blood Type: " + particulars.getBloodType());
+//            System.out.println("Number of medical entries: " + record.getMedicalHistory().size());
         }
 
         assertNotEquals(null, record);

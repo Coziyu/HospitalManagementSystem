@@ -48,10 +48,18 @@ public class MedicalEntry extends AbstractTableEntry {
     public String getTreatmentPlan() { return treatmentPlan; }
     public String getConsultationNotes() { return consultationNotes; }
 
+    // Setters
+    public void setPatientID(String patientID) { this.patientID = patientID; }
+    public void setDoctorID(String doctorID) { this.doctorID = doctorID; }
+    public void setDate(String date) { this.date = date; }
+    public void setDiagnosis(String diagnosis) { this.diagnosis = diagnosis; }
+    public void setTreatmentPlan(String treatmentPlan) { this.treatmentPlan = treatmentPlan; }
+    public void setConsultationNotes(String consultationNotes) { this.consultationNotes = consultationNotes; }
+
     @Override
     public String toCSVString() {
         return String.format("%s,%S,%s,%s,%s,%s,%s\n",
-                getID(),
+                getTableEntryID(),
                 preprocessCSVString(getPatientID()),
                 preprocessCSVString(getDoctorID()),
                 preprocessCSVString(getDate()),
@@ -64,7 +72,7 @@ public class MedicalEntry extends AbstractTableEntry {
     @Override
     public void loadFromCSVString(String csvLine) {
         String[] parts = parseCSVLine(csvLine);
-        id = Integer.parseInt(parts[0]);
+        tableEntryID = Integer.parseInt(parts[0]);
         patientID = parts[1];
         doctorID = parts[2];
         date = parts[3];
