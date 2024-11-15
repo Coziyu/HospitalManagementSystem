@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public abstract class AbstractTable<T extends AbstractTableEntry> implements Serializable {
@@ -37,9 +36,10 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
         this.filePath = filePath;
     }
 
-    public void removeEntry(int tableEntryID) throws Exception {
+    public boolean removeEntry(int tableEntryID) throws Exception {
         entries.remove(searchByAttribute(AbstractTableEntry::getTableEntryID, tableEntryID).getFirst());
         saveToFile();
+        return false;
     }
 
 

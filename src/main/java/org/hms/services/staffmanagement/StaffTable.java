@@ -1,7 +1,6 @@
 package org.hms.services.staffmanagement;
 
 import org.hms.entities.AbstractTable;
-
 import java.io.IOException;
 
 /**
@@ -39,7 +38,7 @@ public class StaffTable extends AbstractTable<Staff> {
      */
     @Override
     protected Staff createValidEntryTemplate() {
-        return new Staff(0, 0, "", "", "", "");
+        return new Staff("", 0, "", "", "", "");
     }
 
     /**
@@ -68,5 +67,43 @@ public class StaffTable extends AbstractTable<Staff> {
      */
     public void loadFromFile() throws IOException {
         super.loadFromFile(DEFAULT_FILENAME);
+    }
+
+    /**
+     * Retrieves a staff entry based on a String ID, converting it to an int for compatibility.
+     *
+     * @param id the ID of the staff entry as a String
+     * @return the Staff object if found, otherwise null
+     */
+    public Staff getEntry(String id) {
+        try {
+            int numericId = Integer.parseInt(id);
+            return super.getEntry(numericId); // Call the existing int-based getEntry method
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid ID format: " + id);
+            return null;
+        } catch (Exception e) {
+            System.err.println("Error retrieving entry: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Removes a staff entry based on a String ID, converting it to an int for compatibility.
+     *
+     * @param id the ID of the staff entry as a String
+     * @return true if the removal was successful, false otherwise
+     */
+    public boolean removeEntry(String id) {
+        try {
+            int numericId = Integer.parseInt(id);
+            return super.removeEntry(numericId); // Call the existing int-based removeEntry method
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid ID format: " + id);
+            return false;
+        } catch (Exception e) {
+            System.err.println("Error removing entry: " + e.getMessage());
+            return false;
+        }
     }
 }

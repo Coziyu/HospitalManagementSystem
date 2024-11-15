@@ -27,9 +27,18 @@ public class Staff extends AbstractTableEntry {
      * @param status the employment status of the staff member (e.g., active, inactive)
      * @param gender the gender of the staff member
      */
-    public Staff(int staffId, int age, String name, String role, String status, String gender) {
-        super(staffId);
-        this.person = new Person(staffId);  // Initialize Person with staffId
+    public Staff(String staffId, int age, String name, String role, String status, String gender) {
+        // Call the superclass constructor with a default value of -1
+        super(-1);  // Temporarily passing a default value (e.g., -1)
+
+        // Convert the staffId (String) to an integer after the superclass constructor is called
+        int numericStaffId = convertStaffIdToInt(staffId);
+
+        // Now, set the actual staff ID in the AbstractTableEntry
+        this.setTableEntryID(numericStaffId);  // Assuming setTableEntryID exists in AbstractTableEntry
+
+        // Initialize the rest of the fields
+        this.person = new Person(staffId);  // Use the String version for the Person object
         this.age = age;
         this.name = name;
         this.role = role;
@@ -38,11 +47,29 @@ public class Staff extends AbstractTableEntry {
     }
 
     /**
+     * Converts the staffId (String) to an integer.
+     * If conversion fails, it returns a default value (e.g., -1).
+     *
+     * @param staffId the staff ID in String format
+     * @return the staff ID as an integer
+     */
+    private int convertStaffIdToInt(String staffId) {
+        try {
+            // Convert the String to an integer
+            return Integer.parseInt(staffId);
+        } catch (NumberFormatException e) {
+            // If conversion fails, return a default value (e.g., -1)
+            System.err.println("Invalid staffId format, using default value -1.");
+            return -1;
+        }
+    }
+
+    /**
      * Retrieves the unique staff ID from the Person object.
      *
      * @return the staff ID
      */
-    public int getStaffId() {
+    public String getStaffId() {
         return person.getStaffId();
     }
 
@@ -51,7 +78,7 @@ public class Staff extends AbstractTableEntry {
      *
      * @param staffId the new staff ID
      */
-    public void setStaffId(int staffId) {
+    public void setStaffId(String staffId) {
         person.setStaffId(staffId);
     }
 
@@ -154,7 +181,7 @@ public class Staff extends AbstractTableEntry {
      */
     @Override
     public String toCSVString() {
-        return String.format("%d,%d,%s,%s,%s,%s",
+        return String.format("%s,%d,%s,%s,%s,%s",
                 getStaffId(),  // Access staffId from Person
                 age,
                 preprocessCSVString(name),
@@ -171,7 +198,7 @@ public class Staff extends AbstractTableEntry {
     @Override
     public void loadFromCSVString(String csvLine) {
         String[] parts = parseCSVLine(csvLine);
-        this.setStaffId(Integer.parseInt(parts[0]));  // Set ID in Person
+        this.setStaffId(parts[0]);  // Parse `staffId` as String
         this.age = Integer.parseInt(parts[1]);
         this.name = parts[2];
         this.role = parts[3];
@@ -187,7 +214,7 @@ public class Staff extends AbstractTableEntry {
      */
     @Override
     public String toString() {
-        return String.format("Staff ID: %d, Name: %s, Age: %d, Role: %s, Status: %s, Gender: %s",
+        return String.format("Staff ID: %s, Name: %s, Age: %d, Role: %s, Status: %s, Gender: %s",
                 getStaffId(), name, age, role, status, gender);
     }
 }

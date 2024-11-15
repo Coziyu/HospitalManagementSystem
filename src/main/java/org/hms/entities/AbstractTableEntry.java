@@ -15,6 +15,10 @@ public abstract class AbstractTableEntry implements Serializable {
         return tableEntryID;
     }
 
+    public void setTableEntryID(int tableEntryID) {
+        this.tableEntryID = tableEntryID;
+    }
+
     /**
      * Concrete classes must define how to save CSV.
      * @return a csvLine representation of the data.
