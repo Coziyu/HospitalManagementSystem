@@ -3,10 +3,13 @@ package org.hms.views;
 import org.hms.App;
 import org.hms.entities.UserContext;
 import org.hms.entities.UserRole;
+import org.hms.services.appointment.AppointmentOutcome;
+import org.hms.services.drugdispensary.DrugDispenseRequest;
 import org.hms.services.medicalrecord.MedicalRecord;
 
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -71,12 +74,53 @@ public class DoctorMenu extends AbstractMainMenu {
 
     private void handleRecordAppointmentOutcome() {
         // TODO: For Yingjie to implement
-        System.out.println("Feature coming soon");
+
+        ArrayList<DrugDispenseRequest> prescribedMedication = app.getAppointmentService().createNewArrayOfDrugDispenseRequest();
+
+        System.out.print("Enter number of medications to prescribe: ");
+        int medicationCount = Integer.parseInt(scanner.nextLine());
+
+        for (int i = 1; i <= medicationCount; i++) {
+            System.out.print("Enter name of drug " + i + ": ");
+            String drugName = scanner.nextLine();
+
+            System.out.print("Enter quantity for " + drugName + ": ");
+            int quantity = Integer.parseInt(scanner.nextLine());
+
+            // Use the addDrugDispenseRequest method to add each DrugDispenseRequest to the list
+            app.getAppointmentService().addDrugDispenseRequest(prescribedMedication, drugName, quantity);
+        }
+
+        // Step 3: Collect data for the AppointmentOutcome fields
+        System.out.print("Enter Appointment ID: ");
+        String appointmentID = scanner.nextLine();
+
+        System.out.print("Enter Patient ID: ");
+        String patientID = scanner.nextLine();
+
+        System.out.print("Enter Type of Appointment: ");
+        String typeOfAppointment = scanner.nextLine();
+
+        System.out.print("Enter Consultation Notes (use ',' and '/' if needed): ");
+        String consultationNotes = scanner.nextLine();
+
+        // Use createNewAppointmentOutcome to create an AppointmentOutcome object
+        AppointmentOutcome newOutcome = app.getAppointmentService().createNewAppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
+
+        System.out.println("AppointmentOutcome has been written to the CSV file.");
     }
 
     private void handleAppointmentRequests() {
         // TODO: For Yingjie to implement
         System.out.println("Feature coming soon");
+
+        String doctorID = Integer.toString(app.getUserContext().getHospitalID());
+        //doctorID = "D1001" ;  //remove this line after real doctor ID have appointments
+        app.getAppointmentService().viewRequest(doctorID);
+        System.out.println("key in appointment ID");
+        int appointmentID = Integer.parseInt(scanner.nextLine());
+
+        app.getAppointmentService().manageAppointmentRequests(appointmentID, doctorID);
     }
 
     private void handleSetAppointmentAvailability() {

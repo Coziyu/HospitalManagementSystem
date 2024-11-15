@@ -94,6 +94,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
                     // Update the appointment's time slot
                     appointment.setAppointmentTimeSlot(newTimeSlot);
+                    storageServiceInterface.writeAppointmentsToCsv(appointments);
                 } catch (ParseException e) {
                     System.out.println("Failed to parse the new time slot: " + e.getMessage());
                 }
@@ -153,10 +154,11 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
                     appointmentID,
                     patientID,
                     doctorID,
-                    new SimpleDateFormat("yyyy-MM-dd HH:mm-HH:mm").parse(timeSlotString),
+                    new SimpleDateFormat("yyyyMMdd HH:mm-HH:mm").parse(timeSlotString),
                     AppointmentStatus.PENDING
             );
             appointments.add(newAppointment);
+            storageServiceInterface.writeAppointmentsToCsv(appointments);
         } catch (ParseException e) {
             throw new RuntimeException("Failed to parse the time slot: " + e.getMessage());
         }
@@ -170,6 +172,36 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
                 System.out.print((cell != null ? cell : "") + "\t");
             }
             System.out.println();
+        }
+    }
+
+    public void displaySchedule(String date) {
+        AppointmentSchedule schedule = storageServiceInterface.loadSchedule(date);
+        String[][] matrix = schedule.getMatrix();
+
+        // Store the headers from the first row for reference
+        String[] headers = matrix[0];
+
+        // Start loop from 1 to skip the first row
+        for (int i = 1; i < matrix.length; i++) {
+            String[] row = matrix[i];
+
+            // Skip if row[0] (first column) is null, to avoid printing unintended empty rows
+            if (row[0] == null) {
+                continue;
+            }
+
+            // Display the first column (time slot) as is
+            System.out.print(row[0]);
+
+            // For the rest of the columns
+            for (int j = 1; j < row.length; j++) {
+                // Only add a tab and print header if the cell contains "1"
+                if ("1".equals(row[j])) {
+                    System.out.print("\t" + headers[j]);
+                }
+            }
+            System.out.println(); // Move to the next row
         }
     }
 
@@ -210,6 +242,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
                 if (newStatusInput.equals("CONFIRMED") || newStatusInput.equals("CANCELLED")) {
                     AppointmentStatus newStatus = AppointmentStatus.valueOf(newStatusInput);
                     appointment.setAppointmentStatus(newStatus);
+                    storageServiceInterface.writeAppointmentsToCsv(appointments);
                     System.out.println("Appointment status updated successfully to " + newStatus + ".");
                 } else {
                     System.out.println("Invalid status entered. Please enter CONFIRMED or CANCELLED.");
@@ -374,6 +407,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
     public AppointmentOutcome createNewAppointmentOutcome(String appointmentID, String patientID, String typeOfAppointment, String consultationNotes, ArrayList<DrugDispenseRequest> prescribedMedication) {
         AppointmentOutcome outcome = new AppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
         appointmentOutcomes.add(outcome);
+        storageServiceInterface.writeAppointmentOutcomeToCSV(outcome);
 
         return outcome;
     }
