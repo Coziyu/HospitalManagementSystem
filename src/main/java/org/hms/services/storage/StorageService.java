@@ -150,6 +150,32 @@ public class StorageService
         return appointments;
     }
 
+    public void writeAppointmentsToCsv(List<AppointmentInformation> appointments) {
+        String filePath = dataRoot + "Appointments.csv";
+        SimpleDateFormat timeSlotFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm-HH:mm");
+
+        try (FileWriter writer = new FileWriter(filePath)) {
+            // Write the header row
+            writer.write("appointmentID,patientID,doctorID,appointmentTimeSlot,appointmentStatus\n");
+
+            // Write each appointment's details
+            for (AppointmentInformation appointment : appointments) {
+                // Format the appointment time slot correctly
+                String formattedTimeSlot = timeSlotFormat.format(appointment.getAppointmentTimeSlot());
+
+                writer.write(appointment.getAppointmentID() + "," +
+                        appointment.getPatientID() + "," +
+                        appointment.getDoctorID() + "," +
+                        formattedTimeSlot + "," +
+                        appointment.getAppointmentStatus() + "\n");
+            }
+
+            System.out.println("Appointments successfully written to " + filePath);
+        } catch (IOException e) {
+            System.err.println("Error writing to CSV file: " + e.getMessage());
+        }
+    }
+
     public AppointmentSchedule loadSchedule(String date) {
         int numRows = 0;
         int numCols = 0;

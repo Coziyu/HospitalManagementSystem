@@ -71,7 +71,7 @@ public class PatientMenu extends AbstractMainMenu {
     }
 
     private void handleViewAvailableAppointmentSlot() {
-        System.out.println("\n=== Schedule Appointment ===");
+        //System.out.println("\n=== Schedule Appointment ===");
         System.out.print("Enter date (YYYYMMDD): ");
         try {
             String dateStr = scanner.nextLine();
@@ -81,15 +81,15 @@ public class PatientMenu extends AbstractMainMenu {
                 System.out.println("Cannot view appointment slots in the past.");
                 return;
             }
-            dateStr = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString();
-            app.getAppointmentService().displayMatrix(dateStr);
+
+            app.getAppointmentService().displaySchedule(dateStr);
             System.out.println("Feature coming soon...");
         }catch (DateTimeParseException e) {}
     }
 
     // TODO: For implementation
     private void handleScheduleAppointment() {
-        System.out.println("Feature coming soon...");
+        //System.out.println("Feature coming soon...");
         System.out.println("\n=== Schedule Appointment ===");
         System.out.print("Enter date (YYYYMMDD): ");
         try {
@@ -101,10 +101,12 @@ public class PatientMenu extends AbstractMainMenu {
                 return;
             }
 
-            dateStr = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString();
-            app.getAppointmentService().displayMatrix(dateStr);
-            String patientID = Integer.toString(patientContext.getPatientID());
+            //dateStr = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString();
+            app.getAppointmentService().displaySchedule(dateStr);
+            String patientID = Integer.toString(app.getUserContext().getHospitalID());
+            System.out.println("Enter doctor ID : ");
             String doctorID = scanner.nextLine();
+            System.out.println("Enter time slot : ");
             String timeslot = scanner.nextLine();
             // TODO: scheduleAppointment requires doctorID, patientID, and timeSlot too.
             app.getAppointmentService().scheduleAppointment(patientID, doctorID, dateStr,timeslot, app.getAppointmentService().getAppointmentSchedule(dateStr));
@@ -135,7 +137,8 @@ public class PatientMenu extends AbstractMainMenu {
     private void handleViewUpcomingAppointments() {
         System.out.println("\n=== Upcoming Appointments ===");
         // Implementation would use AppointmentService to get appointments
-        String patienID = Integer.toString(patientContext.getPatientID());
+        //String patienID = Integer.toString(patientContext.getPatientID());
+        String patienID = Integer.toString(app.getUserContext().getHospitalID());
         app.getAppointmentService().viewAppointmentStatus(patienID);
         System.out.println("Feature coming soon...");
     }

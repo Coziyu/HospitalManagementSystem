@@ -18,6 +18,8 @@ public interface IAppointmentDataInterface extends IDataInterface {
 
     public ArrayList<AppointmentOutcome> readAppointmentOutcomesFromCSV();
 
+    public void writeAppointmentsToCsv(List<AppointmentInformation> appointments);
+
     public void writeAppointmentOutcomeToCSV(AppointmentOutcome outcome);
 
     public void writeAllAppointmentOutcomesToCSV(ArrayList<AppointmentOutcome> appointmentOutcomes);
@@ -28,6 +30,7 @@ public interface IAppointmentDataInterface extends IDataInterface {
     public AppointmentSchedule loadSchedule(String date) ;
 
     public void writeScheduleToCSV(AppointmentSchedule schedule, String date);
+
 
 
 }

@@ -21,7 +21,7 @@ public class AppointmentOutcomeTest {
 
 
         // Step 2: Add DrugDispenseRequest objects to the list
-        /*System.out.print("Enter number of medications to prescribe: ");
+        System.out.print("Enter number of medications to prescribe: ");
         int medicationCount = Integer.parseInt(scanner.nextLine());
 
         for (int i = 1; i <= medicationCount; i++) {
@@ -55,7 +55,7 @@ public class AppointmentOutcomeTest {
         storageService.writeAppointmentOutcomeToCSV(newOutcome);
 
         System.out.println("AppointmentOutcome has been written to the CSV file.");
-        scanner.close();*/
+        scanner.close();
 
         //ArrayList<AppointmentOutcome> outcomes = storageService.readAppointmentOutcomesFromCSV();
         appointmentService.displayPendingPrescriptions();
