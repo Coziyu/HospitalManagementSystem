@@ -82,13 +82,14 @@ public class PatientMenu extends AbstractMainMenu {
         app.getAppointmentService().resumeDoctorSchedule(doctorID, DateAndSlot[0], DateAndSlot[1]);
         System.out.println("Appointment Canceled");
         //
-        //some more code need to update appointment status to Canceled
+
 
 
     }
 
     private void handleRescheduleAppointment() {
-        System.out.println("Feature coming soon...");
+        handleCancelAppointment();
+        handleScheduleAppointment();
     }
 
     private void handleViewAvailableAppointmentSlot() {

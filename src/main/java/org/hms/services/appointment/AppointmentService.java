@@ -188,8 +188,10 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
-    public void rescheduleAppointment(String patientID, String doctorID, String date, String timeSlot, AppointmentSchedule schedule) {
+    public void rescheduleAppointment(String patientID, String doctorID, String date, String timeSlot) {
 
+
+        AppointmentSchedule schedule = storageServiceInterface.loadSchedule(date);
         int doctorCol = -1;  // Find doctor column
         int timeSlotRow = -1;
         String[][] matrix = schedule.getMatrix();
