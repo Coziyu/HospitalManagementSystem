@@ -39,7 +39,7 @@ public class StaffTable extends AbstractTable<Staff> {
      */
     @Override
     protected Staff createValidEntryTemplate() {
-        return new Staff(0, 0, "", "", "", "");
+        return new Staff(0,"", 0, "", "", "", "");
     }
 
     /**
