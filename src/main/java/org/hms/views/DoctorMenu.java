@@ -125,7 +125,39 @@ public class DoctorMenu extends AbstractMainMenu {
 
     private void handleSetAppointmentAvailability() {
         // TODO: For Yingjie to implement
-        System.out.println("Feature coming soon");
+        String doctorID = Integer.toString(app.getUserContext().getHospitalID());
+
+        System.out.println("Do you want to set the schedule as:");
+        System.out.println("1. Available");
+        System.out.println("2. Unavailable");
+
+        int choice;
+        try {
+            choice = Integer.parseInt(scanner.nextLine());
+
+            if (choice != 1 && choice != 2) {
+                System.out.println("Invalid choice. Please select 1 or 2.");
+                return;
+            }
+
+            System.out.print("Enter the date (YYYYMMDD): ");
+            String date = scanner.nextLine();
+
+            System.out.print("Enter the time slot (e.g., 12:00): ");
+            String timeSlot = scanner.nextLine();
+
+            if (choice == 1) {
+                app.getAppointmentService().setDoctorSchedule(doctorID, date, timeSlot);
+                System.out.println("Schedule set to 'Available' successfully.");
+            } else if (choice == 2) {
+                app.getAppointmentService().cancelDoctorSchedule(doctorID, date, timeSlot);
+                System.out.println("Schedule set to 'Unavailable' successfully.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a numeric value for the choice.");
+        }
+
+
     }
 
     private void handleViewAppointments() {
@@ -196,7 +228,7 @@ public class DoctorMenu extends AbstractMainMenu {
 
     private void handleViewSchedule() {
         // TODO: Implement this.
-        System.out.println("\n=== Weekly Schedule ===");
+        System.out.println("\n=== Daily Schedule ===");
         System.out.println("Schedule for: Dr. " + userContext.getName());
         System.out.println("Hospital ID: " + userContext.getHospitalID());
         logDoctorAction("Viewed weekly schedule");

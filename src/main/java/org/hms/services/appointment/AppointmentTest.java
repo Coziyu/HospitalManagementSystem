@@ -140,7 +140,7 @@ public class AppointmentTest {
 
                 case 10:
 
-                    appointmentService.rescheduleAppointment("P1000", "DoctorC","2024-11-01", "10:00", schedule);
+                    //appointmentService.rescheduleAppointment("P1000", "DoctorC","2024-11-01", "10:00", schedule);
                     break;
 
                 case 11:

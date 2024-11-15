@@ -74,7 +74,7 @@ public class AdminMenu extends AbstractMainMenu {
 
     // TODO: For Yingjie to implement
     private void handleViewAppointments() {
-
+        app.getAppointmentService().displayAllAppointments();
     }
     // TODO: For Nich to implement
     private void handleManageDrugInventory() {
