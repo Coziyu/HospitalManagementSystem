@@ -3,10 +3,13 @@ package org.hms.views;
 import org.hms.App;
 import org.hms.entities.UserContext;
 import org.hms.entities.UserRole;
+import org.hms.services.appointment.AppointmentOutcome;
+import org.hms.services.drugdispensary.DrugDispenseRequest;
 import org.hms.services.medicalrecord.MedicalRecord;
 
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -35,23 +38,27 @@ public class DoctorMenu extends AbstractMainMenu {
             System.out.println("Doctor: Dr. " + userContext.getName());
             System.out.println("Hospital ID: " + userContext.getHospitalID());
             System.out.println("Date: " + LocalDate.now());
-            System.out.println("1. View Appointments");
-            System.out.println("2. Access Patient Records");
-            System.out.println("3. Update Medical Records");
-            System.out.println("4. Write Prescription");
-            System.out.println("5. View Schedule");
-            System.out.println("6. Logout");
+            System.out.println("1. View Patient Medical Records");
+            System.out.println("2. Update Patient Medical Records");
+            System.out.println("3. View Personal Schedule");
+            System.out.println("4. Set Appointment Slot Availability");
+            System.out.println("5. Handle Appointment Requests");
+            System.out.println("6. View Upcoming Appointments");
+            System.out.println("7. Record Appointment Outcome");
+            System.out.println("8. Logout");
             System.out.print("Select an option: ");
 
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
                 switch (choice) {
-                    case 1 -> handleViewAppointments();
-                    case 2 -> handleAccessPatientRecords();
-                    case 3 -> handleUpdateMedicalRecords();
-                    case 4 -> handleWritePrescription();
-                    case 5 -> handleViewSchedule();
-                    case 6 -> {
+                    case 1 -> handleAccessPatientRecords();
+                    case 2 -> handleUpdateMedicalRecords();
+                    case 3 -> handleViewSchedule();
+                    case 4 -> handleSetAppointmentAvailability();
+                    case 5 -> handleAppointmentRequests();
+                    case 6 -> handleViewAppointments();
+                    case 7 -> handleRecordAppointmentOutcome();
+                    case 8 -> {
                         logDoctorAction("Logged out");
                         app.getAuthenticationService().logout();
                         app.setCurrentMenu(new AuthenticationMenu(app));
@@ -65,11 +72,68 @@ public class DoctorMenu extends AbstractMainMenu {
         }
     }
 
+    private void handleRecordAppointmentOutcome() {
+        // TODO: For Yingjie to implement
+
+        ArrayList<DrugDispenseRequest> prescribedMedication = app.getAppointmentService().createNewArrayOfDrugDispenseRequest();
+
+        System.out.print("Enter number of medications to prescribe: ");
+        int medicationCount = Integer.parseInt(scanner.nextLine());
+
+        for (int i = 1; i <= medicationCount; i++) {
+            System.out.print("Enter name of drug " + i + ": ");
+            String drugName = scanner.nextLine();
+
+            System.out.print("Enter quantity for " + drugName + ": ");
+            int quantity = Integer.parseInt(scanner.nextLine());
+
+            // Use the addDrugDispenseRequest method to add each DrugDispenseRequest to the list
+            app.getAppointmentService().addDrugDispenseRequest(prescribedMedication, drugName, quantity);
+        }
+
+        // Step 3: Collect data for the AppointmentOutcome fields
+        System.out.print("Enter Appointment ID: ");
+        String appointmentID = scanner.nextLine();
+
+        System.out.print("Enter Patient ID: ");
+        String patientID = scanner.nextLine();
+
+        System.out.print("Enter Type of Appointment: ");
+        String typeOfAppointment = scanner.nextLine();
+
+        System.out.print("Enter Consultation Notes (use ',' and '/' if needed): ");
+        String consultationNotes = scanner.nextLine();
+
+        // Use createNewAppointmentOutcome to create an AppointmentOutcome object
+        AppointmentOutcome newOutcome = app.getAppointmentService().createNewAppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
+
+        System.out.println("AppointmentOutcome has been written to the CSV file.");
+    }
+
+    private void handleAppointmentRequests() {
+        // TODO: For Yingjie to implement
+        System.out.println("Feature coming soon");
+
+        String doctorID = Integer.toString(app.getUserContext().getHospitalID());
+        //doctorID = "D1001" ;  //remove this line after real doctor ID have appointments
+        app.getAppointmentService().viewRequest(doctorID);
+        System.out.println("key in appointment ID");
+        int appointmentID = Integer.parseInt(scanner.nextLine());
+
+        app.getAppointmentService().manageAppointmentRequests(appointmentID, doctorID);
+    }
+
+    private void handleSetAppointmentAvailability() {
+        // TODO: For Yingjie to implement
+        System.out.println("Feature coming soon");
+    }
+
     private void handleViewAppointments() {
         System.out.println("\n=== Today's Appointments ===");
         System.out.println("Doctor: Dr. " + userContext.getName());
         logDoctorAction("Viewed today's appointments");
         // Implementation would show today's appointments
+
         System.out.println("Feature coming soon...");
     }
 
@@ -90,7 +154,7 @@ public class DoctorMenu extends AbstractMainMenu {
 
             //TODO: For Elijah to refactor this part. Since his method was refactored to use Optional<>
             // Also, is this meant to be `records` or `record` singular? If it's singular, consider
-            // something like this line below:
+            // somemthing like this line below:
             // Optional<MedicalRecord> record = app.getMedicalRecordService().getMedicalRecord();
             // If it's all the records, then you have to implement the method / declare the method in
             // the DataInterface
@@ -106,6 +170,7 @@ public class DoctorMenu extends AbstractMainMenu {
     }
 
     private void handleUpdateMedicalRecords() {
+        // TODO: Implement this.
         System.out.println("\n=== Update Medical Records ===");
         System.out.println("Updating as: Dr. " + userContext.getName());
         System.out.print("Enter patient ID: ");
@@ -129,29 +194,8 @@ public class DoctorMenu extends AbstractMainMenu {
         }
     }
 
-    private void handleWritePrescription() {
-        System.out.println("\n=== Write Prescription ===");
-        System.out.println("Prescribing as: Dr. " + userContext.getName());
-        System.out.print("Enter patient ID: ");
-
-        try {
-            int patientId = Integer.parseInt(scanner.nextLine());
-
-            if (!canAccessPatientRecords(patientId)) {
-                System.out.println("Access denied: Patient not assigned to you.");
-                logDoctorAction("Attempted unauthorized prescription for patient: " + patientId);
-                return;
-            }
-
-            // Future implementation would handle prescription details
-            logDoctorAction("Wrote prescription for patient: " + patientId);
-            System.out.println("Feature coming soon...");
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid patient ID format.");
-        }
-    }
-
     private void handleViewSchedule() {
+        // TODO: Implement this.
         System.out.println("\n=== Weekly Schedule ===");
         System.out.println("Schedule for: Dr. " + userContext.getName());
         System.out.println("Hospital ID: " + userContext.getHospitalID());
@@ -161,6 +205,7 @@ public class DoctorMenu extends AbstractMainMenu {
     }
 
     private boolean canAccessPatientRecords(int patientId) {
+        // TODO: For implementation
         // In a real implementation, this would check if the patient is assigned to this doctor
         // For now, returning true for demonstration
         return true;

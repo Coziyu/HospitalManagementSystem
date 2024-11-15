@@ -34,36 +34,36 @@ public class StaffManagementServiceTestWithSwitch {
 
             switch (choice) {
                 case 1:
-                    System.out.print("Enter Staff ID, Age, Name, Role, Status, and Gender: ");
-                    int staffId = scanner.nextInt();
+                    System.out.print("Enter Staff ID (String), Age, Name, Role, Status, and Gender: ");
+                    String staffId = scanner.nextLine();  // Change to String input for staffId
                     int age = scanner.nextInt();
                     String name = scanner.next();
                     String role = scanner.next();
                     String status = scanner.next();
                     String gender = scanner.next();
-                    Staff newStaff = new Staff(staffId, age, name, role, status, gender);
+                    Staff newStaff = new Staff(staffId, age, name, role, status, gender);  // Pass staffId as String
                     boolean addSuccess = service.addStaff(newStaff);
                     System.out.println("Add Staff: " + (addSuccess ? "Success" : "Failed"));
                     break;
 
                 case 2:
-                    System.out.print("Enter Staff ID to retrieve: ");
-                    int getId = scanner.nextInt();
-                    Staff retrievedStaff = service.getStaff(getId);
+                    System.out.print("Enter Staff ID (String) to retrieve: ");
+                    String getId = scanner.nextLine();  // Change to String input for staffId
+                    Staff retrievedStaff = service.getStaff(getId);  // Pass staffId as String
                     System.out.println("Get Staff: " + (retrievedStaff != null ? retrievedStaff : "Staff not found"));
                     break;
 
                 case 3:
-                    System.out.print("Enter Staff ID to update: ");
-                    int updateId = scanner.nextInt();
+                    System.out.print("Enter Staff ID (String) to update: ");
+                    String updateId = scanner.nextLine();  // Change to String input for staffId
                     System.out.print("Enter new Age, Name, Role, Status, and Gender: ");
                     int newAge = scanner.nextInt();
                     String newName = scanner.next();
                     String newRole = scanner.next();
                     String newStatus = scanner.next();
                     String newGender = scanner.next();
-                    Staff updatedStaff = new Staff(updateId, newAge, newName, newRole, newStatus, newGender);
-                    boolean updateSuccess = service.updateStaff(updateId, updatedStaff);
+                    Staff updatedStaff = new Staff(updateId, newAge, newName, newRole, newStatus, newGender);  // Pass staffId as String
+                    boolean updateSuccess = service.updateStaff(updateId, updatedStaff);  // Pass staffId as String
                     System.out.println("Update Staff: " + (updateSuccess ? "Success" : "Failed"));
                     break;
 
@@ -80,43 +80,41 @@ public class StaffManagementServiceTestWithSwitch {
                     break;
 
                 case 6:
-                    System.out.print("Enter Staff ID to soft delete: ");
-                    int softDeleteId = scanner.nextInt();
-                    boolean softDeleteSuccess = service.removeStaff(softDeleteId, true);
+                    System.out.print("Enter Staff ID (String) to soft delete: ");
+                    String softDeleteId = scanner.nextLine();  // Change to String input for staffId
+                    boolean softDeleteSuccess = service.removeStaff(softDeleteId, true);  // Pass staffId as String
                     System.out.println("Soft Delete Staff: " + (softDeleteSuccess ? "Success" : "Failed"));
                     break;
 
                 case 7:
-                    System.out.print("Enter Staff ID to hard delete: ");
-                    int hardDeleteId = scanner.nextInt();
-                    boolean hardDeleteSuccess = service.removeStaff(hardDeleteId, false);
+                    System.out.print("Enter Staff ID (String) to hard delete: ");
+                    String hardDeleteId = scanner.nextLine();  // Change to String input for staffId
+                    boolean hardDeleteSuccess = service.removeStaff(hardDeleteId, false);  // Pass staffId as String
                     System.out.println("Hard Delete Staff: " + (hardDeleteSuccess ? "Success" : "Failed"));
                     break;
 
                 case 8:
-                    System.out.print("Enter Staff ID to assign role: ");
-                    int roleId = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
+                    System.out.print("Enter Staff ID (String) to assign role: ");
+                    String roleId = scanner.nextLine();  // Change to String input for staffId
                     System.out.print("Enter new Role: ");
                     String newRoleAssign = scanner.nextLine();
-                    boolean roleAssignSuccess = service.assignRole(roleId, newRoleAssign);
+                    boolean roleAssignSuccess = service.assignRole(roleId, newRoleAssign);  // Pass staffId as String
                     System.out.println("Assign Role: " + (roleAssignSuccess ? "Success" : "Failed"));
                     break;
 
                 case 9:
-                    System.out.print("Enter Staff ID to change status: ");
-                    int statusId = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
+                    System.out.print("Enter Staff ID (String) to change status: ");
+                    String statusId = scanner.nextLine();  // Change to String input for staffId
                     System.out.print("Enter new Status: ");
                     String newStatusChange = scanner.nextLine();
-                    boolean statusChangeSuccess = service.changeStatus(statusId, newStatusChange);
+                    boolean statusChangeSuccess = service.changeStatus(statusId, newStatusChange);  // Pass staffId as String
                     System.out.println("Change Status: " + (statusChangeSuccess ? "Success" : "Failed"));
                     break;
 
                 case 10:
-                    System.out.print("Enter Staff ID to archive: ");
-                    int archiveId = scanner.nextInt();
-                    boolean archiveSuccess = service.archiveStaff(archiveId);
+                    System.out.print("Enter Staff ID (String) to archive: ");
+                    String archiveId = scanner.nextLine();  // Change to String input for staffId
+                    boolean archiveSuccess = service.archiveStaff(archiveId);  // Pass staffId as String
                     System.out.println("Archive Staff: " + (archiveSuccess ? "Success" : "Failed"));
                     break;
 

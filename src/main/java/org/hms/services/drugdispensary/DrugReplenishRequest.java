@@ -49,7 +49,7 @@ public class DrugReplenishRequest extends AbstractTableEntry {
     @Override
     public String toCSVString() {
         return String.format("%s,%s,%s,%s",
-                getID(),
+                getTableEntryID(),
                 preprocessCSVString(drugName),
                 addQuantity,
                 preprocessCSVString(notes));
@@ -61,9 +61,26 @@ public class DrugReplenishRequest extends AbstractTableEntry {
     @Override
     public void loadFromCSVString(String csvLine) {
         String[] parts = parseCSVLine(csvLine);
-        id = Integer.parseInt(parts[0]);
+        tableEntryID = Integer.parseInt(parts[0]);
         drugName = parts[1];
         addQuantity = Integer.parseInt(parts[2]);
         notes = parts[3];
+    }
+
+    /**
+     * Generate a string representation of the object with the given format string.
+     * Meant to be printed to the console.
+     * @param formatString The format string to use. Must contain 4 placeholders for the entry's ID, drugName, addQuantity and notes.
+     * @return A string representation of the object.
+     */
+    public String toPrintString(String formatString){
+        // TODO: Consider adding print string's escape method
+        String printString = String.format(formatString,
+                getTableEntryID(),
+                drugName,
+                addQuantity,
+                notes
+        );
+        return printString;
     }
 }

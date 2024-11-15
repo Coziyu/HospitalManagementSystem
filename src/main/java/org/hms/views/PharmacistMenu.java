@@ -30,23 +30,21 @@ public class PharmacistMenu extends AbstractMainMenu {
             System.out.println("\n=== Pharmacist Menu ===");
             System.out.println("Pharmacist: " + userContext.getName());
             System.out.println("Hospital ID: " + userContext.getHospitalID());
-            System.out.println("1. View Prescriptions");
-            System.out.println("2. Dispense Medication");
-            System.out.println("3. Check Medication Stock");
-            System.out.println("4. Update Inventory");
-            System.out.println("5. View Patient History");
-            System.out.println("6. Logout");
+            System.out.println("1. View Appointment Outcome Records");
+            System.out.println("2. Dispense Drug for Prescription");
+            System.out.println("3. Check Drug Stock");
+            System.out.println("4. Request Drug Replenishment");
+            System.out.println("5. Logout");
             System.out.print("Select an option: ");
 
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
                 switch (choice) {
-                    case 1 -> handleViewPrescriptions();
-                    case 2 -> handleDispenseMedication();
-                    case 3 -> handleCheckStock();
-                    case 4 -> handleUpdateInventory();
-                    case 5 -> handleViewPatientHistory();
-                    case 6 -> {
+                    case 1 -> handleViewAppointmentOutcomes();
+                    case 2 -> handleDispenseDrug();
+                    case 3 -> handleCheckDrugStock();
+                    case 4 -> handleSubmitDrugReplenishRequest();
+                    case 5 -> {
                         logPharmacistAction("Logged out");
                         app.getAuthenticationService().logout();
                         app.setCurrentMenu(new AuthenticationMenu(app));
@@ -60,87 +58,75 @@ public class PharmacistMenu extends AbstractMainMenu {
         }
     }
 
-    private void handleViewPrescriptions() {
-        System.out.println("\n=== View Prescriptions ===");
-        System.out.println("Pharmacist: " + userContext.getName());
-        System.out.println("Hospital ID: " + userContext.getHospitalID());
-
-        System.out.print("Enter patient ID: ");
-        try {
-            int patientId = Integer.parseInt(scanner.nextLine());
-            logPharmacistAction("Viewed prescriptions for patient ID: " + patientId);
-            // Implementation would show patient's prescriptions
-            System.out.println("Feature coming soon...");
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid patient ID format.");
-        }
+    // TODO: For Nich & Yingjie to work on.
+    private void handleViewAppointmentOutcomes() {
+        System.out.println("Feature coming soon");
     }
 
-    private void handleDispenseMedication() {
-        System.out.println("\n=== Dispense Medication ===");
-        System.out.println("Pharmacist: " + userContext.getName());
-        System.out.println("Hospital ID: " + userContext.getHospitalID());
 
-        try {
-            System.out.print("Enter prescription ID: ");
-            String prescriptionId = scanner.nextLine();
+    // TODO: For Nich to finish implementation. Work with Yingjie on this
+    // TODO: Think, do we need to get patient info here? If so, we must add fields to DrugDispenseRequest for patientID
+    private void handleDispenseDrug() {
+        System.out.println("Feature coming soon");
 
-            System.out.print("Enter patient ID: ");
-            int patientId = Integer.parseInt(scanner.nextLine());
+        // Show all requests pending dispensary
+        System.out.println("=== Drug Dispense Requests ===");
+        // Add code here.
+//        String requestTableString = app.getDrugDispensaryService().getDrugDispensaryRequestsAsString();
+//        System.out.println(requestTableString);
 
-            logPharmacistAction("Dispensed medication for prescription ID: " + prescriptionId +
-                    " to patient ID: " + patientId);
-            // Implementation would handle medication dispensing
-            System.out.println("Feature coming soon...");
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input format.");
-        }
+        // Make user select the request they want to honor
+
+
     }
 
-    private void handleCheckStock() {
-        System.out.println("\n=== Medication Stock Levels ===");
-        System.out.println("Pharmacist: " + userContext.getName());
-        System.out.println("Hospital ID: " + userContext.getHospitalID());
-
-        logPharmacistAction("Checked medication stock levels");
-        // Implementation would show current inventory
-        System.out.println("Feature coming soon...");
+    /**
+     * Displays the current drug stock levels by retrieving the drug inventory
+     * as a formatted string from the DrugDispensaryService and printing it
+     * to the console.
+     */
+    private void handleCheckDrugStock() {
+        System.out.println("\n=== Drug Stock Levels ===");
+        String drugInventoryString = app.getDrugDispensaryService().getDrugInventoryAsString();
+        System.out.println(drugInventoryString);
     }
 
-    private void handleUpdateInventory() {
-        System.out.println("\n=== Update Inventory ===");
-        System.out.println("Pharmacist: " + userContext.getName());
-        System.out.println("Hospital ID: " + userContext.getHospitalID());
+    // TODO: For Nich to TEST CORRECTNESS
+    private void handleSubmitDrugReplenishRequest() {
+        // Display
+        handleCheckDrugStock();
 
-        System.out.print("Enter medication ID: ");
-        try {
-            String medicationId = scanner.nextLine();
-            System.out.print("Enter quantity change (+/-): ");
-            int quantityChange = Integer.parseInt(scanner.nextLine());
-
-            logPharmacistAction("Updated inventory for medication ID: " + medicationId +
-                    " by " + quantityChange + " units");
-            // Implementation would allow updating medication stock
-            System.out.println("Feature coming soon...");
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid quantity format.");
+        // Select drug to replenish
+        System.out.println("Enter the ID of the drug you want to replenish: ");
+        int entryID = -1;
+        while (entryID == -1) {
+            try {
+                entryID = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+            // Check if drug exists
+            if (!app.getDrugDispensaryService().isValidDrugEntryID(entryID)) {
+                entryID = -1;
+            }
         }
-    }
-
-    private void handleViewPatientHistory() {
-        System.out.println("\n=== Patient Medication History ===");
-        System.out.println("Pharmacist: " + userContext.getName());
-        System.out.println("Hospital ID: " + userContext.getHospitalID());
-
-        System.out.print("Enter patient ID: ");
-        try {
-            int patientId = Integer.parseInt(scanner.nextLine());
-            logPharmacistAction("Viewed medication history for patient ID: " + patientId);
-            // Implementation would show patient's medication history
-            System.out.println("Feature coming soon...");
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid patient ID format.");
+        // Enter quantity to add
+        System.out.println("Enter the quantity to add: ");
+        int quantity = -1;
+        while (quantity == -1) {
+            try {
+                quantity = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
         }
+        // Enter replenishment notes
+        System.out.println("Enter replenishment notes: ");
+        String notes = scanner.nextLine();
+        // Submit request
+        app.getDrugDispensaryService().submitReplenishRequest(entryID, quantity, notes);
+
+        System.out.println("Successfully submitted replenishment request.");
     }
 
     private void logPharmacistAction(String action) {

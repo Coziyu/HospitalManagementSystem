@@ -1,10 +1,7 @@
 package org.hms.services.storage;
 
 import org.hms.services.AbstractService;
-import org.hms.services.appointment.AppointmentInformation;
-import org.hms.services.appointment.AppointmentSchedule;
-import org.hms.services.appointment.AppointmentStatus;
-import org.hms.services.appointment.IAppointmentDataInterface;
+import org.hms.services.appointment.*;
 import org.hms.services.drugdispensary.DrugInventoryTable;
 import org.hms.services.drugdispensary.DrugReplenishRequestTable;
 import org.hms.services.drugdispensary.IDrugStockDataInterface;
@@ -25,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Date;
 import java.util.List;
+
+//TODO: Rename var from var to something meaningful
 
 public class StorageService
         extends AbstractService<IDataInterface>
@@ -49,9 +48,9 @@ public class StorageService
      * If an IOException occurs during loading, a RuntimeException is thrown.
      */
     private void initializeDrugReplenishRequestTable() {
-        drugReplenishRequestTable = new DrugReplenishRequestTable();
+        drugReplenishRequestTable = new DrugReplenishRequestTable(dataRoot + "drugReplenishRequests.csv");
         try {
-            drugReplenishRequestTable.loadFromFile(dataRoot + "drugReplenishRequests.csv");
+            drugReplenishRequestTable.loadFromFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -63,9 +62,9 @@ public class StorageService
      * If an IOException occurs during loading, a RuntimeException is thrown.
      */
     private void initializeDrugInventoryTable() {
-        drugInventoryTable = new DrugInventoryTable();
+        drugInventoryTable = new DrugInventoryTable(dataRoot + "drugInventory.csv");
         try {
-            drugInventoryTable.loadFromFile(dataRoot + "drugInventory.csv");
+            drugInventoryTable.loadFromFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -113,7 +112,8 @@ public class StorageService
     }
 
     public DrugDispenseRequest createNewDrugDispenseRequest(String drugName, int addQuantity){
-        // TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
+        //TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
+        // Requires cooperation with Yingjie for this
         DrugDispenseRequest newDispenseRequest = new DrugDispenseRequest(drugDispenseRequestCounter, drugName, addQuantity, DrugRequestStatus.PENDING);
         drugDispenseRequestCounter += 1;
         return newDispenseRequest;
@@ -150,36 +150,49 @@ public class StorageService
         return appointments;
     }
 
-    public AppointmentSchedule loadschedule(String date) {
+    public void writeAppointmentsToCsv(List<AppointmentInformation> appointments) {
+        String filePath = dataRoot + "Appointments.csv";
+        SimpleDateFormat timeSlotFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm-HH:mm");
+
+        try (FileWriter writer = new FileWriter(filePath)) {
+            // Write the header row
+            writer.write("appointmentID,patientID,doctorID,appointmentTimeSlot,appointmentStatus\n");
+
+            // Write each appointment's details
+            for (AppointmentInformation appointment : appointments) {
+                // Format the appointment time slot correctly
+                String formattedTimeSlot = timeSlotFormat.format(appointment.getAppointmentTimeSlot());
+
+                writer.write(appointment.getAppointmentID() + "," +
+                        appointment.getPatientID() + "," +
+                        appointment.getDoctorID() + "," +
+                        formattedTimeSlot + "," +
+                        appointment.getAppointmentStatus() + "\n");
+            }
+
+            System.out.println("Appointments successfully written to " + filePath);
+        } catch (IOException e) {
+            System.err.println("Error writing to CSV file: " + e.getMessage());
+        }
+    }
+
+    public AppointmentSchedule loadSchedule(String date) {
         int numRows = 0;
         int numCols = 0;
 
+        String filePath = dataRoot + date + ".csv";
+
         try {
-            BufferedReader br = new BufferedReader(new FileReader(dataRoot + date + ".csv"));
-
+            BufferedReader br = new BufferedReader(new FileReader(filePath));
             String line;
-            try {
-                while((line = br.readLine()) != null) {
-                    ++numRows;
-                    String[] values = line.split(",");
-                    if (numCols < values.length) {
-                        numCols = values.length;
-                    }
-                }
-            } catch (Throwable var14) {
-                try {
-                    br.close();
-                } catch (Throwable var11) {
-                    var14.addSuppressed(var11);
-                }
-
-                throw var14;
+            while ((line = br.readLine()) != null) {
+                numRows++;
+                String[] values = line.split(",");
+                numCols = Math.max(values.length, numCols);
             }
-
             br.close();
-        } catch (IOException var15) {
-            IOException e = var15;
-            e.printStackTrace();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
         }
 
         AppointmentSchedule schedule = new AppointmentSchedule(numCols - 1, numRows - 1);
@@ -188,27 +201,18 @@ public class StorageService
             BufferedReader br = new BufferedReader(new FileReader(dataRoot + date + ".csv"));
 
             String line;
-            try {
-                for(int row = 0; (line = br.readLine()) != null; ++row) {
-                    String[] values = line.split(",");
 
-                    for(int col = 0; col < values.length; ++col) {
-                        schedule.getMatrix()[row][col] = values[col];
-                    }
-                }
-            } catch (Throwable var12) {
-                try {
-                    br.close();
-                } catch (Throwable var10) {
-                    var12.addSuppressed(var10);
-                }
+            for(int row = 0; (line = br.readLine()) != null; ++row) {
+                String[] values = line.split(",");
 
-                throw var12;
+                for(int col = 0; col < values.length; ++col) {
+                    schedule.getMatrix()[row][col] = values[col];
+                }
             }
 
             br.close();
-        } catch (IOException var13) {
-            var13.printStackTrace();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
         }
 
         return schedule;
@@ -232,6 +236,122 @@ public class StorageService
                 writer.write("\n");  // Newline after each row
             }
             System.out.println("Matrix written to " + filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeAppointmentOutcomeToCSV(AppointmentOutcome outcome) {
+        try (FileWriter writer = new FileWriter(dataRoot + "Appointment/" + "AppointmentOutcome.csv", true)) { // Append mode
+
+            // Prepare data fields for the AppointmentOutcome
+            String appointmentID = outcome.getAppointmentID();
+            String patientID = outcome.getPatientID();
+            String typeOfAppointment = outcome.getTypeOfAppointment();
+
+            // Handle consultation notes by escaping commas and slashes
+            String sanitizedNotes = outcome.getConsultationNotes().replace(",", ";").replace("/", " or ");
+
+            // Begin constructing the row for the CSV
+            StringBuilder rowData = new StringBuilder();
+            rowData.append(appointmentID).append(",")
+                    .append(patientID).append(",")
+                    .append(typeOfAppointment).append(",")
+                    .append(sanitizedNotes);
+
+            // Add each drug name and quantity to separate slots in the CSV row
+            for (DrugDispenseRequest request : outcome.getPrescribedMedication()) {
+                rowData.append(",").append(request.getDrugName()) // Drug name slot
+                        .append(",").append(request.getQuantity())
+                        .append(",").append("PENDING");
+            }
+
+            // Write the row to the CSV and add a new line
+            writer.write(rowData.toString());
+            writer.write("\n"); // New line for each record
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ArrayList<AppointmentOutcome> readAppointmentOutcomesFromCSV() {
+        ArrayList<AppointmentOutcome> appointmentOutcomes = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(dataRoot + "Appointment/" + "AppointmentOutcome.csv"))) {
+            String line;
+            boolean isHeader = true;
+
+            while ((line = reader.readLine()) != null) {
+                // Skip the header row
+                if (isHeader) {
+                    isHeader = false;
+                    continue;
+                }
+
+                // Split the line by comma
+                String[] fields = line.split(",");
+
+                // Parse the basic AppointmentOutcome fields
+                String appointmentID = fields[0].trim();
+                String patientID = fields[1].trim();
+                String typeOfAppointment = fields[2].trim();
+                String consultationNotes = fields[3].replace(";", ",").replace(" or ", "/").trim();
+
+                // Parse the prescribed medications, starting from index 4
+                ArrayList<DrugDispenseRequest> prescribedMedication = new ArrayList<>();
+                for (int i = 4; i < fields.length; i += 3) {
+                    if (i + 2 >= fields.length) break; // Ensure there are enough fields for drug data
+
+                    String drugName = fields[i].trim();
+                    int quantity = Integer.parseInt(fields[i + 1].trim());
+                    DrugRequestStatus status = DrugRequestStatus.valueOf(fields[i + 2].trim());
+
+                    DrugDispenseRequest drugRequest = new DrugDispenseRequest(i / 3, drugName, quantity, status);
+                    prescribedMedication.add(drugRequest);
+                }
+
+                // Create an AppointmentOutcome object and add it to the list
+                AppointmentOutcome outcome = new AppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
+                appointmentOutcomes.add(outcome);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
+            System.out.println("Error parsing the CSV file: " + e.getMessage());
+        }
+
+        return appointmentOutcomes;
+    }
+
+    public void writeAllAppointmentOutcomesToCSV(ArrayList<AppointmentOutcome> appointmentOutcomes) {
+        try (FileWriter writer = new FileWriter(dataRoot + "Appointment/" + "AppointmentOutcome.csv", false)) { // Overwrite mode
+
+            // Step 1: Write the header line
+            writer.write("AppointmentID,PatientID,TypeOfAppointment,ConsultationNotes,DrugName,Quantity,Status\n");
+
+            // Step 2: Write each AppointmentOutcome to the CSV file
+            for (AppointmentOutcome outcome : appointmentOutcomes) {
+                StringBuilder rowData = new StringBuilder();
+                rowData.append(outcome.getAppointmentID()).append(",")
+                        .append(outcome.getPatientID()).append(",")
+                        .append(outcome.getTypeOfAppointment()).append(",")
+                        .append(outcome.getConsultationNotes().replace(",", ";").replace("/", " or "));
+
+                // Add each drug name, quantity, and status as separate columns
+                for (DrugDispenseRequest request : outcome.getPrescribedMedication()) {
+                    rowData.append(",").append(request.getDrugName())
+                            .append(",").append(request.getQuantity())
+                            .append(",").append(request.getStatus().toString());
+                }
+
+                // Write the row to the CSV and add a new line
+                writer.write(rowData.toString());
+                writer.write("\n");
+            }
+
+            System.out.println("All AppointmentOutcomes have been updated in CSV file.");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
