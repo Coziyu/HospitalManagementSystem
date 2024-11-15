@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class MedicalRecordCSVTest {
 
     @Test
@@ -35,6 +37,7 @@ public class MedicalRecordCSVTest {
         // TODO: Get Bloodtype is really messed up, I need to find a better way to simplify this, I could consider revamping MedicalRecordService or inheriting some things
 
         // Print results
+
         if (record == null) {
             System.out.println("Test failed: No record found in CSV");
         } else {
@@ -42,6 +45,8 @@ public class MedicalRecordCSVTest {
             System.out.println("Blood Type: " + particulars.getBloodType());
             System.out.println("Number of medical entries: " + record.getMedicalHistory().size());
         }
+
+        assertNotEquals(null, record);
     }
 
     private void createTestFiles(String directory) {

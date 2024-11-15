@@ -21,7 +21,7 @@ public class DrugReplenishRequestTable extends AbstractTable<DrugReplenishReques
     }
 
     @Override
-    protected AbstractTable<DrugReplenishRequest> createEmpty() {
+    protected DrugReplenishRequestTable createEmpty() {
         return new DrugReplenishRequestTable();
     }
 

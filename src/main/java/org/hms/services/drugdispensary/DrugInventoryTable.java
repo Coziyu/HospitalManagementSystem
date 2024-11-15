@@ -16,7 +16,7 @@ public class DrugInventoryTable extends AbstractTable<DrugInventoryEntry> {
     }
 
     @Override
-    protected AbstractTable<DrugInventoryEntry> createEmpty() {
+    protected DrugInventoryTable createEmpty() {
         return new DrugInventoryTable();
     }
 }
