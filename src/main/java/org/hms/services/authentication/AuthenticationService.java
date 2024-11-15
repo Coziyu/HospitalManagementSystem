@@ -16,31 +16,39 @@ public class AuthenticationService {
 
     public AuthenticationService() {
         users = new HashMap<>();
+        initializeUserDatabase();
         loadUsers();
     }
 
-    private void loadUsers() {
+    private void initializeUserDatabase() {
         try {
+            Files.createDirectories(Paths.get(dataRoot));
+
             if (!Files.exists(Paths.get(USER_DB_FILE))) {
                 try (PrintWriter writer = new PrintWriter(USER_DB_FILE)) {
                     writer.println("id,password,role,isFirstLogin");
+                    // Add default admin account for first-time setup
+                    writer.println("ADMIN001,password,ADMINISTRATOR,true");
                 }
-                return;
             }
+        } catch (IOException e) {
+            System.out.println("Error initializing user database: " + e.getMessage());
+        }
+    }
 
-            try (BufferedReader reader = new BufferedReader(new FileReader(USER_DB_FILE))) {
-                String line = reader.readLine(); // Skip header
-                while ((line = reader.readLine()) != null) {
-                    String[] parts = line.split(",");
-                    if (parts.length == 4) {
-                        User user = new User(
-                                parts[0],
-                                parts[1],
-                                UserRole.valueOf(parts[2].toUpperCase()),
-                                Boolean.parseBoolean(parts[3])
-                        );
-                        users.put(user.getId(), user);
-                    }
+    private void loadUsers() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(USER_DB_FILE))) {
+            String line = reader.readLine(); // Skip header
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 4) {
+                    User user = new User(
+                            parts[0],
+                            parts[1],
+                            UserRole.valueOf(parts[2].toUpperCase()),
+                            Boolean.parseBoolean(parts[3])
+                    );
+                    users.put(user.getId(), user);
                 }
             }
         } catch (IOException e) {
