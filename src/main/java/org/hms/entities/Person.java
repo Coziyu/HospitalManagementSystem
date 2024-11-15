@@ -2,17 +2,17 @@
 package org.hms.entities;
 
 public class Person {
-    private int staffId;
+    private String staffId;
 
-    public Person(int staffId) {
+    public Person(String staffId) {
         this.staffId = staffId;
     }
 
-    public int getStaffId() {
+    public String getStaffId() {
         return staffId;
     }
 
-    public void setStaffId(int staffId) {
+    public void setStaffId(String staffId) {
         this.staffId = staffId;
     }
 }

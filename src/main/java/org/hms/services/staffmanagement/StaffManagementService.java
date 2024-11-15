@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public class StaffManagementService {
 
     private final StaffTable staffTable;
+
     /**
      * Initializes the StaffManagementService with a StaffTable instance and
      * optionally loads data from a file.
@@ -19,13 +20,13 @@ public class StaffManagementService {
         this.staffTable = new StaffTable();
         loadFromFile(); // Optionally load from file on initialization
     }
+
     /**
      * Adds a new staff entry to the staff table and saves the changes to a file.
      *
      * @param staff the Staff object to be added
      * @return true if the staff was added successfully, false otherwise
      */
-
     public boolean addStaff(Staff staff) {
         try {
             staffTable.addEntry(staff);
@@ -36,6 +37,7 @@ public class StaffManagementService {
         }
         return true;
     }
+
     /**
      * Updates an existing staff entry in the staff table and saves the changes to a file.
      *
@@ -43,7 +45,7 @@ public class StaffManagementService {
      * @param updatedStaff the updated Staff object
      * @return true if the update was successful, false if the staff was not found
      */
-    public boolean updateStaff(int staffId, Staff updatedStaff) {
+    public boolean updateStaff(String staffId, Staff updatedStaff) {
         Staff existingStaff = staffTable.getEntry(staffId);
         if (existingStaff == null) {
             System.err.println("Staff ID not found.");
@@ -65,9 +67,10 @@ public class StaffManagementService {
      * @param staffId the ID of the staff to retrieve
      * @return the Staff object if found, otherwise null
      */
-    public Staff getStaff(int staffId) {
+    public Staff getStaff(String staffId) {
         return staffTable.getEntry(staffId);
     }
+
     /**
      * Lists all active staff entries.
      *
@@ -76,6 +79,7 @@ public class StaffManagementService {
     public List<Staff> listAllActiveStaff() {
         return staffTable.filterByAttribute(Staff::getStatus, "active").getEntries();
     }
+
     /**
      * Lists all staff entries without filtering.
      *
@@ -84,6 +88,7 @@ public class StaffManagementService {
     public List<Staff> listAllStaff() {
         return staffTable.getEntries();
     }
+
     /**
      * Removes a staff entry based on staff ID. Supports both soft and hard deletion.
      *
@@ -91,7 +96,7 @@ public class StaffManagementService {
      * @param softDelete true for soft delete (mark as inactive), false for hard delete
      * @return true if the removal was successful, false otherwise
      */
-    public boolean removeStaff(int staffId, boolean softDelete) {
+    public boolean removeStaff(String staffId, boolean softDelete) {
         Staff staff = getStaff(staffId);
         if (staff == null) {
             System.err.println("Staff ID not found.");
@@ -119,7 +124,7 @@ public class StaffManagementService {
      * @param role the role to be assigned to the staff member
      * @return true if the role was assigned successfully, false otherwise
      */
-    public boolean assignRole(int staffId, String role) {
+    public boolean assignRole(String staffId, String role) {
         Staff staff = getStaff(staffId);
         if (staff == null) {
             System.err.println("Staff ID not found.");
@@ -128,6 +133,7 @@ public class StaffManagementService {
         staff.setRole(role);
         return updateStaff(staffId, staff);
     }
+
     /**
      * Changes the status (e.g., active/inactive) of a staff member.
      *
@@ -135,7 +141,7 @@ public class StaffManagementService {
      * @param status the new status to be assigned to the staff member
      * @return true if the status was changed successfully, false otherwise
      */
-    public boolean changeStatus(int staffId, String status) {
+    public boolean changeStatus(String staffId, String status) {
         Staff staff = getStaff(staffId);
         if (staff == null) {
             System.err.println("Staff ID not found.");
@@ -144,13 +150,14 @@ public class StaffManagementService {
         staff.setStatus(status);
         return updateStaff(staffId, staff);
     }
+
     /**
      * Archives a staff member’s data by changing their status to "archived".
      *
      * @param staffId the ID of the staff to archive
      * @return true if the archiving was successful, false otherwise
      */
-    public boolean archiveStaff(int staffId) {
+    public boolean archiveStaff(String staffId) {
         return changeStatus(staffId, "archived");
     }
 
@@ -208,6 +215,7 @@ public class StaffManagementService {
         }
         return true;
     }
+
     /**
      * Retrieves the StaffTable instance used by this service.
      *
