@@ -252,7 +252,7 @@ public class DoctorMenu extends AbstractMainMenu {
     }
 
     private void logDoctorAction(String action) {
-        String logMessage = String.format("Doctor Action - Dr. %s (Hospital: %d) - %s",
+        String logMessage = String.format("Doctor Action - Dr. %s (UserID: %s) - %s",
                 userContext.getName(),
                 userContext.getHospitalID(),
                 action

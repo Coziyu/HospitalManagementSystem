@@ -629,7 +629,7 @@ public class AdminMenu extends AbstractMainMenu {
 
 
     private void logAdminAction(String action) {
-        String logMessage = String.format("Admin Action - User: %s, Hospital: %d - %s",
+        String logMessage = String.format("Admin Action - User: %s, UserID: %s - %s",
                 userContext.getName(),
                 userContext.getHospitalID(),
                 action
