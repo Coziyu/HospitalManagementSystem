@@ -124,23 +124,8 @@ public class StorageService
     }
 
     @Override
-    public Optional<MedicalRecord> getMedicalRecord(String patientID) {
-        return Optional.empty();
-    }
-
-    @Override
-    public boolean saveMedicalRecord(MedicalRecord record) {
-        return false;
-    }
-
-    @Override
-    public boolean updateContactInformation(String patientID, ContactInformation contact) {
-        return false;
-    }
-
-    @Override
-    public boolean addMedicalEntry(String patientID, MedicalEntry entry) {
-        return false;
+    public PatientTable getPatientTable() {
+        return patientParticularsTable;
     }
 
     @Override

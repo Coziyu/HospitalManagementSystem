@@ -17,13 +17,13 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
     private static final String MEDICAL_RECORDS_CSV = DATA_DIRECTORY + "/medical_records.csv";
 
     // In-memory storage
-    private Map<String, PatientParticulars> personalParticularsMap;
+    private PatientTable patientTable;
     private Map<String, ContactInformation> contactInformationMap;
     private MedicalRecord medicalRecordsTable;
 
     public MedicalRecordService(IMedicalDataInterface storageService) {
         this.storageServiceInterface = storageService;
-        this.personalParticularsMap = new HashMap<>();
+        this.patientTable = storageServiceInterface.getPatientTable();
         this.contactInformationMap = new HashMap<>();
         this.medicalRecordsTable = storageServiceInterface.getMedicalRecordTable();
         initializeData();
@@ -50,28 +50,12 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
     }
 
     private void loadAllData() {
-//        loadPersonalParticulars();
         loadContactInformation();
     }
 
-//    // TODO: For nich to refactor to use AbstractTable and AbstractTableEntry
-//    private void loadPersonalParticulars() {
-//        try (BufferedReader reader = new BufferedReader(new FileReader(PATIENT_LIST_CSV))) {
-//            reader.readLine(); // Skip header
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                try {
-//                    PatientParticulars particulars = PatientParticulars.fromPatientList(line.split(","));
-//                    personalParticularsMap.put(particulars.getPatientID(), particulars);
-//                } catch (Exception e) {
-//                    System.err.println("Error parsing patient: " + e.getMessage());
-//                }
-//            }
-//        } catch (IOException e) {
-//            System.err.println("Error loading patient data: " + e.getMessage());
-//        }
-//    }
 
+
+    // TODO: Refactor using AbstractTable
     private void loadContactInformation() {
         try (BufferedReader reader = new BufferedReader(new FileReader(CONTACT_INFO_CSV))) {
             reader.readLine(); // Skip header
@@ -101,7 +85,7 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
     }
 
     public PatientParticulars getPersonalParticulars(String patientID) {
-        return personalParticularsMap.get(patientID);
+        return patientTable.searchByAttribute(PatientParticulars::getPatientID, patientID).getFirst();
     }
 
     public boolean updateOwnContactInfo(PatientContext patientContext,
@@ -119,12 +103,20 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
     }
 
     // === DOCTOR METHODS ===
+
+    /**
+     * View a patient's medical record. If the doctor is not authorized, return null
+     * @param doctorContext
+     * @param patientID
+     * @return a MedicalRecord if the doctor is authorized to access the patient's record
+     *         null if the doctor is not authorized
+     */
     public MedicalRecord viewPatientRecord(UserContext doctorContext, String patientID) {
         if (doctorContext.getUserType() != UserRole.DOCTOR) {
             System.err.println("Unauthorized: Only doctors can view patient records");
             return null;
         }
-        return (MedicalRecord) getMedicalRecord(patientID);
+        return getMedicalRecord(patientID);
     }
 
     public boolean addMedicalEntry(UserContext doctorContext, String patientID,
@@ -151,18 +143,15 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
     }
 
     // === CSV OPERATIONS ===
+    //TODO: Refactor
     private void createContactInfoCSV() throws IOException {
         try (FileWriter writer = new FileWriter(CONTACT_INFO_CSV)) {
             writer.write("PatientID,PhoneNumber,Email,Address\n");
         }
     }
 
-    private void createMedicalRecordsCSV() throws IOException {
-        try (FileWriter writer = new FileWriter(MEDICAL_RECORDS_CSV)) {
-            writer.write("PatientID,Date,Diagnosis,TreatmentPlan,ConsultationNotes,DoctorID\n");
-        }
-    }
 
+    //TODO: Refactor
     private void saveContactInfoToCSV() throws IOException {
         try (FileWriter writer = new FileWriter(CONTACT_INFO_CSV)) {
             writer.write("PatientID,PhoneNumber,Email,Address\n");
@@ -178,15 +167,6 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
     }
 
 
-
-    // Required by AbstractService
-    //TODO: For Elijah to reimplement this part.
-    // For now, I have added patientID as an argument to your code.
-    // make sure to ensure that your implementation is correct
-    // Also note that patientID eventually would be stored as a String
-//    public Optional<MedicalRecord> getMedicalRecord() {
-//        return Optional.ofNullable(medicalRecordsMap.get(patientID));
-//    }
     public MedicalRecord getMedicalRecord(String patientID) {
         return (MedicalRecord) medicalRecordsTable.filterByAttribute(MedicalEntry::getPatientID, patientID);
     }
