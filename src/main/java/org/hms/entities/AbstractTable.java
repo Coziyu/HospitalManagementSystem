@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractTable<T extends AbstractTableEntry> implements Serializable {
     protected List<T> entries;
-    protected String[] headers;
     protected String filePath;
 
     public AbstractTable() {

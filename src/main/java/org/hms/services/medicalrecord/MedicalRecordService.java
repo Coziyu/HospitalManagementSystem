@@ -17,7 +17,7 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
     private static final String MEDICAL_RECORDS_CSV = DATA_DIRECTORY + "/medical_records.csv";
 
     // In-memory storage
-    private Map<String, PersonalParticulars> personalParticularsMap;
+    private Map<String, PatientParticulars> personalParticularsMap;
     private Map<String, ContactInformation> contactInformationMap;
     private MedicalRecord medicalRecordsTable;
 
@@ -50,27 +50,27 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
     }
 
     private void loadAllData() {
-        loadPersonalParticulars();
+//        loadPersonalParticulars();
         loadContactInformation();
     }
 
-    // TODO: For nich to refactor to use AbstractTable and AbstractTableEntry
-    private void loadPersonalParticulars() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(PATIENT_LIST_CSV))) {
-            reader.readLine(); // Skip header
-            String line;
-            while ((line = reader.readLine()) != null) {
-                try {
-                    PersonalParticulars particulars = PersonalParticulars.fromPatientList(line.split(","));
-                    personalParticularsMap.put(particulars.getPatientID(), particulars);
-                } catch (Exception e) {
-                    System.err.println("Error parsing patient: " + e.getMessage());
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Error loading patient data: " + e.getMessage());
-        }
-    }
+//    // TODO: For nich to refactor to use AbstractTable and AbstractTableEntry
+//    private void loadPersonalParticulars() {
+//        try (BufferedReader reader = new BufferedReader(new FileReader(PATIENT_LIST_CSV))) {
+//            reader.readLine(); // Skip header
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                try {
+//                    PatientParticulars particulars = PatientParticulars.fromPatientList(line.split(","));
+//                    personalParticularsMap.put(particulars.getPatientID(), particulars);
+//                } catch (Exception e) {
+//                    System.err.println("Error parsing patient: " + e.getMessage());
+//                }
+//            }
+//        } catch (IOException e) {
+//            System.err.println("Error loading patient data: " + e.getMessage());
+//        }
+//    }
 
     private void loadContactInformation() {
         try (BufferedReader reader = new BufferedReader(new FileReader(CONTACT_INFO_CSV))) {
@@ -100,7 +100,7 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
         return getMedicalRecord(patientIDString);
     }
 
-    public PersonalParticulars getPersonalParticulars(String patientID) {
+    public PatientParticulars getPersonalParticulars(String patientID) {
         return personalParticularsMap.get(patientID);
     }
 

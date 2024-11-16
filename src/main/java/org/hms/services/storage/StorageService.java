@@ -7,10 +7,7 @@ import org.hms.services.drugdispensary.DrugReplenishRequestTable;
 import org.hms.services.drugdispensary.IDrugStockDataInterface;
 import org.hms.services.drugdispensary.*;
 
-import org.hms.services.medicalrecord.ContactInformation;
-import org.hms.services.medicalrecord.IMedicalDataInterface;
-import org.hms.services.medicalrecord.MedicalEntry;
-import org.hms.services.medicalrecord.MedicalRecord;
+import org.hms.services.medicalrecord.*;
 import org.hms.services.staffmanagement.Staff;
 import org.hms.services.staffmanagement.StaffTable;
 
@@ -35,6 +32,7 @@ public class StorageService
     private DrugInventoryTable drugInventoryTable;
     private DrugReplenishRequestTable drugReplenishRequestTable;
     private MedicalRecord medicalRecordTable;
+    private PatientTable patientParticularsTable;
 
     // TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
     private static int drugDispenseRequestCounter = 0;
@@ -44,6 +42,21 @@ public class StorageService
         initializeDrugInventoryTable();
         initializeDrugReplenishRequestTable();
         initializeMedicalRecordTable();
+        initializePatientParticularsTable();
+    }
+
+    /**
+     * Initializes the patient particulars table by loading data from a CSV file.
+     * The CSV file is located at the dataRoot directory.
+     * If an IOException occurs during loading, a RuntimeException is thrown.
+     */
+    private void initializePatientParticularsTable() {
+        patientParticularsTable = new PatientTable(dataRoot + "PatientList.csv");
+        try {
+            patientParticularsTable.loadFromFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
