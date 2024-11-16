@@ -4,6 +4,8 @@ import org.hms.App;
 import org.hms.entities.UserContext;
 import org.hms.entities.UserRole;
 import org.hms.entities.Colour;
+import org.hms.services.logging.AuditLogger;
+
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.util.Scanner;
@@ -172,11 +174,11 @@ public class PharmacistMenu extends AbstractMainMenu {
     }
 
     private void logPharmacistAction(String action) {
-        String logMessage = String.format("Pharmacist Action - Name: %s, UserID: %s - %s",
+        AuditLogger.logAction(
                 userContext.getName(),
-                userContext.getHospitalID(),
+                "PHARMACIST",
+                String.valueOf(userContext.getHospitalID()),
                 action
         );
-        System.out.println("LOG: " + LocalDateTime.now() + " - " + logMessage);
     }
 }

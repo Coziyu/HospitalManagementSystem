@@ -6,6 +6,7 @@ import org.hms.entities.UserContext;
 import org.hms.entities.UserRole;
 import org.hms.entities.User;
 import org.hms.services.drugdispensary.DrugInventoryTable;
+import org.hms.services.logging.AuditLogger;
 import org.hms.services.staffmanagement.Staff;
 import org.hms.services.staffmanagement.StaffManagementService;
 
@@ -629,12 +630,11 @@ public class AdminMenu extends AbstractMainMenu {
 
 
     private void logAdminAction(String action) {
-        String logMessage = String.format("Admin Action - User: %s, UserID: %s - %s",
+        AuditLogger.logAction(
                 userContext.getName(),
-                userContext.getHospitalID(),
+                "ADMINISTRATOR",
+                String.valueOf(userContext.getHospitalID()),
                 action
         );
-        System.out.println("LOG: " + LocalDateTime.now() + " - " + logMessage);
-        // In a real system, this would write to a secure audit log
     }
 }
