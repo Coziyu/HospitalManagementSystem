@@ -33,6 +33,7 @@ public class StorageService
     private DrugReplenishRequestTable drugReplenishRequestTable;
     private MedicalRecord medicalRecordTable;
     private PatientTable patientParticularsTable;
+    private ContactInfomationTable contactInformationTable;
 
     // TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
     private static int drugDispenseRequestCounter = 0;
@@ -43,6 +44,22 @@ public class StorageService
         initializeDrugReplenishRequestTable();
         initializeMedicalRecordTable();
         initializePatientParticularsTable();
+        initializeContactInformationTable();
+    }
+
+
+    /**
+     * Initializes the contact information table by loading data from a CSV file.
+     * The CSV file is located at the dataRoot directory.
+     * If an IOException occurs during loading, a RuntimeException is thrown.
+     */
+    private void initializeContactInformationTable() {
+        contactInformationTable = new ContactInfomationTable(dataRoot + "contact_information.csv");
+        try {
+            contactInformationTable.loadFromFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -131,6 +148,11 @@ public class StorageService
     @Override
     public MedicalRecord getMedicalRecordTable() {
         return medicalRecordTable;
+    }
+
+    @Override
+    public ContactInfomationTable getContactInformationTable() {
+        return contactInformationTable;
     }
 
     public DrugDispenseRequest createNewDrugDispenseRequest(String drugName, int addQuantity){

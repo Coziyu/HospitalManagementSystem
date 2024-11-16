@@ -15,4 +15,6 @@ public interface IMedicalDataInterface extends IDataInterface {
     PatientTable getPatientTable();
 
     MedicalRecord getMedicalRecordTable();
+
+    ContactInfomationTable getContactInformationTable();
 }
