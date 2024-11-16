@@ -80,4 +80,23 @@ public class MedicalEntry extends AbstractTableEntry {
         treatmentPlan = parts[5];
         consultationNotes = parts[6];
     }
+
+    /**
+     * Generate a string representation of the object with the given format string.
+     * Meant to be printed to the console.
+     * @param formatString The format string to use. .
+     * @return A string representation of the object.
+     */
+    public String toPrintString(String formatString){
+        String printString = String.format(formatString,
+                getTableEntryID(),
+                getPatientID(),
+                getDoctorID(),
+                getDate(),
+                getDiagnosis(),
+                getTreatmentPlan(),
+                getConsultationNotes()
+        );
+        return printString;
+    }
 }

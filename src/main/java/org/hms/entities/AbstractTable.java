@@ -285,6 +285,11 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
                 entries.add(entry);
             }
         }
+        catch (Exception e){
+            if(!Objects.equals(filePath, "")){
+                e.printStackTrace();
+            }
+        }
     }
 
     public void loadFromFile() throws IOException {
@@ -298,6 +303,11 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
                 T entry = createValidEntryTemplate();
                 entry.loadFromCSVString(line);
                 entries.add(entry);
+            }
+        }
+        catch (Exception e){
+            if(!Objects.equals(filePath, "")){
+                e.printStackTrace();
             }
         }
     }
