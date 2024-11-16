@@ -5,6 +5,7 @@ import org.hms.services.drugdispensary.DrugDispenseRequest;
 import org.hms.services.drugdispensary.DrugRequestStatus;
 import org.hms.services.storage.StorageService;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -330,8 +331,8 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
                 // Only add a tab and print header if the cell contains "1"
                 if ("available".equals(row[j])) {
                     System.out.print("\t" + headers[j]);
-                    //String doctorName = storageServiceInterface.getStaffForSchedule(headers[j]).getName();
-                    //System.out.print("\t" + doctorName + "(ID = " + headers[1] + ")");
+                    String doctorName = storageServiceInterface.getStaffNameByID(headers[j]);
+                    System.out.print("\t" + doctorName + "(ID = " + headers[1] + ")");
                     //Not sure can work or not until the the staff.csv and schedule csv files have same doctors
                 }
             }
@@ -695,6 +696,26 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
         // Save the updated schedule back to the storage service
         storageServiceInterface.writeScheduleToCSV(schedule,date);
+    }
+
+    public void updateAllSchedulesWithNewDoctor(String doctorID) {
+
+        File[] csvFiles = storageServiceInterface.getALlDateFile();
+
+        for (File csvFile : csvFiles) {
+            try {
+                String fileName = csvFile.getName();
+                String date = fileName.substring(0, fileName.indexOf(".csv"));
+
+                addNewDoctorToSchedule(doctorID, date);
+
+                System.out.println("Updated schedule for date: " + date);
+            } catch (Exception e) {
+
+                System.err.println("Failed to update schedule for file: " + csvFile.getName());
+                e.printStackTrace();
+            }
+        }
     }
 
 }
