@@ -377,7 +377,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
 
     //For doctor
-    public void viewRequest(String doctorID) {
+    public boolean viewRequest(String doctorID) {
         boolean found = false;
         for (AppointmentInformation appointment : appointments) {
             if (appointment.getDoctorID().equals(doctorID) && appointment.getAppointmentStatus() == AppointmentStatus.PENDING) {
@@ -389,7 +389,9 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
         if (!found) {
             System.out.println("No pending appointments found for doctor ID: " + doctorID);
+            return false;
         }
+        return true;
     }
 
     public void manageAppointmentRequests(int appointmentID, String doctorID) {
