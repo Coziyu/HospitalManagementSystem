@@ -32,6 +32,7 @@ public class StorageService
     private static final String dataRoot = System.getProperty("user.dir") + "/data/";
     private DrugInventoryTable drugInventoryTable;
     private DrugReplenishRequestTable drugReplenishRequestTable;
+    private MedicalRecord medicalRecordTable;
 
     // TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
     private static int drugDispenseRequestCounter = 0;
@@ -40,6 +41,7 @@ public class StorageService
         storageServiceInterface = this;
         initializeDrugInventoryTable();
         initializeDrugReplenishRequestTable();
+        initializeMedicalRecordTable();
     }
 
     /**
@@ -65,6 +67,21 @@ public class StorageService
         drugInventoryTable = new DrugInventoryTable(dataRoot + "drugInventory.csv");
         try {
             drugInventoryTable.loadFromFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Initialzes the medical record table by loading data from a CSV file.
+     * The CSV file is located at the dataRoot directory.
+     * If an IOException occurs during loading, a RuntimeException is thrown.
+     * @return
+     */
+    private void initializeMedicalRecordTable() {
+        medicalRecordTable = new MedicalRecord(dataRoot + "medical_records.csv");
+        try {
+            medicalRecordTable.loadFromFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -109,6 +126,11 @@ public class StorageService
     @Override
     public boolean addMedicalEntry(String patientID, MedicalEntry entry) {
         return false;
+    }
+
+    @Override
+    public MedicalRecord getMedicalRecordTable() {
+        return medicalRecordTable;
     }
 
     public DrugDispenseRequest createNewDrugDispenseRequest(String drugName, int addQuantity){

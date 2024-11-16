@@ -29,9 +29,9 @@ public class PersonalParticulars implements Serializable {
             Date dob = new SimpleDateFormat("yyyy-MM-dd").parse(csvRow[2].trim());
             String gender = csvRow[3].trim();
             BloodType bloodType = BloodType.valueOf(
-                    csvRow[4].trim().replace("+", "_POSITIVE").replace("-", "_NEGATIVE")
+                    (csvRow[4].trim().endsWith("+") ? "POSITIVE_" : "NEGATIVE_") +
+                            csvRow[4].trim().substring(0, csvRow[4].trim().length() - 1)
             );
-
             return new PersonalParticulars(patientID, name, dob, gender, bloodType);
         } catch (Exception e) {
             throw new Exception("Error creating PersonalParticulars from CSV: " + e.getMessage());
