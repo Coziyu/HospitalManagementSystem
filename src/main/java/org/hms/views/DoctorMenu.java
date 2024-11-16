@@ -6,12 +6,15 @@ import org.hms.entities.UserRole;
 import org.hms.services.appointment.AppointmentOutcome;
 import org.hms.services.drugdispensary.DrugDispenseRequest;
 import org.hms.services.medicalrecord.MedicalRecord;
+import org.hms.entities.Colour;
 
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.List;
 
 public class DoctorMenu extends AbstractMainMenu {
     private final Scanner scanner;
@@ -26,7 +29,7 @@ public class DoctorMenu extends AbstractMainMenu {
 
     private void validateDoctorAccess() {
         if (userContext == null || userContext.getUserType() != UserRole.DOCTOR) {
-            System.out.println("Access Denied: Doctor privileges required.");
+            System.out.println(Colour.RED + "Access Denied: Doctor privileges required." + Colour.RESET);
             app.setCurrentMenu(new AuthenticationMenu(app));
         }
     }
@@ -34,7 +37,7 @@ public class DoctorMenu extends AbstractMainMenu {
     @Override
     public void displayAndExecute() {
         while (true) {
-            System.out.println("\n=== Doctor Menu ===");
+            System.out.println("\n" + Colour.BLUE + "=== Doctor Menu ===" + Colour.RESET);
             System.out.println("Doctor: Dr. " + userContext.getName());
             System.out.println("Hospital ID: " + userContext.getHospitalID());
             System.out.println("Date: " + LocalDate.now());
@@ -64,10 +67,10 @@ public class DoctorMenu extends AbstractMainMenu {
                         app.setCurrentMenu(new AuthenticationMenu(app));
                         return;
                     }
-                    default -> System.out.println("Invalid option. Please try again.");
+                    default -> System.out.println(Colour.RED + "Invalid option. Please try again." + Colour.RESET);
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Please enter a valid number.");
+                System.out.println(Colour.RED + "Please enter a valid number." + Colour.RESET);
             }
         }
     }
@@ -166,11 +169,16 @@ public class DoctorMenu extends AbstractMainMenu {
         logDoctorAction("Viewed today's appointments");
         // Implementation would show today's appointments
 
-        System.out.println("Feature coming soon...");
+        String doctorID = Integer.toString(app.getUserContext().getHospitalID());
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String formattedDate = currentDate.format(formatter);
+        app.getAppointmentService().displayAppointmentsForDoctor(formattedDate, doctorID);
+
     }
 
     private void handleAccessPatientRecords() {
-        System.out.println("\n=== Access Patient Records ===");
+        System.out.println("\n" + Colour.BLUE + "=== Access Patient Records ===" + Colour.RESET);
         System.out.println("Accessing as: Dr. " + userContext.getName());
         System.out.print("Enter patient ID: ");
 
@@ -179,7 +187,7 @@ public class DoctorMenu extends AbstractMainMenu {
 
             // Verify doctor's access rights for this patient
             if (!canAccessPatientRecords(patientId)) {
-                System.out.println("Access denied: Patient not assigned to you.");
+                System.out.println(Colour.RED + "Access denied: Patient not assigned to you." + Colour.RESET);
                 logDoctorAction("Attempted unauthorized access to patient records: " + patientId);
                 return;
             }
@@ -195,15 +203,15 @@ public class DoctorMenu extends AbstractMainMenu {
             String records = "placeholder";
 
             System.out.println(records);
+
             logDoctorAction("Accessed medical records for patient: " + patientId);
         } catch (NumberFormatException e) {
-            System.out.println("Invalid patient ID format.");
+            System.out.println(Colour.RED + "Invalid patient ID format." + Colour.RESET);
         }
     }
 
     private void handleUpdateMedicalRecords() {
-        // TODO: Implement this.
-        System.out.println("\n=== Update Medical Records ===");
+        System.out.println("\n" + Colour.BLUE + "=== Update Medical Records ===" + Colour.RESET);
         System.out.println("Updating as: Dr. " + userContext.getName());
         System.out.print("Enter patient ID: ");
 
@@ -211,7 +219,7 @@ public class DoctorMenu extends AbstractMainMenu {
             int patientId = Integer.parseInt(scanner.nextLine());
 
             if (!canAccessPatientRecords(patientId)) {
-                System.out.println("Access denied: Patient not assigned to you.");
+                System.out.println(Colour.RED + "Access denied: Patient not assigned to you." + Colour.RESET);
                 logDoctorAction("Attempted unauthorized update to patient records: " + patientId);
                 return;
             }
@@ -222,7 +230,7 @@ public class DoctorMenu extends AbstractMainMenu {
             logDoctorAction("Updated medical records for patient: " + patientId);
             System.out.println("Feature coming soon...");
         } catch (NumberFormatException e) {
-            System.out.println("Invalid patient ID format.");
+            System.out.println(Colour.RED + "Invalid input format." + Colour.RESET);
         }
     }
 

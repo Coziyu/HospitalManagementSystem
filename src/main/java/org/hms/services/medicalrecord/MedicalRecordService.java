@@ -54,6 +54,7 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
         loadContactInformation();
     }
 
+    // TODO: For nich to refactor to use AbstractTable and AbstractTableEntry
     private void loadPersonalParticulars() {
         try (BufferedReader reader = new BufferedReader(new FileReader(PATIENT_LIST_CSV))) {
             reader.readLine(); // Skip header
