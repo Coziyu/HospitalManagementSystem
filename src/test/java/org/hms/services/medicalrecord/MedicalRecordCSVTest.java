@@ -1,6 +1,5 @@
 package org.hms.services.medicalrecord;
 
-import org.hms.entities.BloodType;
 import org.hms.entities.UserContext;
 import org.hms.entities.PatientContext;
 import org.hms.entities.UserRole;
@@ -33,7 +32,7 @@ public class MedicalRecordCSVTest {
         // Test record retrieval
         MedicalRecord record = service.viewOwnRecord(patient);
         // Fetch Personal Particulars
-        PersonalParticulars particulars = service.getPersonalParticulars(patient.getPatientID().toString());
+        PatientParticulars particulars = service.getPersonalParticulars(patient.getPatientID().toString());
 
         // TODO: Get Bloodtype is really messed up, I need to find a better way to simplify this, I could consider revamping MedicalRecordService or inheriting some things
 
