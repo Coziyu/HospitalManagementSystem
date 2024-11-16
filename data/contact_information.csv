@@ -1,2 +1,3 @@
 EntryID,PatientID,PhoneNumber,Email,Address
-0,PAT001,+6587774218,5V9r4@example.com,Blk 123, Singapore 123456
+0,PAT001,+6587774218,nicholas@example.com,"Blk 123, Singapore 123456"
+1,PAT002,+6590964439,x@y.com,"Blk 456, Singapore 5471327"
