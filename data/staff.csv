@@ -1,2 +1,3 @@
 staffId,age,name,role,status,gender
 DOC001,25,Adam,Doctor,Active,Male
+DOC002,23,Nicholas,M,DOCTOR,active

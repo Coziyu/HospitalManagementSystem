@@ -367,44 +367,53 @@ public class AdminMenu extends AbstractMainMenu {
     private void handleAddStaff() {
         System.out.println("\n" + Colour.BLUE + "=== Add New Staff Member ===" + Colour.RESET);
         try {
+            // Prompt for all inputs in the order of constructor parameters
             System.out.print("Enter staff ID: ");
             String staffId = scanner.nextLine();
 
-            System.out.println("Select staff role:");
-            System.out.println("1. Doctor");
-            System.out.println("2. Pharmacist");
-            System.out.print("Enter choice: ");
-
-            int roleChoice = Integer.parseInt(scanner.nextLine());
-            UserRole role = switch (roleChoice) {
-                case 1 -> UserRole.DOCTOR;
-                case 2 -> UserRole.PHARMACIST;
-                default -> throw new IllegalArgumentException("Invalid role selection");
-            };
-
-            // Add additional staff information
             System.out.print("Enter full name: ");
             String name = scanner.nextLine();
 
             System.out.print("Enter age: ");
             int age = Integer.parseInt(scanner.nextLine());
 
+            System.out.println("Select staff role:");
+            System.out.println("1. Doctor");
+            System.out.println("2. Pharmacist");
+            System.out.print("Enter choice: ");
+            int roleChoice = Integer.parseInt(scanner.nextLine());
+            String role = switch (roleChoice) {
+                case 1 -> "Doctor";
+                case 2 -> "Pharmacist";
+                default -> throw new IllegalArgumentException("Invalid role selection");
+            };
+
+            System.out.print("Enter status (e.g., active, inactive): ");
+            String status = scanner.nextLine();
+
             System.out.print("Enter gender (M/F): ");
             String gender = scanner.nextLine();
 
-            Staff newStaff = new Staff(staffId, age, name, gender, role.name(), "active");
+            // Construct the Staff object with the inputs
+            Staff newStaff = new Staff(staffId, age, name, role, status, gender);
+
+            // Attempt to add the new staff to the system
             boolean success = staffManagementService.addStaff(newStaff);
 
+            // Provide feedback to the user
             if (success) {
                 logAdminAction("Added new staff member: " + staffId);
                 System.out.println(Colour.GREEN + "Staff member added successfully!" + Colour.RESET);
             } else {
                 System.out.println(Colour.RED + "Failed to add staff member. Staff ID might already exist." + Colour.RESET);
             }
+        } catch (NumberFormatException e) {
+            System.out.println(Colour.RED + "Invalid input for numeric fields. Please enter valid numbers." + Colour.RESET);
         } catch (Exception e) {
             System.out.println(Colour.RED + "Error adding staff member: " + e.getMessage() + Colour.RESET);
         }
     }
+
 
     private void handleUpdateStaff() {
         System.out.println(Colour.BLUE + "=== Update Staff Information ===" + Colour.RESET);
