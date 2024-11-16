@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class StorageService
     private DrugReplenishRequestTable drugReplenishRequestTable;
     private MedicalRecord medicalRecordTable;
     private PatientTable patientParticularsTable;
-    private ContactInfomationTable contactInformationTable;
+    private ContactInformationTable contactInformationTable;
 
     // TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
     private static int drugDispenseRequestCounter = 0;
@@ -54,7 +53,7 @@ public class StorageService
      * If an IOException occurs during loading, a RuntimeException is thrown.
      */
     private void initializeContactInformationTable() {
-        contactInformationTable = new ContactInfomationTable(dataRoot + "contact_information.csv");
+        contactInformationTable = new ContactInformationTable(dataRoot + "contact_information.csv");
         try {
             contactInformationTable.loadFromFile();
         } catch (IOException e) {
@@ -151,7 +150,7 @@ public class StorageService
     }
 
     @Override
-    public ContactInfomationTable getContactInformationTable() {
+    public ContactInformationTable getContactInformationTable() {
         return contactInformationTable;
     }
 

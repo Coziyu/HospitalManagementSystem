@@ -1,3 +1,7 @@
 Entry,PatientID,DoctorID,Date,Diagnosis,TreatmentPlan,ConsultationNotes
-0,P1001,D001,2024-03-15,Flu,Rest and fluids,Patient shows typical symptoms
-1,P1001,D002,2024-03-20,Follow-up,Continue rest,Symptoms improving
+0,PAT001,DOC001,2024-03-15,Flu,Rest and fluids,Patient shows typical symptoms
+1,PAT001,DOC002,2024-03-20,Follow-up,Continue rest,Symptoms improving
+2,PAT002,DOC003,2024-03-25,Flu,Rest and fluids,Patient shows typical symptoms
+3,PAT001,DOC001,2024-03-28,Follow-up,Continue rest,Symptoms improving
+4,PAT002,DOC005,2024-04-05,Flu,Rest and fluids,Patient shows typical symptoms
+5,PAT003,DOC006,2024-04-10,Flu,Rest and fluids,Patient shows typical symptoms

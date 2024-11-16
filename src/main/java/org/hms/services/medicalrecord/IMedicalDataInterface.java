@@ -3,8 +3,6 @@ package org.hms.services.medicalrecord;
 
 import org.hms.services.storage.IDataInterface;
 
-import java.util.Optional;
-
 /**
  * This interface should be implemented by StorageService.
  * It should contain methods that requires getting data from
@@ -16,5 +14,5 @@ public interface IMedicalDataInterface extends IDataInterface {
 
     MedicalRecord getMedicalRecordTable();
 
-    ContactInfomationTable getContactInformationTable();
+    ContactInformationTable getContactInformationTable();
 }

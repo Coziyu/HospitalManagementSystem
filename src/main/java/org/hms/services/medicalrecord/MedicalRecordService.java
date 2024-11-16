@@ -4,9 +4,6 @@ import org.hms.entities.UserContext;
 import org.hms.entities.UserRole;
 import org.hms.services.AbstractService;
 
-import java.io.*;
-import java.nio.file.*;
-
 public class MedicalRecordService extends AbstractService<IMedicalDataInterface> {
     // CSV paths
     private static final String DATA_DIRECTORY = "data";
@@ -16,7 +13,7 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
 
     // In-memory storage
     private PatientTable patientTable;
-    private ContactInfomationTable contactInformationTable;
+    private ContactInformationTable contactInformationTable;
     private MedicalRecord medicalRecordsTable;
 
     public MedicalRecordService(IMedicalDataInterface storageService) {
@@ -47,6 +44,14 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
      */
     public PatientParticulars getPersonalParticulars(String patientID) {
         return patientTable.searchByAttribute(PatientParticulars::getPatientID, patientID).getFirst();
+    }
+
+    /**
+     * @param patientID
+     * @return a PrintString of a PatientParticulars
+     */
+    public String getPatientPersonalParticulars(String patientID){
+        return ((PatientTable) (patientTable.filterByAttribute(PatientParticulars::getPatientID, patientID))).toPrintString();
     }
 
     /**
@@ -114,10 +119,16 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
         }
     }
 
+    public String getPatientContactInformation(String patientID){
+        ContactInformationTable patientEntry = (ContactInformationTable) contactInformationTable.filterByAttribute(ContactInformation::getPatientID, patientID);
+        return patientEntry.toPrintString();
+    }
+
     // === CSV OPERATIONS ===
 
 
-    public MedicalRecord getMedicalRecord(String patientID) {
+    private MedicalRecord getMedicalRecord(String patientID) {
         return (MedicalRecord) medicalRecordsTable.filterByAttribute(MedicalEntry::getPatientID, patientID);
     }
+
 }
