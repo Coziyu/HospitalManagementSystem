@@ -109,14 +109,13 @@ public class AuthenticationMenu extends AbstractMenu {
 
     private void navigateToAppropriateMenu(User user) {
         // Create UserContext with hospital ID parsed from user ID
-        int hospitalId = 1; // Default hospital ID
+        String hospitalId = null; // Default hospital ID
         UserContext userContext = new UserContext(user.getId(), user.getRole(), hospitalId);
         app.setUserContext(userContext);
 
         switch (user.getRole()) {
             case PATIENT:
-                // Create PatientContext with a default patient number (should come from a database in real system)
-                PatientContext patientContext = new PatientContext(userContext, 444);
+                PatientContext patientContext = new PatientContext(userContext, user.getId());
                 app.setCurrentMenu(new PatientMenu(app, patientContext));
                 break;
             case DOCTOR:

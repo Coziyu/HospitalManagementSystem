@@ -63,15 +63,14 @@ public class PatientMenu extends AbstractMainMenu {
         }
     }
 
-    // TODO: For implementation
     private void handleViewPastAppointmentOutcome() {
-        String patientID = Integer.toString(app.getUserContext().getHospitalID());
+        String patientID = (app.getUserContext().getHospitalID());
         app.getAppointmentService().displayAppointmentOutcomesByPatient(patientID);
 
     }
 
     private void handleCancelAppointment() {
-        String patientID = Integer.toString(app.getUserContext().getHospitalID());
+        String patientID = (app.getUserContext().getHospitalID());
         AppointmentStatus status = app.getAppointmentService().getCurrentAppointmentStatus(patientID);
         if (status != AppointmentStatus.CONFIRMED && status != AppointmentStatus.PENDING) {
             System.out.println("No appointment can be canceled");
@@ -87,9 +86,6 @@ public class PatientMenu extends AbstractMainMenu {
         app.getAppointmentService().resumeDoctorSchedule(doctorID, DateAndSlot[0], DateAndSlot[1]);
         System.out.println("Appointment Canceled");
         //
-
-
-
     }
 
     private void handleRescheduleAppointment() {
@@ -130,7 +126,7 @@ public class PatientMenu extends AbstractMainMenu {
 
             //dateStr = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString();
             app.getAppointmentService().displaySchedule(dateStr);
-            String patientID = Integer.toString(app.getUserContext().getHospitalID());
+            String patientID = (app.getUserContext().getHospitalID());
             System.out.println("Enter doctor ID : ");
             String doctorID = scanner.nextLine();
             System.out.println("Enter time slot : ");
@@ -149,7 +145,7 @@ public class PatientMenu extends AbstractMainMenu {
 
     private void handleViewMedicalRecord() {
         System.out.println("\n" + Colour.BLUE + "=== Medical Records ===" + Colour.RESET);
-        Integer patientID = patientContext.getHospitalID();
+        String patientID = patientContext.getHospitalID();
 
         //TODO: For Elijah to refactor this part. Since his method was refactored to use Optional<>
         // Also, is this meant to be `records` or `record` singular? If it's singular, consider
@@ -166,12 +162,11 @@ public class PatientMenu extends AbstractMainMenu {
     // TODO: For Yingjie to implement
     private void handleViewUpcomingAppointments() {
         System.out.println("\n=== Upcoming Appointments ===");
-        String patienID = Integer.toString(app.getUserContext().getHospitalID());
+        String patienID = (app.getUserContext().getHospitalID());
         app.getAppointmentService().viewUpcomingAppointments(patienID);
 
     }
 
-    // TODO: For Amos to implement
     private void handleUpdateInformation() {
         System.out.println("\n=== Update Personal Information ===");
         // Implementation would allow updating contact info, etc.
