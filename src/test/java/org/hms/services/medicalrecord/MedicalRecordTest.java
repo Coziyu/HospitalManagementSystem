@@ -23,6 +23,6 @@ class MedicalRecordTest {
 
         System.out.println(medicalRecord.toPrintString());
 
-        assertEquals(6, medicalRecord.getEntries().size());
+        assertEquals(7, medicalRecord.getEntries().size());
     }
 }
