@@ -43,7 +43,8 @@ public class PatientMenu extends AbstractMainMenu {
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
                 switch (choice) {
-                    case 1 -> handleViewMedicalRecord();
+                    //case 1 -> handleViewMedicalRecord();
+                    case 1 ->handleAddDoctor();
                     case 2 -> handleUpdateInformation();
                     case 3 -> handleViewAvailableAppointmentSlot();
                     case 4 -> handleScheduleAppointment();
@@ -62,6 +63,14 @@ public class PatientMenu extends AbstractMainMenu {
                 System.out.println(Colour.RED + "Please enter a valid number." + Colour.RESET);
             }
         }
+    }
+
+    private void handleAddDoctor(){
+        System.out.print("Enter Doctor ID: ");
+        String docID = scanner.nextLine();
+        System.out.print("Enter date: ");
+        String date = scanner.nextLine();
+        app.getAppointmentService().addNewDoctorToSchedule(docID, date);
     }
 
     private void handleViewPastAppointmentOutcome() {

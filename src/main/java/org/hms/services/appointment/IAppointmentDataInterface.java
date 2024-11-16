@@ -34,4 +34,6 @@ public interface IAppointmentDataInterface extends IDataInterface {
 
     public Staff getStaffForSchedule(String staffId);
 
+    public String getStaffNameByID(String userId);
+
 }
