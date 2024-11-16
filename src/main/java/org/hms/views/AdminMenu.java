@@ -28,6 +28,15 @@ public class AdminMenu extends AbstractMainMenu {
         validateAdminAccess();
     }
 
+    /**
+     * Validates if the current user has administrator access.
+     *
+     * This method checks the user's context to determine if the
+     * user has administrator privileges. If the user is not an
+     * administrator or the user context is null, access is denied,
+     * an error message is displayed, and the user is redirected to
+     * the authentication menu.
+     */
     private void validateAdminAccess() {
         if (userContext == null || userContext.getUserType() != UserRole.ADMINISTRATOR) {
             System.out.println(Colour.RED + "Access Denied: Administrator privileges required." + Colour.RESET);
@@ -35,6 +44,17 @@ public class AdminMenu extends AbstractMainMenu {
         }
     }
 
+    /**
+     * Displays the Administrator menu and executes the chosen action.
+     *
+     * The administrator menu provides options to view and manage hospital staff,
+     * view scheduled appointments, view and manage medication inventory, and
+     * approve/reject replenishment requests. The administrator can also logout
+     * from the system.
+     *
+     * The administrator's menu is displayed until the administrator chooses to
+     * logout.
+     */
     @Override
     public void displayAndExecute() {
         printLowStockAlertMessage();
@@ -326,6 +346,14 @@ public class AdminMenu extends AbstractMainMenu {
 
 
 
+    /**
+     * Handles the approval of drug replenishment requests.
+     * This method displays a list of all replenishment requests and prompts the administrator
+     * to select a request to approve or reject. If the administrator chooses to approve the request,
+     * the method processes the request and updates the inventory accordingly. If the administrator
+     * chooses to reject the request, the method simply removes the request from the list.
+     * The method continues to loop until the administrator chooses to go back.
+     */
     private void handleApproveReplenishmentRequests() {
         // Print out the list of all replenishment requests
         System.out.println(Colour.BLUE + "=== Replenishment Requests ===" + Colour.RESET);
