@@ -5,6 +5,7 @@ import org.hms.services.drugdispensary.DrugRequestStatus;
 import org.hms.services.staffmanagement.Staff;
 import org.hms.services.storage.IDataInterface;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,8 @@ public interface IAppointmentDataInterface extends IDataInterface {
 
     public Staff getStaffForSchedule(String staffId);
 
-    public String getStaffNameByID(String userId);
+    public File[] getALlDateFile();
+
+    //public String getStaffNameByID(String userId);
 
 }

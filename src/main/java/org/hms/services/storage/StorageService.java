@@ -11,10 +11,7 @@ import org.hms.services.medicalrecord.*;
 import org.hms.services.staffmanagement.Staff;
 import org.hms.services.staffmanagement.StaffTable;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -172,7 +169,7 @@ public class StorageService
         List<AppointmentInformation> appointments = new ArrayList<>();
         String line;
 
-        try (BufferedReader br = new BufferedReader(new FileReader(dataRoot + "Appointments.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(dataRoot + "Appointment/" + "Appointments.csv"))) {
             br.readLine();
 
             while ((line = br.readLine()) != null) {
@@ -194,7 +191,7 @@ public class StorageService
     }
 
     public void writeAppointmentsToCsv(List<AppointmentInformation> appointments) {
-        String filePath = dataRoot + "Appointments.csv";
+        String filePath = dataRoot + "Appointment/" + "Appointments.csv";
         SimpleDateFormat timeSlotFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm-HH:mm");
 
         try (FileWriter writer = new FileWriter(filePath)) {
@@ -223,7 +220,7 @@ public class StorageService
         int numRows = 0;
         int numCols = 0;
 
-        String filePath = dataRoot + date + ".csv";
+        String filePath = dataRoot + "Appointment/schedules/" + date + ".csv";
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(filePath));
@@ -241,7 +238,7 @@ public class StorageService
         AppointmentSchedule schedule = new AppointmentSchedule(numCols - 1, numRows - 1);
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader(dataRoot + date + ".csv"));
+            BufferedReader br = new BufferedReader(new FileReader(dataRoot + "Appointment/schedules/" + date + ".csv"));
 
             String line;
 
@@ -264,7 +261,7 @@ public class StorageService
     public void writeScheduleToCSV(AppointmentSchedule schedule, String date) {
         String[][] matrix = schedule.getMatrix();  // Retrieve the matrix from the AppointmentSchedule object
         //String fileName = date + ".csv";  // Use the date to create the file name
-        String filePath = dataRoot + date + ".csv";
+        String filePath = dataRoot + "Appointment/schedules/" + date + ".csv";
 
         try (FileWriter writer = new FileWriter(filePath)) {
             for (String[] row : matrix) {
@@ -398,6 +395,22 @@ public class StorageService
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public File[] getALlDateFile(){
+        String directoryPath = dataRoot + "Appointment/schedules/";
+        File directory = new File(directoryPath);
+
+        if (!directory.exists() || !directory.isDirectory()) {
+            throw new IllegalArgumentException("Invalid directory path: " + directoryPath);
+        }
+
+        File[] csvFiles = directory.listFiles((dir, name) -> name.endsWith(".csv"));
+
+        if (csvFiles == null || csvFiles.length == 0) {
+            System.out.println("No CSV files found in the directory: " + directoryPath);
+        }
+        return csvFiles;
     }
 
     public Staff getStaffForSchedule(String staffId) {

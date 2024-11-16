@@ -68,9 +68,8 @@ public class PatientMenu extends AbstractMainMenu {
     private void handleAddDoctor(){
         System.out.print("Enter Doctor ID: ");
         String docID = scanner.nextLine();
-        System.out.print("Enter date: ");
-        String date = scanner.nextLine();
-        app.getAppointmentService().addNewDoctorToSchedule(docID, date);
+
+        app.getAppointmentService().updateAllSchedulesWithNewDoctor(docID);
     }
 
     private void handleViewPastAppointmentOutcome() {
