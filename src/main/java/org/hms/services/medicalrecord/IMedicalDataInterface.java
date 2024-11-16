@@ -43,4 +43,5 @@ public interface IMedicalDataInterface extends IDataInterface {
      */
     boolean addMedicalEntry(String patientID, MedicalEntry entry);
 
+    MedicalRecord getMedicalRecordTable();
 }

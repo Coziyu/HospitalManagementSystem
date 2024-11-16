@@ -2,7 +2,9 @@ package org.hms.services.staffmanagement;
 
 import org.hms.entities.AbstractTable;
 
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The StaffTable class extends the AbstractTable class to manage staff data,
@@ -18,9 +20,10 @@ public class StaffTable extends AbstractTable<Staff> {
     private static final String dataRoot = System.getProperty("user.dir") + "/data/";
 
     /**
-     * The default filename for storing staff data.
+     * The default filenames for staff and user data.
      */
-    private static final String DEFAULT_FILENAME = dataRoot + "staff.csv";
+    private static final String STAFF_FILE = dataRoot + "staff.csv";
+    private static final String USERS_FILE = dataRoot + "users.csv";
 
     /**
      * Provides the headers for the staff table.
@@ -39,7 +42,7 @@ public class StaffTable extends AbstractTable<Staff> {
      */
     @Override
     protected Staff createValidEntryTemplate() {
-        return new Staff(0,"", 0, "", "", "", "");
+        return new Staff(0, "", 0, "", "", "", "");
     }
 
     /**
@@ -53,12 +56,13 @@ public class StaffTable extends AbstractTable<Staff> {
     }
 
     /**
-     * Saves the staff data to the default file.
+     * Saves the staff data to the default file and updates users.csv.
      *
      * @throws IOException if an I/O error occurs.
      */
     public void saveToFile() throws IOException {
-        super.saveToFile(DEFAULT_FILENAME);
+        super.saveToFile(STAFF_FILE);
+        syncUsersFile();
     }
 
     /**
@@ -67,6 +71,72 @@ public class StaffTable extends AbstractTable<Staff> {
      * @throws IOException if an I/O error occurs.
      */
     public void loadFromFile() throws IOException {
-        super.loadFromFile(DEFAULT_FILENAME);
+        super.loadFromFile(STAFF_FILE);
+        syncUsersFile();
     }
+
+    /**
+     * Synchronizes the users.csv file with staff.csv by matching the id and staffId columns.
+     */
+    private void syncUsersFile() {
+        List<String> userLines = new ArrayList<>();
+        userLines.add("id,password,role,isFirstLogin"); // Add headers
+
+        for (Staff staff : getEntries()) {
+            userLines.add(String.format("%s,%s,%s,%s",
+                    staff.getStaffId(),
+                    "password",
+                    staff.getRole(),
+                    "true")); // Default isFirstLogin to true
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(USERS_FILE))) {
+            for (String line : userLines) {
+                writer.write(line);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Error synchronizing users.csv: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Adds a new entry to the staff table and updates users.csv.
+     *
+     * @param staff the Staff object to add
+     */
+    @Override
+    public void addEntry(Staff staff) {
+        try {
+            super.addEntry(staff);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        syncUsersFile();
+    }
+
+    /**
+     * Removes an entry from the staff table and users.csv.
+     *
+     * @param tableEntryID the numeric ID of the entry to remove
+     */
+    @Override
+    public boolean removeEntry(int tableEntryID) {
+        Staff staff = getEntries().stream()
+                .filter(entry -> entry.getTableEntryID() == tableEntryID)
+                .findFirst()
+                .orElse(null);
+
+        if (staff != null) {
+            try {
+                super.removeEntry(tableEntryID); // Call parent class method
+                syncUsersFile(); // Ensure users.csv is updated
+                return true;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return false; // Return false if staff not found
+    }
+
 }

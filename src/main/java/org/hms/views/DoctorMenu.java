@@ -171,7 +171,7 @@ public class DoctorMenu extends AbstractMainMenu {
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String formattedDate = currentDate.format(formatter);
-        app.getAppointmentService().displayAppointmentsForDoctor("20241201", doctorID);
+        app.getAppointmentService().displayAppointmentsForDoctor(formattedDate, doctorID);
 
     }
 

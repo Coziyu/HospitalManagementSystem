@@ -11,16 +11,31 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
     DrugInventoryTable drugInventory;
     DrugReplenishRequestTable drugReplenishRequestTable;
 
+    /**
+     * Initialises the DrugDispensaryService with the given data interface
+     *
+     * @param dataInterface the interface for accessing drug stock data.
+     */
     public DrugDispensaryService(IDrugStockDataInterface dataInterface) {
         this.storageServiceInterface = dataInterface;
         drugInventory = storageServiceInterface.getDrugInventory();
         drugReplenishRequestTable = storageServiceInterface.getDrugReplenishRequestTable();
     }
 
+    /**
+     * Retrieves the drug replenish requests as a formatted string.
+     *
+     * @return a string representation of the drug replenish requests.
+     */
     public String getDrugReplenishRequestsAsString(){
         return drugReplenishRequestTable.toPrintString();
     }
 
+    /**
+     * Retrieves the drug inventory as a string
+     *
+     * @return a string representation of the drug inventory
+     */
     public String getDrugInventoryAsString(){
         return drugInventory.toPrintString();
     }
@@ -39,6 +54,11 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
                 smallerThanOrEquals);
     }
 
+    /**
+     * Processes a drug dispense request and updates the inventory if valid.
+     * @param pendingRequest the drug dispense request to process.
+     * @return true if the drug was successfully dispensed, false otherwise
+     */
     public boolean dispenseDrug(DrugDispenseRequest pendingRequest){
         String drugRequested = pendingRequest.getDrugName();
 
@@ -68,6 +88,14 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         return true;
     }
 
+    /**
+     *Submits a replenish request for a specified drug by name
+     *
+     * @param drugName name of drug to replenish
+     * @param addQuantity quantity to add
+     * @param notes additional notes for the request
+     * @return true if request was successfully submitted, false otherwise
+     */
     public boolean submitReplenishRequest(String drugName, int addQuantity, String notes) {
         DrugReplenishRequest newRequest = drugReplenishRequestTable.createValidEntryTemplate();
         newRequest.setDrugName(drugName);
@@ -84,6 +112,14 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         return true;
     }
 
+    /**
+     * Submits a replenish request for a specific drug using its inventory entry ID.
+     *
+     * @param inventoryEntryID the ID of the inventory entry to replenish.
+     * @param addQuantity      the quantity to add.
+     * @param notes            additional notes for the request.
+     * @return true if the request was successfully submitted, false otherwise.
+     */
     public boolean submitReplenishRequest(int inventoryEntryID, int addQuantity, String notes) {
         DrugReplenishRequest newRequest = drugReplenishRequestTable.createValidEntryTemplate();
 
@@ -104,6 +140,13 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         return true;
     }
 
+    /**
+     * Processes a replenish and accepts or reject it
+     *
+     * @param replenishRequestID the ID of the replenish request
+     * @param accept        True if accepted, false if rejected
+     * @return          True if request was successfully processed, false otherwise
+     */
     public boolean processReplenishRequest(int replenishRequestID, boolean accept){
         // TODO: Decide if we are keeping records of past requests.
         DrugReplenishRequest request = drugReplenishRequestTable.getEntry(replenishRequestID);
@@ -124,6 +167,13 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         return true;
     }
 
+
+    /**
+     * Updates the stock quantity for a specific drug by name
+     * @param drugName  name of the drug
+     * @param newQuantity   the new stock quantity
+     * @return  true if stock quantity successfully updated, false otherwise
+     */
     //TODO: Exceptions of StockQuantity Manipulation
     public boolean setDrugStockQuantity(String drugName, int newQuantity){
         ArrayList<DrugInventoryEntry> results = drugInventory.searchByAttribute(DrugInventoryEntry::getName, drugName);
@@ -134,6 +184,14 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         drugStock.setQuantity(newQuantity);
         return true;
     }
+
+    /**
+     * Adds to the stock quantity for a specific drug by name.
+     *
+     * @param drugName    the name of the drug.
+     * @param newQuantity the quantity to add.
+     * @return true if the stock quantity was successfully updated, false otherwise.
+     */
     public boolean addDrugStockQuantity(String drugName, int newQuantity){
         ArrayList<DrugInventoryEntry> results = drugInventory.searchByAttribute(DrugInventoryEntry::getName, drugName);
         if (results.isEmpty()){
@@ -143,6 +201,13 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         drugStock.setQuantity(drugStock.getQuantity() + newQuantity);
         return true;
     }
+
+    /**
+     * Retrieves the current stock quantity for a specific drug by name.
+     *
+     * @param drugName the name of the drug.
+     * @return the current stock quantity, or -1 if the drug does not exist.
+     */
     public int getDrugStockQuantity(String drugName){
         ArrayList<DrugInventoryEntry> results = drugInventory.searchByAttribute(DrugInventoryEntry::getName, drugName);
         if (results.isEmpty()){
@@ -154,8 +219,8 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
 
     /**
      * Checks if the entryID is valid
-     * @param entryID
-     * @return
+     * @param entryID the inventory to validate
+     * @return  true if valid, false otherwise
      */
     public boolean isValidDrugEntryID(int entryID){
          return !drugInventory.searchByAttribute(DrugInventoryEntry::getTableEntryID, entryID).isEmpty();

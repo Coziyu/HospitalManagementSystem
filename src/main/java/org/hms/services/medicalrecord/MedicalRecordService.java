@@ -19,13 +19,13 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
     // In-memory storage
     private Map<String, PersonalParticulars> personalParticularsMap;
     private Map<String, ContactInformation> contactInformationMap;
-    private Map<String, MedicalRecord> medicalRecordsMap;
+    private MedicalRecord medicalRecordsTable;
 
     public MedicalRecordService(IMedicalDataInterface storageService) {
         this.storageServiceInterface = storageService;
         this.personalParticularsMap = new HashMap<>();
         this.contactInformationMap = new HashMap<>();
-        this.medicalRecordsMap = new HashMap<>();
+        this.medicalRecordsTable = storageServiceInterface.getMedicalRecordTable();
         initializeData();
     }
 
@@ -52,7 +52,6 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
     private void loadAllData() {
         loadPersonalParticulars();
         loadContactInformation();
-        loadMedicalRecords();
     }
 
     private void loadPersonalParticulars() {
@@ -92,33 +91,16 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
         }
     }
 
-    private void loadMedicalRecords() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(MEDICAL_RECORDS_CSV))) {
-            reader.readLine(); // Skip header
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                String patientId = parts[0].trim();
-
-                MedicalRecord record = medicalRecordsMap.computeIfAbsent(
-                        patientId,
-                        k -> new MedicalRecord(patientId, personalParticularsMap.get(patientId).getBloodType())
-                );
-
-                record.addMedicalEntry(
-                        parts[2].trim(), // diagnosis
-                        parts[3].trim(), // treatment
-                        parts[4].trim()  // notes
-                );
-            }
-        } catch (IOException e) {
-            System.err.println("Error loading medical records: " + e.getMessage());
-        }
-    }
-
     // === PATIENT METHODS ===
     public MedicalRecord viewOwnRecord(PatientContext patientContext) {
-        return medicalRecordsMap.get(patientContext.getPatientID());
+        String patientIDString = patientContext.getPatientID().toString();
+        System.out.println("Looking up record with ID: " + patientIDString);
+        // Use the medicalRecordsMap that's loaded from CSV instead of storageServiceInterface
+        return getMedicalRecord(patientIDString);
+    }
+
+    public PersonalParticulars getPersonalParticulars(String patientID) {
+        return personalParticularsMap.get(patientID);
     }
 
     public boolean updateOwnContactInfo(PatientContext patientContext,
@@ -141,7 +123,7 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
             System.err.println("Unauthorized: Only doctors can view patient records");
             return null;
         }
-        return medicalRecordsMap.get(patientID);
+        return (MedicalRecord) getMedicalRecord(patientID);
     }
 
     public boolean addMedicalEntry(UserContext doctorContext, String patientID,
@@ -152,9 +134,14 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
         }
 
         try {
-            MedicalRecord record = medicalRecordsMap.get(patientID);
-            record.addMedicalEntry(diagnosis, treatment, notes);
-            saveMedicalRecordsToCSV();
+            MedicalEntry newEntry = medicalRecordsTable.createValidEntryTemplate();
+            newEntry.setPatientID(patientID);
+            newEntry.setDoctorID(String.valueOf(doctorContext.getHospitalID()));
+            newEntry.setDiagnosis(diagnosis);
+            newEntry.setTreatmentPlan(treatment);
+            newEntry.setConsultationNotes(notes);
+
+            medicalRecordsTable.addEntry(newEntry);
             return true;
         } catch (Exception e) {
             System.err.println("Error adding medical entry: " + e.getMessage());
@@ -189,33 +176,17 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
         }
     }
 
-    private void saveMedicalRecordsToCSV() throws IOException {
-        try (FileWriter writer = new FileWriter(MEDICAL_RECORDS_CSV)) {
-            writer.write("PatientID,Date,Diagnosis,TreatmentPlan,ConsultationNotes,DoctorID\n");
-            for (MedicalRecord record : medicalRecordsMap.values()) {
-                for (MedicalEntry entry : record.getMedicalHistory()) {
-                    writer.write(String.format("%s,%s,%s,%s,%s,%s\n",
-                            record.getBloodType(),
-                            entry.getDate(),
-                            entry.getDiagnosis(),
-                            entry.getTreatmentPlan(),
-                            entry.getConsultationNotes(),
-                            "D001" // Placeholder for doctor ID
-                    ));
-                }
-            }
-        }
-    }
+
 
     // Required by AbstractService
     //TODO: For Elijah to reimplement this part.
-    // For now, I have added patentID as an argument to your code.
+    // For now, I have added patientID as an argument to your code.
     // make sure to ensure that your implementation is correct
     // Also note that patientID eventually would be stored as a String
 //    public Optional<MedicalRecord> getMedicalRecord() {
 //        return Optional.ofNullable(medicalRecordsMap.get(patientID));
 //    }
-    public Optional<MedicalRecord> getMedicalRecord(int patientID) {
-        return Optional.ofNullable(medicalRecordsMap.get(patientID));
+    public MedicalRecord getMedicalRecord(String patientID) {
+        return (MedicalRecord) medicalRecordsTable.filterByAttribute(MedicalEntry::getPatientID, patientID);
     }
 }
