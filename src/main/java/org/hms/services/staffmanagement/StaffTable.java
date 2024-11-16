@@ -1,10 +1,14 @@
 package org.hms.services.staffmanagement;
 
 import org.hms.entities.AbstractTable;
+import org.hms.entities.User;
+import org.hms.entities.UserRole;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The StaffTable class extends the AbstractTable class to manage staff data,
@@ -71,7 +75,6 @@ public class StaffTable extends AbstractTable<Staff> {
      */
     public void saveToFile() throws IOException {
         super.saveToFile();
-        syncUsersFile();
     }
 
     /**
@@ -81,31 +84,50 @@ public class StaffTable extends AbstractTable<Staff> {
      */
     public void loadFromFile() throws IOException {
         super.loadFromFile();
-        syncUsersFile();
     }
 
     /**
-     * Synchronizes the users.csv file with staff.csv by matching the id and staffId columns.
+     * Loads user data from users.csv into the users map.
      */
-    private void syncUsersFile() {
-        List<String> userLines = new ArrayList<>();
-        userLines.add("id,password,role,isFirstLogin"); // Add headers
-
-        for (Staff staff : getEntries()) {
-            userLines.add(String.format("%s,%s,%s,%s",
-                    staff.getStaffId(),
-                    "password",
-                    staff.getRole(),
-                    "true")); // Default isFirstLogin to true
-        }
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(USERS_FILE))) {
-            for (String line : userLines) {
-                writer.write(line);
-                writer.newLine();
+    private Map<String, User> loadUsers() {
+        Map<String, User> users = new HashMap<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(USERS_FILE))) {
+            String line = reader.readLine(); // Skip header
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 4) {
+                    User user = new User(
+                            parts[0],
+                            parts[1],
+                            UserRole.valueOf(parts[2].toUpperCase()),
+                            Boolean.parseBoolean(parts[3])
+                    );
+                    users.put(user.getId(), user);
+                }
             }
         } catch (IOException e) {
-            System.err.println("Error synchronizing users.csv: " + e.getMessage());
+            System.out.println("Error loading users: " + e.getMessage());
+        }
+
+        return users;
+    }
+
+    /**
+     * Saves user data to users.csv
+     */
+    private void saveUsers(Map<String, User> users) {
+        try (PrintWriter writer = new PrintWriter(USERS_FILE)) {
+            writer.println("id,password,role,isFirstLogin");
+            for (User user : users.values()) {
+                writer.printf("%s,%s,%s,%b%n",
+                        user.getId(),
+                        user.getPassword(),
+                        user.getRole().toString(),
+                        user.isFirstLogin()
+                );
+            }
+        } catch (IOException e) {
+            System.out.println("Error saving users: " + e.getMessage());
         }
     }
 
@@ -118,10 +140,29 @@ public class StaffTable extends AbstractTable<Staff> {
     public void addEntry(Staff staff) {
         try {
             super.addEntry(staff);
+            saveToFile();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        syncUsersFile();
+
+        Map<String, User> users = loadUsers();
+        users.put(staff.getStaffId(), new User(staff.getStaffId(), "password", parseUserRole(staff.getRole()), true));
+        saveUsers(users);
+
+    }
+
+    /**
+     * Converts a string representation of a user role to a UserRole enum value.
+     *
+     * @param role the string representation of the user role
+     * @return the corresponding UserRole enum value
+     */
+    private static UserRole parseUserRole(String role) {
+        try {
+            return UserRole.valueOf(role.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid role: " + role);
+        }
     }
 
     /**
@@ -139,7 +180,12 @@ public class StaffTable extends AbstractTable<Staff> {
         if (staff != null) {
             try {
                 super.removeEntry(tableEntryID); // Call parent class method
-                syncUsersFile(); // Ensure users.csv is updated
+                saveToFile(); // Ensure users.csv is updated
+
+                Map<String, User> users = loadUsers();
+                users.remove(staff.getStaffId());
+                saveUsers(users);
+
                 return true;
             } catch (Exception e) {
                 throw new RuntimeException(e);
