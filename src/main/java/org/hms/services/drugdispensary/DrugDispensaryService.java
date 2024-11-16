@@ -2,6 +2,7 @@ package org.hms.services.drugdispensary;
 
 import org.hms.services.AbstractService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
@@ -84,6 +85,11 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         // Update the Inventory with new stock
         pendingRequest.setStatus(DrugRequestStatus.DISPENSED);
         drugStock.setQuantity(quantityAvailable - quantityRequested);
+        try {
+            drugInventory.saveToFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return true;
     }
@@ -174,7 +180,6 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
      * @param newQuantity   the new stock quantity
      * @return  true if stock quantity successfully updated, false otherwise
      */
-    //TODO: Exceptions of StockQuantity Manipulation
     public boolean setDrugStockQuantity(String drugName, int newQuantity){
         ArrayList<DrugInventoryEntry> results = drugInventory.searchByAttribute(DrugInventoryEntry::getName, drugName);
         if (results.isEmpty()){
@@ -182,6 +187,27 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         }
         DrugInventoryEntry drugStock = results.getFirst();
         drugStock.setQuantity(newQuantity);
+        try {
+            drugInventory.saveToFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return true;
+    }
+
+
+    public boolean setDrugLowStockAlertThreshold(String drugName, int newLowStockAlertThreshold){
+        ArrayList<DrugInventoryEntry> results = drugInventory.searchByAttribute(DrugInventoryEntry::getName, drugName);
+        if (results.isEmpty()){
+            return false;
+        }
+        DrugInventoryEntry drugStock = results.getFirst();
+        drugStock.setLowStockAlertThreshold(newLowStockAlertThreshold);
+        try {
+            drugInventory.saveToFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return true;
     }
 
@@ -199,6 +225,11 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         }
         DrugInventoryEntry drugStock = results.getFirst();
         drugStock.setQuantity(drugStock.getQuantity() + newQuantity);
+        try {
+            drugInventory.saveToFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return true;
     }
 
@@ -224,5 +255,62 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
      */
     public boolean isValidDrugEntryID(int entryID){
          return !drugInventory.searchByAttribute(DrugInventoryEntry::getTableEntryID, entryID).isEmpty();
+    }
+
+    /**
+     * Checks if a drug exists in the inventory.
+     *
+     * @param drugName the name of the drug to search for.
+     * @return true if the drug exists, false otherwise.
+     */
+    public boolean doesDrugExist(String drugName){
+        return !drugInventory.searchByAttribute(DrugInventoryEntry::getName, drugName).isEmpty();
+    }
+
+    /**
+     * Adds a new drug to the inventory.
+     *
+     * @param drugName               the name of the drug.
+     * @param quantity               the initial quantity of the drug.
+     * @param lowStockAlertThreshold the low stock alert threshold for the drug.
+     * @return true if the drug was successfully added, false otherwise.
+     */
+    public boolean addNewDrug(String drugName, int quantity, int lowStockAlertThreshold){
+        DrugInventoryEntry newDrug = drugInventory.createValidEntryTemplate();
+
+        newDrug.setName(drugName);
+        newDrug.setQuantity(quantity);
+        newDrug.setLowStockAlertThreshold(lowStockAlertThreshold);
+
+        try {
+            drugInventory.addEntry(newDrug);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean removeDrugFromInventory(int entryID){
+        // Check if the entryID is valid
+        if (!isValidDrugEntryID(entryID)){
+            return false;
+        }
+        try {
+            drugInventory.removeEntry(entryID);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    public String getDrugName(int entryID){
+        ArrayList<DrugInventoryEntry> results = drugInventory.searchByAttribute(DrugInventoryEntry::getTableEntryID, entryID);
+        if (results.isEmpty()){
+            return null;
+        }
+        return results.getFirst().getName();
     }
 }
