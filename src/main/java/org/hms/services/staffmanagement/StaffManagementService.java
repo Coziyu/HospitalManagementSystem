@@ -1,5 +1,8 @@
 package org.hms.services.staffmanagement;
 
+import org.hms.services.AbstractService;
+import org.hms.services.drugdispensary.IDrugStockDataInterface;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,18 +11,21 @@ import java.util.stream.Collectors;
  * members, including adding, updating, removing, searching, and changing
  * staff details and roles.
  */
-public class StaffManagementService {
+public class StaffManagementService extends AbstractService<IDrugStockDataInterface> {
 
-    private final StaffTable staffTable;
+    private StaffTable staffTable;
 
     /**
      * Initializes the StaffManagementService with a StaffTable instance and
      * optionally loads data from a file.
      */
-    public StaffManagementService() {
-        this.staffTable = new StaffTable();
-        loadFromFile(); // Optionally load from file on initialization
+    public StaffManagementService(IDrugStockDataInterface dataInterface) {
+        this.storageServiceInterface = dataInterface;
+        staffTable = storageServiceInterface.getStaffTable();
+        //TODO: Decide if needed
+        // loadFromFile(); // Optionally load from file on initialization
     }
+
 
     /**
      * Adds a new staff entry to the staff table and saves the changes to a file.

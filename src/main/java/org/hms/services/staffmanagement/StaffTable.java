@@ -14,6 +14,16 @@ import java.util.List;
  */
 public class StaffTable extends AbstractTable<Staff> {
 
+
+    public StaffTable() {
+        super();
+    }
+
+    public StaffTable(String filePath){
+        super();
+        this.filePath = filePath;
+    }
+
     /**
      * The root directory for data storage.
      */
@@ -22,7 +32,6 @@ public class StaffTable extends AbstractTable<Staff> {
     /**
      * The default filenames for staff and user data.
      */
-    private static final String STAFF_FILE = dataRoot + "staff.csv";
     private static final String USERS_FILE = dataRoot + "users.csv";
 
     /**
@@ -42,7 +51,7 @@ public class StaffTable extends AbstractTable<Staff> {
      */
     @Override
     protected Staff createValidEntryTemplate() {
-        return new Staff(0, "", 0, "", "", "", "");
+        return new Staff(getUnusedID(), "", 0, "", "", "", "");
     }
 
     /**
@@ -61,7 +70,7 @@ public class StaffTable extends AbstractTable<Staff> {
      * @throws IOException if an I/O error occurs.
      */
     public void saveToFile() throws IOException {
-        super.saveToFile(STAFF_FILE);
+        super.saveToFile();
         syncUsersFile();
     }
 
@@ -71,7 +80,7 @@ public class StaffTable extends AbstractTable<Staff> {
      * @throws IOException if an I/O error occurs.
      */
     public void loadFromFile() throws IOException {
-        super.loadFromFile(STAFF_FILE);
+        super.loadFromFile();
         syncUsersFile();
     }
 
