@@ -8,7 +8,6 @@ import org.hms.services.storage.StorageService;
 import org.hms.services.authentication.AuthenticationService;
 import org.hms.views.AuthenticationMenu;
 import org.hms.views.AbstractMenu;
-import org.hms.entities.UserRole;
 
 public class App {
     private final StorageService storageService;
@@ -26,18 +25,7 @@ public class App {
         this.appointmentService = new AppointmentService(storageService);
         this.drugDispensaryService = new DrugDispensaryService(storageService);
         this.authenticationService = new AuthenticationService();
-
         this.userContext = null;
-
-        // Initialize test users
-        initializeTestUsers();
-    }
-
-    private void initializeTestUsers() {
-        authenticationService.addUser("DOC001", UserRole.DOCTOR);
-        authenticationService.addUser("PAT001", UserRole.PATIENT);
-        authenticationService.addUser("PHARM001", UserRole.PHARMACIST);
-        authenticationService.addUser("ADMIN001", UserRole.ADMINISTRATOR);
     }
 
     public void setCurrentMenu(AbstractMenu menu) {
