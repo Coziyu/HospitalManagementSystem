@@ -91,14 +91,14 @@ class DrugDispensaryServiceTest {
         void getDrugReplenishRequestsAsString() {
             System.out.println(drugDispensaryService.getDrugReplenishRequestsAsString());
             String expected = """
-                                 ┌─────┬────────────────┬──────┬───────────────────────────────┐
-                                 │ ID  │ Name           │ Qty  │ Notes                         │
-                                 ├─────┼────────────────┼──────┼───────────────────────────────┤
-                                 │ 0   │ Ibuprofen      │ 5    │ Out of stock                  │
-                                 │ 1   │ Aspirin        │ 10   │ Out of stock?                 │
-                                 │ 2   │ Paracetamol    │ 15   │ Out ,of, "stock"              │
-                                 └─────┴────────────────┴──────┴───────────────────────────────┘
-                                 """;
+                    ┌─────┬────────────────┬──────┬─────────────────────────────────────────────────────────────┐
+                    │ ID  │ Name           │ Qty  │ Notes                                                       │
+                    ├─────┼────────────────┼──────┼─────────────────────────────────────────────────────────────┤
+                    │ 0   │ Ibuprofen      │ 5    │ Out of stock                                                │
+                    │ 1   │ Aspirin        │ 10   │ Out of stock?                                               │
+                    │ 2   │ Paracetamol    │ 15   │ Out ,of, "stock"                                            │
+                    └─────┴────────────────┴──────┴─────────────────────────────────────────────────────────────┘
+                    """;
             assertEquals(expected, drugDispensaryService.getDrugReplenishRequestsAsString());
         }
         @Test
