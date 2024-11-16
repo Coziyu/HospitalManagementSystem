@@ -117,7 +117,7 @@ public class DoctorMenu extends AbstractMainMenu {
         // TODO: For Yingjie to implement
         System.out.println("Feature coming soon");
 
-        String doctorID = Integer.toString(app.getUserContext().getHospitalID());
+        String doctorID = (app.getUserContext().getHospitalID());
         //doctorID = "D1001" ;  //remove this line after real doctor ID have appointments
         app.getAppointmentService().viewRequest(doctorID);
         System.out.println("key in appointment ID");
@@ -128,7 +128,7 @@ public class DoctorMenu extends AbstractMainMenu {
 
     private void handleSetAppointmentAvailability() {
         // TODO: For Yingjie to implement
-        String doctorID = Integer.toString(app.getUserContext().getHospitalID());
+        String doctorID = (app.getUserContext().getHospitalID());
 
         System.out.println("Do you want to set the schedule as:");
         System.out.println("1. Available");
@@ -169,7 +169,7 @@ public class DoctorMenu extends AbstractMainMenu {
         logDoctorAction("Viewed today's appointments");
         // Implementation would show today's appointments
 
-        String doctorID = Integer.toString(app.getUserContext().getHospitalID());
+        String doctorID = (app.getUserContext().getHospitalID());
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String formattedDate = currentDate.format(formatter);
