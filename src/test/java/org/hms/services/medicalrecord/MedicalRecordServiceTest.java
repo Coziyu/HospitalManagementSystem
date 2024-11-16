@@ -22,4 +22,9 @@ class MedicalRecordServiceTest {
     void viewContactInfo(){
         System.out.println(medicalRecordService.getPatientContactInformation("PAT001"));
     }
+
+    @Test
+    void getPatientParticularsTreatedByDoctor() {
+        System.out.println(medicalRecordService.getPatientParticularsTreatedByDoctor("DOC001"));
+    }
 }

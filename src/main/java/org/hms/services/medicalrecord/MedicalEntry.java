@@ -58,7 +58,7 @@ public class MedicalEntry extends AbstractTableEntry {
 
     @Override
     public String toCSVString() {
-        return String.format("%s,%S,%s,%s,%s,%s,%s\n",
+        return String.format("%s,%S,%s,%s,%s,%s,%s",
                 getTableEntryID(),
                 preprocessCSVString(getPatientID()),
                 preprocessCSVString(getDoctorID()),
