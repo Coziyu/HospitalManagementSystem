@@ -30,6 +30,7 @@ public class StorageService
     private MedicalRecord medicalRecordTable;
     private PatientTable patientParticularsTable;
     private ContactInformationTable contactInformationTable;
+    private StaffTable staffTable;
 
     // TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
     private static int drugDispenseRequestCounter = 0;
@@ -41,6 +42,16 @@ public class StorageService
         initializeMedicalRecordTable();
         initializePatientParticularsTable();
         initializeContactInformationTable();
+        initializeStaffTable();
+    }
+
+    private void initializeStaffTable() {
+        staffTable = new StaffTable(dataRoot + "staff.csv");
+        try {
+            staffTable.loadFromFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -134,6 +145,11 @@ public class StorageService
     @Override
     public DrugReplenishRequestTable getDrugReplenishRequestTable() {
         return drugReplenishRequestTable;
+    }
+
+    @Override
+    public StaffTable getStaffTable() {
+        return staffTable;
     }
 
     @Override
@@ -420,5 +436,15 @@ public class StorageService
                 .findFirst()
                 .orElse(null);
     }
+
+    @Override
+    public String getStaffNameByID(String userId){
+        ArrayList<Staff> target = staffTable.searchByAttribute(Staff::getStaffId, userId);
+        if (target.isEmpty()){
+            return null;
+        }
+        return target.getFirst().getName();
+    }
+
 }
 

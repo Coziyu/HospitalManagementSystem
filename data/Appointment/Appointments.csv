@@ -1,4 +1,2 @@
-appointmentID,patientID,doctorID,appointmentTimeSlot,appointmentStatus
-108,2,1,2024-12-01 14:00-14:00,CONFIRMED
-101,PAT001,DOC002,2024-12-01 13:00-13:00,CANCELLED
-102,PAT001,DOC001,2024-12-01 10:00-10:00,PENDING
+﻿appointmentID,patientID,doctorID,appointmentTimeSlot,appointmentStatus
+100,PAT001,DOC001,2024-12-01 12:00-13:00,CANCELLED

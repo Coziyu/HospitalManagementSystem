@@ -1,5 +1,6 @@
 package org.hms.services.drugdispensary;
 
+import org.hms.services.staffmanagement.StaffTable;
 import org.hms.services.storage.IDataInterface;
 
 import java.util.ArrayList;
@@ -25,4 +26,6 @@ public interface IDrugStockDataInterface extends IDataInterface {
      * @return the DrugReplenishRequestTable containing replenish requests.
      */
     DrugReplenishRequestTable getDrugReplenishRequestTable();
+
+    StaffTable getStaffTable();
 }

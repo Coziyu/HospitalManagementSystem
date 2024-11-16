@@ -5,7 +5,6 @@ import org.hms.services.drugdispensary.DrugDispenseRequest;
 import org.hms.services.drugdispensary.DrugRequestStatus;
 import org.hms.services.storage.StorageService;
 
-import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -688,7 +687,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
         // Set all time slots for the new doctor as "Available"
         for (int i = 1; i < oldRows; i++) {
-            newMatrix[i][oldCols] = "available";
+            newMatrix[i][oldCols] = "Available";
         }
 
         // Update the schedule's matrix
@@ -696,26 +695,6 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
         // Save the updated schedule back to the storage service
         storageServiceInterface.writeScheduleToCSV(schedule,date);
-    }
-
-    public void updateAllSchedulesWithNewDoctor(String doctorID) {
-
-        File[] csvFiles = storageServiceInterface.getALlDateFile();
-
-        for (File csvFile : csvFiles) {
-            try {
-                String fileName = csvFile.getName();
-                String date = fileName.substring(0, fileName.indexOf(".csv"));
-
-                addNewDoctorToSchedule(doctorID, date);
-
-                System.out.println("Updated schedule for date: " + date);
-            } catch (Exception e) {
-
-                System.err.println("Failed to update schedule for file: " + csvFile.getName());
-                e.printStackTrace();
-            }
-        }
     }
 
 }

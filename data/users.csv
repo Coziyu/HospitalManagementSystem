@@ -1,7 +1,2 @@
 id,password,role,isFirstLogin
-PAT001,password,PATIENT,false
-ADMIN001,123123,ADMINISTRATOR,false
-PAT120,123456,PATIENT,false
-DOC001,password,DOCTOR,false
-DOC002,password,DOCTOR,true
-PHARM001,password,PHARMACIST,true
+DOC001,password,Doctor,true
