@@ -40,6 +40,118 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
     }
 
     //For patient
+    public String getDoctorID(String patientID) {
+        for (AppointmentInformation appointment : appointments) {
+            // Check if the patientID matches
+            if (appointment.getPatientID().equals(patientID)) {
+                // Return the doctor's ID for the matching appointment
+                return appointment.getDoctorID();
+            }
+        }
+        // If no appointment is found for the given patientID
+        System.out.println("No appointment found for patient ID: " + patientID);
+        return null; // or throw an exception if preferred
+    }
+
+    public AppointmentStatus getCurrentAppointmentStatus(String patientID) {
+        for (AppointmentInformation appointment : appointments) {
+            // Check if the patientID matches
+            if (appointment.getAppointmentStatus() == AppointmentStatus.PENDING
+                    || appointment.getAppointmentStatus() == AppointmentStatus.CONFIRMED) {
+                return appointment.getAppointmentStatus();
+            }
+        }
+        // If no appointment is found for the given patientID
+        System.out.println("No appointment found for patient ID: " + patientID);
+        return null; // or throw an exception if preferred
+    }
+
+    public Boolean checkExistingAppointment(String patientID) {
+        for (AppointmentInformation appointment : appointments) {
+            // Check if the patientID matches
+            if (appointment.getPatientID().equals(patientID)) {
+                // Check if the appointment status is not COMPLETED
+                if (appointment.getAppointmentStatus() != AppointmentStatus.COMPLETED
+                        && appointment.getAppointmentStatus() != AppointmentStatus.CANCELLED) {
+                    return false; // An active appointment exists
+                }
+            }
+        }
+        // No active appointment found or all appointments are COMPLETED
+        return true;
+    }
+
+    public String[] getAppointmentDateTime(String patientID) {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
+
+        for (AppointmentInformation appointment : appointments) {
+            // Check if the patientID matches
+            if (appointment.getPatientID().equals(patientID)) {
+                // Format the date and time slot
+                String date = dateFormatter.format(appointment.getAppointmentTimeSlot());
+                String timeSlot = timeFormatter.format(appointment.getAppointmentTimeSlot());
+                return new String[]{date, timeSlot};
+            }
+        }
+        // If no appointment is found for the given patientID
+        System.out.println("No appointment found for patient ID: " + patientID);
+        return null; // or throw an exception if preferred
+    }//return array of string, index 0 is date, index 1 is timeslot
+
+    public void resumeDoctorSchedule(String doctorID, String Date, String timeSlot) {
+        AppointmentSchedule schedule = storageServiceInterface.loadSchedule(Date);
+        int doctorCol = -1;  // Find doctor column
+        int timeSlotRow = -1;
+        String[][] matrix = schedule.getMatrix();
+
+        for (int col = 1; col < matrix[0].length; col++) {
+            if (matrix[0][col] != null && matrix[0][col].equals(doctorID)) {
+                doctorCol = col - 1;
+                break;
+            }
+        }
+
+
+        for (int row = 1; row < matrix.length; row++) {
+            if (matrix[row][0] != null && matrix[row][0].equals(timeSlot)) {
+                timeSlotRow = row - 1;
+                break;
+            }
+        }
+
+        String slotValue = schedule.getSlot(timeSlotRow, doctorCol);
+
+        if (!("available".equals(slotValue)) ){  // If slot is available (1)
+            schedule.setSlot(timeSlotRow, doctorCol, "available");
+            storageServiceInterface.writeScheduleToCSV(schedule, Date);// Occupy the slot with patientID
+            //System.out.println("Schedule set successful for doctor " + doctorID + " at " + timeSlot + " on " + "2024-11-01" + ".");//hard code the date here,need change
+
+        } else {
+            System.out.println("Fail to change schedule");
+        }
+
+    }
+
+    public void setAppointmentToCanceled(String patientID) {
+        for (AppointmentInformation appointment : appointments) {
+            // Check if the patientID matches
+            if (appointment.getPatientID().equals(patientID)) {
+                // Set the appointment status to CANCELED for the first match
+                if (appointment.getAppointmentStatus() == AppointmentStatus.CONFIRMED || appointment.getAppointmentStatus() == AppointmentStatus.PENDING) {
+                    appointment.setAppointmentStatus(AppointmentStatus.CANCELLED);
+                    storageServiceInterface.writeAppointmentsToCsv(appointments);
+                    return; // Exit after setting the first matching appointment
+                }
+                else{continue;}
+            }
+            // If no appointment is found for the given patientID
+            System.out.println("No appointment found for patient ID: " + patientID);
+        }
+    }
+
+
+
     public void scheduleAppointment(String patientID, String doctorID, String Date, String timeSlot, AppointmentSchedule schedule) {
         //before calling any function related to schedule/reschedule appointment, use storageservice to get schedule of wanted date first;
 
@@ -62,7 +174,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
 
         String slotValue = schedule.getSlot(timeSlotRow, doctorCol);
-        if ("1".equals(slotValue)) {  // If slot is available (1)
+        if ("available".equals(slotValue)) {  // If slot is available (1)
             schedule.setSlot(timeSlotRow, doctorCol, patientID);
             storageServiceInterface.writeScheduleToCSV(schedule, Date);// Occupy the slot with patientID
             System.out.println("Appointment scheduled successfully for patient " + patientID + " with doctor " + doctorID + " at " + timeSlot + " on " + "2024-11-01" + ".");//hard code the date here,need change
@@ -76,13 +188,15 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
-    public void rescheduleAppointment(String patientID, String doctorID, String date, String timeSlot, AppointmentSchedule schedule) {
+    public void rescheduleAppointment(String patientID, String doctorID, String date, String timeSlot) {
 
+
+        AppointmentSchedule schedule = storageServiceInterface.loadSchedule(date);
         int doctorCol = -1;  // Find doctor column
         int timeSlotRow = -1;
         String[][] matrix = schedule.getMatrix();
 
-        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyyMMdd HH:mm");
         boolean found = false;
         for (AppointmentInformation appointment : appointments) {
             if (appointment.getPatientID().equals(patientID)) {
@@ -115,7 +229,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
                 }
 
                 String slotValue = schedule.getSlot(timeSlotRow, doctorCol);
-                if ("1".equals(slotValue)) {  // If slot is available (1)
+                if ("available".equals(slotValue)) {  // If slot is available (1)
                     schedule.setSlot(timeSlotRow, doctorCol, patientID);  // Occupy the slot with patientID
                     System.out.println("Appointment scheduled successfully for patient " + patientID + " with doctor " + doctorID + " at " + timeSlot + " on " + "2024-11-01" + ".");//hard code the date here,need change
 
@@ -197,7 +311,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
             // For the rest of the columns
             for (int j = 1; j < row.length; j++) {
                 // Only add a tab and print header if the cell contains "1"
-                if ("1".equals(row[j])) {
+                if ("available".equals(row[j])) {
                     System.out.print("\t" + headers[j]);
                 }
             }
@@ -318,7 +432,8 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         return new AppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
     }*/
 
-    public void setDoctorSchedule(String doctorID, String Date, String timeSlot, AppointmentSchedule schedule) {
+    public void setDoctorSchedule(String doctorID, String Date, String timeSlot) {
+        AppointmentSchedule schedule = storageServiceInterface.loadSchedule(Date);
         int doctorCol = -1;  // Find doctor column
         int timeSlotRow = -1;
         String[][] matrix = schedule.getMatrix();
@@ -339,8 +454,9 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
         String slotValue = schedule.getSlot(timeSlotRow, doctorCol);
 
-        if ("0".equals(slotValue)) {  // If slot is available (1)
-            schedule.setSlot(timeSlotRow, doctorCol, "1");  // Occupy the slot with patientID
+        if ("unavailable".equals(slotValue)) {  // If slot is available (1)
+            schedule.setSlot(timeSlotRow, doctorCol, "available");
+            storageServiceInterface.writeScheduleToCSV(schedule, Date);// Occupy the slot with patientID
             //System.out.println("Schedule set successful for doctor " + doctorID + " at " + timeSlot + " on " + "2024-11-01" + ".");//hard code the date here,need change
 
         } else {
@@ -349,7 +465,8 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
     }
 
-    public void cancelDoctorSchedule(String doctorID, String Date, String timeSlot, AppointmentSchedule schedule) {
+    public void cancelDoctorSchedule(String doctorID, String Date, String timeSlot) {
+        AppointmentSchedule schedule = storageServiceInterface.loadSchedule(Date);
         int doctorCol = -1;  // Find doctor column
         int timeSlotRow = -1;
         String[][] matrix = schedule.getMatrix();
@@ -370,8 +487,9 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
         String slotValue = schedule.getSlot(timeSlotRow, doctorCol);
 
-        if ("1".equals(slotValue)) {  // If slot is available (1)
-            schedule.setSlot(timeSlotRow, doctorCol, "0");  // Occupy the slot with patientID
+        if ("available".equals(slotValue)) {  // If slot is available (1)
+            schedule.setSlot(timeSlotRow, doctorCol, "unavailable");
+            storageServiceInterface.writeScheduleToCSV(schedule, Date);// Occupy the slot with patientID
             //System.out.println("Schedule disabled successfully for doctor " + doctorID + " at " + timeSlot + " on " + "2024-11-01" + ".");//hard code the date here,need change
 
         } else {
@@ -388,7 +506,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
     }
 
 
-    //incompleted
+
     public void addAppointmentOutcome(AppointmentOutcome outcome) {
         appointmentOutcomes.add(outcome);
         //Need to add a function to write the new outcome to last row of CSV

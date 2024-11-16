@@ -28,9 +28,14 @@ public class StaffManagementService {
      * @return true if the staff was added successfully, false otherwise
      */
     public boolean addStaff(Staff staff) {
+        if (staffTable.getEntries().stream()
+                .anyMatch(existingStaff -> existingStaff.getStaffId().equals(staff.getStaffId()))) {
+            System.err.println("Error adding staff: Duplicate staffId " + staff.getStaffId());
+            return false;
+        }
         try {
             staffTable.addEntry(staff);
-            staffTable.saveToFile(); // Save after adding
+            staffTable.saveToFile();
         } catch (Exception e) {
             System.err.println("Error adding staff: " + e.getMessage());
             return false;
@@ -38,21 +43,28 @@ public class StaffManagementService {
         return true;
     }
 
+
     /**
      * Updates an existing staff entry in the staff table and saves the changes to a file.
      *
-     * @param staffId the ID of the staff to update
+     * @param staffId the alphanumerical ID of the staff to update
      * @param updatedStaff the updated Staff object
      * @return true if the update was successful, false if the staff was not found
      */
     public boolean updateStaff(String staffId, Staff updatedStaff) {
-        Staff existingStaff = staffTable.getEntry(staffId);
+        Staff existingStaff = getStaffByStaffId(staffId);
         if (existingStaff == null) {
             System.err.println("Staff ID not found.");
             return false;
         }
         try {
-            staffTable.replaceEntry(updatedStaff);
+            // Retain the existing numeric ID to ensure compatibility
+            updatedStaff.setTableEntryID(existingStaff.getTableEntryID());
+
+            // Locate and replace the existing staff entry
+            staffTable.getEntries().remove(existingStaff); // Remove the old entry
+            staffTable.addEntry(updatedStaff); // Add the updated entry
+
             staffTable.saveToFile(); // Save after updating
         } catch (Exception e) {
             System.err.println("Error updating staff: " + e.getMessage());
@@ -61,14 +73,18 @@ public class StaffManagementService {
         return true;
     }
 
+
     /**
-     * Retrieves a specific staff entry based on staff ID.
+     * Retrieves a specific staff entry based on alphanumerical staff ID.
      *
-     * @param staffId the ID of the staff to retrieve
+     * @param staffId the alphanumerical ID of the staff to retrieve
      * @return the Staff object if found, otherwise null
      */
-    public Staff getStaff(String staffId) {
-        return staffTable.getEntry(staffId);
+    public Staff getStaffByStaffId(String staffId) {
+        return staffTable.getEntries().stream()
+                .filter(staff -> staff.getStaffId().equals(staffId))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -90,14 +106,14 @@ public class StaffManagementService {
     }
 
     /**
-     * Removes a staff entry based on staff ID. Supports both soft and hard deletion.
+     * Removes a staff entry based on alphanumerical staff ID. Supports both soft and hard deletion.
      *
-     * @param staffId the ID of the staff to remove
+     * @param staffId the alphanumerical ID of the staff to remove
      * @param softDelete true for soft delete (mark as inactive), false for hard delete
      * @return true if the removal was successful, false otherwise
      */
     public boolean removeStaff(String staffId, boolean softDelete) {
-        Staff staff = getStaff(staffId);
+        Staff staff = getStaffByStaffId(staffId);
         if (staff == null) {
             System.err.println("Staff ID not found.");
             return false;
@@ -107,7 +123,7 @@ public class StaffManagementService {
             return updateStaff(staffId, staff);
         } else {
             try {
-                staffTable.removeEntry(staffId);
+                staffTable.removeEntry(staff.getTableEntryID()); // Use numeric ID to remove
                 staffTable.saveToFile(); // Save after removal
             } catch (Exception e) {
                 System.err.println("Error removing staff: " + e.getMessage());
@@ -120,12 +136,12 @@ public class StaffManagementService {
     /**
      * Assigns a specific role to the staff member.
      *
-     * @param staffId the ID of the staff to assign the role to
+     * @param staffId the alphanumerical ID of the staff to assign the role to
      * @param role the role to be assigned to the staff member
      * @return true if the role was assigned successfully, false otherwise
      */
     public boolean assignRole(String staffId, String role) {
-        Staff staff = getStaff(staffId);
+        Staff staff = getStaffByStaffId(staffId);
         if (staff == null) {
             System.err.println("Staff ID not found.");
             return false;
@@ -137,12 +153,12 @@ public class StaffManagementService {
     /**
      * Changes the status (e.g., active/inactive) of a staff member.
      *
-     * @param staffId the ID of the staff to change the status
+     * @param staffId the alphanumerical ID of the staff to change the status
      * @param status the new status to be assigned to the staff member
      * @return true if the status was changed successfully, false otherwise
      */
     public boolean changeStatus(String staffId, String status) {
-        Staff staff = getStaff(staffId);
+        Staff staff = getStaffByStaffId(staffId);
         if (staff == null) {
             System.err.println("Staff ID not found.");
             return false;
@@ -154,7 +170,7 @@ public class StaffManagementService {
     /**
      * Archives a staff member’s data by changing their status to "archived".
      *
-     * @param staffId the ID of the staff to archive
+     * @param staffId the alphanumerical ID of the staff to archive
      * @return true if the archiving was successful, false otherwise
      */
     public boolean archiveStaff(String staffId) {
