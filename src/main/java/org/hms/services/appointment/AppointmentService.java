@@ -89,10 +89,12 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         for (AppointmentInformation appointment : appointments) {
             // Check if the patientID matches
             if (appointment.getPatientID().equals(patientID)) {
+                if(appointment.getAppointmentStatus() == AppointmentStatus.PENDING || appointment.getAppointmentStatus() == AppointmentStatus.CONFIRMED) {
                 // Format the date and time slot
                 String date = dateFormatter.format(appointment.getAppointmentTimeSlot());
                 String timeSlot = timeFormatter.format(appointment.getAppointmentTimeSlot());
                 return new String[]{date, timeSlot};
+            }
             }
         }
         // If no appointment is found for the given patientID
@@ -330,9 +332,9 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
             for (int j = 1; j < row.length; j++) {
                 // Only add a tab and print header if the cell contains "1"
                 if ("available".equals(row[j])) {
-                    System.out.print("\t" + headers[j]);
+                    //System.out.print("\t" + headers[j]);
                     String doctorName = storageServiceInterface.getStaffNameByID(headers[j]);
-                    System.out.print("\t" + doctorName + "(ID = " + headers[1] + ")");
+                    System.out.print("\t" + doctorName + "(ID = " + headers[j] + ")");
                     //Not sure can work or not until the the staff.csv and schedule csv files have same doctors
                 }
             }
@@ -690,7 +692,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
         // Set all time slots for the new doctor as "Available"
         for (int i = 1; i < oldRows; i++) {
-            newMatrix[i][oldCols] = "Available";
+            newMatrix[i][oldCols] = "available";
         }
 
         // Update the schedule's matrix
