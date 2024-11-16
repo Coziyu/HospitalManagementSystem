@@ -189,7 +189,7 @@ public class StaffManagementService {
      * @param value the value to match for the specified criterion
      * @return a List of Staff objects that match the search criteria
      */
-    public List<Staff> searchStaff(String criteria, String value) {
+    public List<Staff> searchStaff(String criteria, String value, int minAge, int maxAge) {
         return staffTable.getEntries().stream()
                 .filter(staff -> {
                     switch (criteria.toLowerCase()) {
@@ -199,6 +199,8 @@ public class StaffManagementService {
                             return staff.getGender().equalsIgnoreCase(value);
                         case "status":
                             return staff.getStatus().equalsIgnoreCase(value);
+                        case "age":
+                            return staff.getAge() >= minAge && staff.getAge() <= maxAge;
                         default:
                             System.err.println("Invalid search criteria: " + criteria);
                             return false;
@@ -207,6 +209,17 @@ public class StaffManagementService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Overloaded searchStaff method for searching without age range filtering.
+     *
+     * @param criteria the criterion to filter by ("role", "gender", or "status")
+     * @param value the value to match for the specified criterion
+     * @return a List of Staff objects that match the search criteria
+     */
+    public List<Staff> searchStaff(String criteria, String value) {
+        // Pass default age range (no filtering) to the main method
+        return searchStaff(criteria, value, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
     /**
      * Saves the current staff data to a file.
      *

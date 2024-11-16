@@ -6,19 +6,25 @@ import org.hms.entities.UserContext;
 import org.hms.entities.UserRole;
 import org.hms.entities.User;
 import org.hms.services.drugdispensary.DrugInventoryTable;
+import org.hms.services.staffmanagement.Staff;
+import org.hms.services.staffmanagement.StaffManagementService;
 
+import java.util.List;
 import java.util.Scanner;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.util.stream.Collectors;
 
 public class AdminMenu extends AbstractMainMenu {
     private final Scanner scanner;
     private final UserContext userContext;
+    private final StaffManagementService staffManagementService;
 
     public AdminMenu(App app) {
         this.app = app;
         this.userContext = app.getUserContext();
         this.scanner = new Scanner(System.in);
+        this.staffManagementService = app.getStaffManagementService();
         validateAdminAccess();
     }
 
@@ -386,45 +392,103 @@ public class AdminMenu extends AbstractMainMenu {
             System.out.print("Enter gender (M/F): ");
             String gender = scanner.nextLine();
 
-            // TODO: Implement actual staff creation
-            logAdminAction("Added new staff member: " + staffId + " with role: " + role);
-            System.out.println(Colour.GREEN + "Staff member added successfully!" + Colour.RESET);
+            Staff newStaff = new Staff(staffId, age, name, gender, role.name(), "active");
+            boolean success = staffManagementService.addStaff(newStaff);
+
+            if (success) {
+                logAdminAction("Added new staff member: " + staffId);
+                System.out.println(Colour.GREEN + "Staff member added successfully!" + Colour.RESET);
+            } else {
+                System.out.println(Colour.RED + "Failed to add staff member. Staff ID might already exist." + Colour.RESET);
+            }
         } catch (Exception e) {
             System.out.println(Colour.RED + "Error adding staff member: " + e.getMessage() + Colour.RESET);
         }
     }
 
     private void handleUpdateStaff() {
-        System.out.println("\n" + Colour.BLUE + "=== Update Staff Information ===" + Colour.RESET);
-        System.out.print("Enter staff ID to update: ");
-        String staffId = scanner.nextLine();
-        // TODO: Implement staff information update
-        logAdminAction("Updated staff member: " + staffId);
-        System.out.println("Feature coming soon...");
+        System.out.println(Colour.BLUE + "=== Update Staff Information ===" + Colour.RESET);
+        try {
+            System.out.print("Enter staff ID to update: ");
+            String staffId = scanner.nextLine();
+
+            Staff existingStaff = staffManagementService.getStaffByStaffId(staffId);
+            if (existingStaff == null) {
+                System.out.println(Colour.RED + "Staff ID not found." + Colour.RESET);
+                return;
+            }
+
+            System.out.print("Enter new name (leave blank to keep current): ");
+            String name = scanner.nextLine();
+            if (!name.isEmpty()) {
+                existingStaff.setName(name);
+            }
+
+            System.out.print("Enter new age (leave blank to keep current): ");
+            String ageInput = scanner.nextLine();
+            if (!ageInput.isEmpty()) {
+                existingStaff.setAge(Integer.parseInt(ageInput));
+            }
+
+            System.out.print("Enter new role (Doctor/Pharmacist, leave blank to keep current): ");
+            String role = scanner.nextLine();
+            if (!role.isEmpty()) {
+                existingStaff.setRole(role);
+            }
+
+            boolean success = staffManagementService.updateStaff(staffId, existingStaff);
+            if (success) {
+                logAdminAction("Updated staff member: " + staffId);
+                System.out.println(Colour.GREEN + "Staff information updated successfully!" + Colour.RESET);
+            } else {
+                System.out.println(Colour.RED + "Failed to update staff information." + Colour.RESET);
+            }
+        } catch (Exception e) {
+            System.out.println(Colour.RED + "Error updating staff information: " + e.getMessage() + Colour.RESET);
+        }
     }
+
 
     private void handleRemoveStaff() {
-        System.out.println("\n" + Colour.BLUE + "=== Remove Staff Member ===" + Colour.RESET);
-        System.out.print("Enter staff ID to remove: ");
-        String staffId = scanner.nextLine();
-        // TODO: Implement staff removal
-        logAdminAction("Removed staff member: " + staffId);
-        System.out.println("Feature coming soon...");
+        System.out.println(Colour.BLUE + "=== Remove Staff Member ===" + Colour.RESET);
+        try {
+            System.out.print("Enter staff ID to remove: ");
+            String staffId = scanner.nextLine();
+
+            System.out.print("Soft delete (mark as inactive)? (Y/N): ");
+            boolean softDelete = scanner.nextLine().equalsIgnoreCase("Y");
+
+            boolean success = staffManagementService.removeStaff(staffId, softDelete);
+            if (success) {
+                logAdminAction("Removed staff member: " + staffId);
+                System.out.println(Colour.GREEN + "Staff member removed successfully!" + Colour.RESET);
+            } else {
+                System.out.println(Colour.RED + "Failed to remove staff member. Staff ID might not exist." + Colour.RESET);
+            }
+        } catch (Exception e) {
+            System.out.println(Colour.RED + "Error removing staff member: " + e.getMessage() + Colour.RESET);
+        }
     }
 
-    private void handleViewStaff() {
-        System.out.println("\n" + Colour.BLUE + "=== Staff List ===" + Colour.RESET);
-        // TODO: Implement staff listing
-        System.out.println("\nDoctors:");
-        System.out.println("ID\tName\tGender\tAge");
-        System.out.println("---------------------------");
 
-        System.out.println("\nPharmacists:");
-        System.out.println("ID\tName\tGender\tAge");
-        System.out.println("---------------------------");
+    private void handleViewStaff() {
+        System.out.println(Colour.BLUE + "=== Staff List ===" + Colour.RESET);
+        List<Staff> staffList = staffManagementService.listAllStaff();
+
+        if (staffList.isEmpty()) {
+            System.out.println(Colour.YELLOW + "No staff members found." + Colour.RESET);
+            return;
+        }
+
+        System.out.printf("%-10s %-20s %-5s %-10s %-10s %-10s%n", "ID", "Name", "Age", "Gender", "Role", "Status");
+        for (Staff staff : staffList) {
+            System.out.printf("%-10s %-20s %-5d %-10s %-10s %-10s%n",
+                    staff.getStaffId(), staff.getName(), staff.getAge(), staff.getGender(), staff.getRole(), staff.getStatus());
+        }
 
         logAdminAction("Viewed staff list");
     }
+
 
     private void handleFilterStaff() {
         System.out.println("\n" + Colour.BLUE + "=== Filter Staff ===" + Colour.RESET);
@@ -432,10 +496,54 @@ public class AdminMenu extends AbstractMainMenu {
         System.out.println("1. Role");
         System.out.println("2. Gender");
         System.out.println("3. Age Range");
+        System.out.print("Enter your choice: ");
 
-        // TODO: Implement staff filtering
-        System.out.println("Feature coming soon...");
+        try {
+            int choice = Integer.parseInt(scanner.nextLine());
+            List<Staff> filteredStaff;
+
+            switch (choice) {
+                case 1: // Filter by Role
+                    System.out.print("Enter role (e.g., Doctor, Pharmacist): ");
+                    String role = scanner.nextLine();
+                    filteredStaff = staffManagementService.searchStaff("role", role);
+                    break;
+
+                case 2: // Filter by Gender
+                    System.out.print("Enter gender (M/F): ");
+                    String gender = scanner.nextLine();
+                    filteredStaff = staffManagementService.searchStaff("gender", gender);
+                    break;
+
+                case 3: // Filter by Age Range
+                    System.out.print("Enter minimum age: ");
+                    int minAge = Integer.parseInt(scanner.nextLine());
+                    System.out.print("Enter maximum age: ");
+                    int maxAge = Integer.parseInt(scanner.nextLine());
+                    filteredStaff = staffManagementService.searchStaff("age", "", minAge, maxAge);
+                    break;
+
+                default:
+                    System.out.println(Colour.RED + "Invalid choice. Please try again." + Colour.RESET);
+                    return;
+            }
+
+            // Display filtered staff
+            if (filteredStaff.isEmpty()) {
+                System.out.println(Colour.YELLOW + "No staff members match the given criteria." + Colour.RESET);
+            } else {
+                System.out.printf("%-10s %-20s %-5s %-10s %-10s %-10s%n", "ID", "Name", "Age", "Gender", "Role", "Status");
+                for (Staff staff : filteredStaff) {
+                    System.out.printf("%-10s %-20s %-5d %-10s %-10s %-10s%n",
+                            staff.getStaffId(), staff.getName(), staff.getAge(), staff.getGender(), staff.getRole(), staff.getStatus());
+                }
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println(Colour.RED + "Invalid input. Please enter a valid number." + Colour.RESET);
+        }
     }
+
 
     private void logAdminAction(String action) {
         String logMessage = String.format("Admin Action - User: %s, Hospital: %d - %s",
