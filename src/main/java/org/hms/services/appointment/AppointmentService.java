@@ -668,4 +668,33 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
+    //For admin to add staff and update to the schedule
+    public void addNewDoctorToSchedule(String doctorID, String date){
+        AppointmentSchedule schedule = storageServiceInterface.loadSchedule(date);
+
+        String[][] oldMatrix = schedule.getMatrix();
+        int oldRows = oldMatrix.length;
+        int oldCols = oldMatrix[0].length;
+
+        String[][] newMatrix = new String[oldRows][oldCols + 1];
+
+        // Copy old matrix
+        for (int i = 0; i < oldRows; i++) {
+            System.arraycopy(oldMatrix[i], 0, newMatrix[i], 0, oldCols);
+        }
+
+        newMatrix[0][oldCols] = doctorID;
+
+        // Set all time slots for the new doctor as "Available"
+        for (int i = 1; i < oldRows; i++) {
+            newMatrix[i][oldCols] = "Available";
+        }
+
+        // Update the schedule's matrix
+        schedule.setMatrix(newMatrix);
+
+        // Save the updated schedule back to the storage service
+        storageServiceInterface.writeScheduleToCSV(schedule,date);
+    }
+
 }

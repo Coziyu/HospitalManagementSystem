@@ -44,4 +44,8 @@ public class AppointmentSchedule {
     public String[][] getMatrix() {
         return matrix;
     }
+
+    public void setMatrix(String[][] newMatrix) {
+        this.matrix = newMatrix;
+    }
 }
