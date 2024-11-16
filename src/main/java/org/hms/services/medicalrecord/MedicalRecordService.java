@@ -1,13 +1,11 @@
 package org.hms.services.medicalrecord;
 
 import org.hms.entities.UserContext;
-import org.hms.entities.PatientContext;
 import org.hms.entities.UserRole;
 import org.hms.services.AbstractService;
 
 import java.io.*;
 import java.nio.file.*;
-import java.util.*;
 
 public class MedicalRecordService extends AbstractService<IMedicalDataInterface> {
     // CSV paths
@@ -18,84 +16,58 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
 
     // In-memory storage
     private PatientTable patientTable;
-    private Map<String, ContactInformation> contactInformationMap;
+    private ContactInfomationTable contactInformationTable;
     private MedicalRecord medicalRecordsTable;
 
     public MedicalRecordService(IMedicalDataInterface storageService) {
         this.storageServiceInterface = storageService;
         this.patientTable = storageServiceInterface.getPatientTable();
-        this.contactInformationMap = new HashMap<>();
+        this.contactInformationTable = storageServiceInterface.getContactInformationTable();
         this.medicalRecordsTable = storageServiceInterface.getMedicalRecordTable();
-        initializeData();
     }
 
-    private void initializeData() {
-        try {
-            // Create data directory if it doesn't exist
-            Files.createDirectories(Paths.get(DATA_DIRECTORY));
-
-            // Initialize CSV files
-            if (!Files.exists(Paths.get(CONTACT_INFO_CSV))) {
-                createContactInfoCSV();
-            }
-            if (!Files.exists(Paths.get(MEDICAL_RECORDS_CSV))) {
-                createMedicalRecordsCSV();
-            }
-
-            // Load data
-            loadAllData();
-        } catch (IOException e) {
-            System.err.println("Error initializing data: " + e.getMessage());
-        }
-    }
-
-    private void loadAllData() {
-        loadContactInformation();
-    }
-
-
-
-    // TODO: Refactor using AbstractTable
-    private void loadContactInformation() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(CONTACT_INFO_CSV))) {
-            reader.readLine(); // Skip header
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                String patientId = parts[0].trim();
-                ContactInformation contact = new ContactInformation(
-                        patientId,
-                        parts[1].trim(), // phone
-                        parts[2].trim(), // email
-                        parts[3].trim()  // address
-                );
-                contactInformationMap.put(patientId, contact);
-            }
-        } catch (IOException e) {
-            System.err.println("Error loading contact data: " + e.getMessage());
-        }
-    }
 
     // === PATIENT METHODS ===
-    public MedicalRecord viewOwnRecord(PatientContext patientContext) {
-        String patientIDString = patientContext.getPatientID().toString();
-        System.out.println("Looking up record with ID: " + patientIDString);
-        // Use the medicalRecordsMap that's loaded from CSV instead of storageServiceInterface
-        return getMedicalRecord(patientIDString);
+
+    /**
+     * This method returns a PrintString of a MedicalRecord, containing MedicalEntry Objects
+     * for a specific patient.
+     * @param patientID of the patient
+     * @return A printString for the patient's medical record
+     */
+    public String getPatientMedicalRecord(String patientID) {
+        MedicalRecord medicalRecord = (MedicalRecord) medicalRecordsTable.filterByAttribute(MedicalEntry::getPatientID, patientID);
+        return medicalRecord.toPrintString();
     }
 
+    /**
+     * Returns the personal particulars for a patient.
+     * @param patientID of the patient.
+     * @return the personal particulars of the patient.
+     */
     public PatientParticulars getPersonalParticulars(String patientID) {
         return patientTable.searchByAttribute(PatientParticulars::getPatientID, patientID).getFirst();
     }
 
-    public boolean updateOwnContactInfo(PatientContext patientContext,
-                                        String phone, String email, String address) {
+    /**
+     * This method updates the contact information for a patient
+     * @param patientID
+     * @param phone
+     * @param email
+     * @param address
+     * @return
+     */
+    public boolean updateOwnContactInfo(String patientID, String phone, String email, String address) {
         try {
-            String patientID = String.valueOf(patientContext.getPatientID());
-            ContactInformation newContact = new ContactInformation(patientID, phone, email, address);
-            contactInformationMap.put(patientID, newContact);
-            saveContactInfoToCSV();
-            return true;
+            ContactInformation newContact = contactInformationTable.searchByAttribute(ContactInformation::getPatientID, patientID).getFirst();
+            newContact.setPhoneNumber(phone);
+            newContact.setEmail(email);
+            newContact.setAddress(address);
+
+            boolean success = contactInformationTable.replaceEntry(newContact);
+
+            return success;
+
         } catch (Exception e) {
             System.err.println("Error updating contact info: " + e.getMessage());
             return false;
@@ -143,28 +115,6 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
     }
 
     // === CSV OPERATIONS ===
-    //TODO: Refactor
-    private void createContactInfoCSV() throws IOException {
-        try (FileWriter writer = new FileWriter(CONTACT_INFO_CSV)) {
-            writer.write("PatientID,PhoneNumber,Email,Address\n");
-        }
-    }
-
-
-    //TODO: Refactor
-    private void saveContactInfoToCSV() throws IOException {
-        try (FileWriter writer = new FileWriter(CONTACT_INFO_CSV)) {
-            writer.write("PatientID,PhoneNumber,Email,Address\n");
-            for (ContactInformation contact : contactInformationMap.values()) {
-                writer.write(String.format("%s,%s,%s,%s\n",
-                        contact.getPatientID(),
-                        contact.getPhoneNumber(),
-                        contact.getEmail(),
-                        contact.getAddress()
-                ));
-            }
-        }
-    }
 
 
     public MedicalRecord getMedicalRecord(String patientID) {
