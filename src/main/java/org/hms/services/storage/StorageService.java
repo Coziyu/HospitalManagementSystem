@@ -11,6 +11,8 @@ import org.hms.services.medicalrecord.ContactInformation;
 import org.hms.services.medicalrecord.IMedicalDataInterface;
 import org.hms.services.medicalrecord.MedicalEntry;
 import org.hms.services.medicalrecord.MedicalRecord;
+import org.hms.services.staffmanagement.Staff;
+import org.hms.services.staffmanagement.StaffTable;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -32,6 +34,7 @@ public class StorageService
     private static final String dataRoot = System.getProperty("user.dir") + "/data/";
     private DrugInventoryTable drugInventoryTable;
     private DrugReplenishRequestTable drugReplenishRequestTable;
+    private MedicalRecord medicalRecordTable;
 
     // TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
     private static int drugDispenseRequestCounter = 0;
@@ -40,6 +43,7 @@ public class StorageService
         storageServiceInterface = this;
         initializeDrugInventoryTable();
         initializeDrugReplenishRequestTable();
+        initializeMedicalRecordTable();
     }
 
     /**
@@ -65,6 +69,21 @@ public class StorageService
         drugInventoryTable = new DrugInventoryTable(dataRoot + "drugInventory.csv");
         try {
             drugInventoryTable.loadFromFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Initialzes the medical record table by loading data from a CSV file.
+     * The CSV file is located at the dataRoot directory.
+     * If an IOException occurs during loading, a RuntimeException is thrown.
+     * @return
+     */
+    private void initializeMedicalRecordTable() {
+        medicalRecordTable = new MedicalRecord(dataRoot + "medical_records.csv");
+        try {
+            medicalRecordTable.loadFromFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -111,6 +130,11 @@ public class StorageService
         return false;
     }
 
+    @Override
+    public MedicalRecord getMedicalRecordTable() {
+        return medicalRecordTable;
+    }
+
     public DrugDispenseRequest createNewDrugDispenseRequest(String drugName, int addQuantity){
         //TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
         // Requires cooperation with Yingjie for this
@@ -148,6 +172,32 @@ public class StorageService
         }
 
         return appointments;
+    }
+
+    public void writeAppointmentsToCsv(List<AppointmentInformation> appointments) {
+        String filePath = dataRoot + "Appointments.csv";
+        SimpleDateFormat timeSlotFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm-HH:mm");
+
+        try (FileWriter writer = new FileWriter(filePath)) {
+            // Write the header row
+            writer.write("appointmentID,patientID,doctorID,appointmentTimeSlot,appointmentStatus\n");
+
+            // Write each appointment's details
+            for (AppointmentInformation appointment : appointments) {
+                // Format the appointment time slot correctly
+                String formattedTimeSlot = timeSlotFormat.format(appointment.getAppointmentTimeSlot());
+
+                writer.write(appointment.getAppointmentID() + "," +
+                        appointment.getPatientID() + "," +
+                        appointment.getDoctorID() + "," +
+                        formattedTimeSlot + "," +
+                        appointment.getAppointmentStatus() + "\n");
+            }
+
+            System.out.println("Appointments successfully written to " + filePath);
+        } catch (IOException e) {
+            System.err.println("Error writing to CSV file: " + e.getMessage());
+        }
     }
 
     public AppointmentSchedule loadSchedule(String date) {
@@ -330,4 +380,13 @@ public class StorageService
             e.printStackTrace();
         }
     }
+
+    public Staff getStaffForSchedule(String staffId) {
+        StaffTable staffTable = new StaffTable();
+        return staffTable.getEntries().stream()
+                .filter(staff -> staff.getStaffId().equals(staffId))
+                .findFirst()
+                .orElse(null);
+    }
 }
+

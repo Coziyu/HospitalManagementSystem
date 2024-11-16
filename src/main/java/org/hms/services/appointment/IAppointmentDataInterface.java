@@ -2,6 +2,7 @@ package org.hms.services.appointment;
 
 import org.hms.services.drugdispensary.DrugDispenseRequest;
 import org.hms.services.drugdispensary.DrugRequestStatus;
+import org.hms.services.staffmanagement.Staff;
 import org.hms.services.storage.IDataInterface;
 
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ public interface IAppointmentDataInterface extends IDataInterface {
 
     public ArrayList<AppointmentOutcome> readAppointmentOutcomesFromCSV();
 
+    public void writeAppointmentsToCsv(List<AppointmentInformation> appointments);
+
     public void writeAppointmentOutcomeToCSV(AppointmentOutcome outcome);
 
     public void writeAllAppointmentOutcomesToCSV(ArrayList<AppointmentOutcome> appointmentOutcomes);
@@ -29,5 +32,6 @@ public interface IAppointmentDataInterface extends IDataInterface {
 
     public void writeScheduleToCSV(AppointmentSchedule schedule, String date);
 
+    public Staff getStaffForSchedule(String staffId);
 
 }

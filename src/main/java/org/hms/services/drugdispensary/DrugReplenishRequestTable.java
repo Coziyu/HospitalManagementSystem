@@ -17,13 +17,20 @@ public class DrugReplenishRequestTable extends AbstractTable<DrugReplenishReques
         super();
     }
 
+    /**
+     * Creates a new DrugReplenishRequestTable and links it to a specified file path.
+     *
+     * @param filePath the path of the file to link with this table.
+     */
     public DrugReplenishRequestTable(String filePath){
         super();
         this.filePath = filePath;
     }
 
     /**
-     * @return
+     * Retrieves headers for the drug replenish request tables
+     *
+     * @return an array of header names
      */
     @Override
     public String[] getHeaders() {
@@ -31,15 +38,23 @@ public class DrugReplenishRequestTable extends AbstractTable<DrugReplenishReques
     }
 
     /**
-     * @return
+     * Creates a template entry for a valid DrugReplenishRequest
+     * Entry has an unused ID and placeholder values
+     *
+     * @return a new DrugReplenishRequest template
      */
     @Override
     public DrugReplenishRequest createValidEntryTemplate() {
         return new DrugReplenishRequest(getUnusedID(), null, -1, null);
     }
 
+    /**
+     * Creates an empty instance of DrugReplenishRequestTable.
+     *
+     * @return an empty DrugReplenishRequestTable instance.
+     */
     @Override
-    protected AbstractTable<DrugReplenishRequest> createEmpty() {
+    protected DrugReplenishRequestTable createEmpty() {
         return new DrugReplenishRequestTable();
     }
 

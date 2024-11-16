@@ -17,23 +17,44 @@ public class DrugInventoryTable extends AbstractTable<DrugInventoryEntry> {
         super();
     }
 
+    /**
+     * Creates a new DrugInventoryTable and links it to a specified file path.
+     *
+     * @param filePath the path of the file to link with this table.
+     */
     public DrugInventoryTable(String filePath) {
         super();
         this.filePath = filePath;
     }
 
+    /**
+     * Retrieves the headers for the drug inventory table.
+     *
+     * @return an array of header names.
+     */
     @Override
     public String[] getHeaders() {
         return HEADERS;
     }
 
+    /**
+     * Creates a template entry for a valid DrugInventoryEntry.
+     * This entry has an unused ID and placeholder values.
+     *
+     * @return a new DrugInventoryEntry template.
+     */
     @Override
     public DrugInventoryEntry createValidEntryTemplate() {
         return new DrugInventoryEntry(getUnusedID(), null, -1, -1);
     }
 
+    /**
+     * Creates an empty instance of DrugInventoryTable.
+     *
+     * @return an empty DrugInventoryTable instance.
+     */
     @Override
-    protected AbstractTable<DrugInventoryEntry> createEmpty() {
+    protected DrugInventoryTable createEmpty() {
         return new DrugInventoryTable();
     }
 

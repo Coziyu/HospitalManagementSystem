@@ -49,7 +49,7 @@ public class AdminMenu extends AbstractMainMenu {
                 switch (choice) {
                     case 1 -> handleManageHospitalStaff();
                     case 2 -> handleViewAppointments();
-                    case 3 -> handleManageMedicationInventory();
+                    case 3 -> handleManageDrugInventory();
                     case 4 -> handleApproveReplenishmentRequests();
                     case 5 -> {
                         logAdminAction("Logged out");
@@ -62,9 +62,6 @@ public class AdminMenu extends AbstractMainMenu {
             } catch (NumberFormatException e) {
                 System.out.println(Colour.RED + "Please enter a valid number." + Colour.RESET);
             }
-
-            System.out.println("\nPress Enter to continue...");
-            scanner.nextLine();
         }
     }
 
@@ -72,9 +69,22 @@ public class AdminMenu extends AbstractMainMenu {
     private void printLowStockAlertMessage() {
         DrugInventoryTable lowStockView = app.getDrugDispensaryService().getLowStockDrugs();
         if (!lowStockView.getEntries().isEmpty()) {
-            System.out.println(Colour.YELLOW + "Low stock alert: The following medications are running low in stock: ");
+            System.out.println(Colour.YELLOW + "Low stock alert: The following drugs are running low in stock: ");
             System.out.print(lowStockView.toPrintString() + Colour.RESET);
         }
+    }
+
+    // TODO: For Yingjie to implement
+    private void handleViewAppointments() {
+        app.getAppointmentService().displayAllAppointments();
+    }
+    // TODO: For Nich to implement
+    private void handleManageDrugInventory() {
+
+    }
+    // TODO: For Nich to implement
+    private void handleApproveReplenishmentRequests() {
+
     }
 
     // TODO: For Amos to implement Staff related methods.
@@ -187,109 +197,6 @@ public class AdminMenu extends AbstractMainMenu {
 
         // TODO: Implement staff filtering
         System.out.println("Feature coming soon...");
-        logAdminAction("Accessed staff filters");
-    }
-
-    // TODO: For Yingjie to implement
-    private void handleViewAppointments() {
-        System.out.println("\n" + Colour.BLUE + "=== Appointment Details ===" + Colour.RESET);
-        System.out.println("Real-time Appointment Status:");
-
-        // TODO: Implement actual appointment retrieval
-        System.out.println("\nToday's Appointments:");
-        System.out.println("Time\tPatient ID\tDoctor ID\tStatus");
-        System.out.println("----------------------------------------");
-        System.out.println("09:00\tP001\t\tDOC001\t\tConfirmed");
-        System.out.println("10:00\tP002\t\tDOC002\t\tCompleted");
-
-        System.out.println("\nCompleted Appointments with Outcomes:");
-        System.out.println("View detailed outcome record? (Y/N): ");
-        if (scanner.nextLine().equalsIgnoreCase("Y")) {
-            // TODO: Show detailed outcome records
-            System.out.println("Appointment Outcomes:");
-            System.out.println("- Patient ID: P002");
-            System.out.println("- Doctor ID: DOC002");
-            System.out.println("- Date: " + LocalDate.now());
-            System.out.println("- Diagnosis: ...");
-            System.out.println("- Prescribed Medications: ...");
-        }
-
-        logAdminAction("Viewed appointment details");
-    }
-
-    // TODO: For Nich to implement
-    private void handleManageMedicationInventory() {
-        System.out.println("\n" + Colour.BLUE + "=== Medication Inventory Management ===" + Colour.RESET);
-        while (true) {
-            System.out.println("\n1. View Current Inventory");
-            System.out.println("2. Add New Medication");
-            System.out.println("3. Update Stock Levels");
-            System.out.println("4. Set Low Stock Alert Levels");
-            System.out.println("5. Back to Main Menu");
-
-            try {
-                int choice = Integer.parseInt(scanner.nextLine());
-                switch (choice) {
-                    case 1 -> {
-                        System.out.println("\nCurrent Inventory:");
-                        System.out.println(app.getDrugDispensaryService().getDrugInventoryAsString());
-                    }
-                    case 2 -> {
-                        // TODO: Implement adding new medication
-                        System.out.println("Feature coming soon...");
-                    }
-                    case 3 -> {
-                        // TODO: Implement stock level updates
-                        System.out.println("Feature coming soon...");
-                    }
-                    case 4 -> {
-                        // TODO: Implement alert level setting
-                        System.out.println("Feature coming soon...");
-                    }
-                    case 5 -> {
-                        return;
-                    }
-                    default -> System.out.println(Colour.RED + "Invalid option." + Colour.RESET);
-                }
-            } catch (NumberFormatException e) {
-                System.out.println(Colour.RED + "Please enter a valid number." + Colour.RESET);
-            }
-        }
-    }
-
-    // TODO: For Nich to implement
-    private void handleApproveReplenishmentRequests() {
-        System.out.println("\n" + Colour.BLUE + "=== Approve Replenishment Requests ===" + Colour.RESET);
-
-        // TODO: Show pending replenishment requests
-        System.out.println("Pending Requests:");
-        System.out.println("1. Request ID: REQ001");
-        System.out.println("   Medication: Amoxicillin 500mg");
-        System.out.println("   Requested Quantity: 100");
-        System.out.println("   Requested by: PHARM001");
-
-        System.out.print("\nEnter request ID to approve (or 0 to return): ");
-        String requestId = scanner.nextLine();
-
-        if (!requestId.equals("0")) {
-            System.out.println("1. Approve");
-            System.out.println("2. Reject");
-            System.out.print("Select action: ");
-
-            try {
-                int action = Integer.parseInt(scanner.nextLine());
-                // TODO: Implement approval/rejection logic
-                if (action == 1) {
-                    System.out.println(Colour.GREEN + "Request approved. Stock levels updated." + Colour.RESET);
-                    logAdminAction("Approved replenishment request: " + requestId);
-                } else if (action == 2) {
-                    System.out.println(Colour.YELLOW + "Request rejected." + Colour.RESET);
-                    logAdminAction("Rejected replenishment request: " + requestId);
-                }
-            } catch (NumberFormatException e) {
-                System.out.println(Colour.RED + "Invalid input." + Colour.RESET);
-            }
-        }
     }
 
     private void logAdminAction(String action) {

@@ -1,6 +1,3 @@
 staffId,age,name,role,status,gender
-10001,23,John Doe,Pharmacist,Active,Male
-10002,25,Amelia,Doctor,Inactive,Female
-0,25,Jimmy,Doctor,Active,Male
-0,25,Lola,Doctor,active,female
-1001,23,Amos,Doctor,archived,Male
+DOC002,23,Nich,doctor,active,male
+DOC001,23,amos,doctor,active,male

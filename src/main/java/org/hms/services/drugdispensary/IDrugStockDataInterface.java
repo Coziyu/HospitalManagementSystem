@@ -6,9 +6,23 @@ import java.util.ArrayList;
 
 public interface IDrugStockDataInterface extends IDataInterface {
     /**
-     * @return ArrayList of appointmentIDs
+     * Retrieves list of appointment IDs pending dispensary.
+     *
+     * @return ArrayList of appointmentIDs pending dispensary.
      */
     ArrayList<String> getAppointmentsPendingDispensary();
+
+    /**
+     * Retrieves list of current drug inventory.
+     *
+     * @return Drug Inventory Table (current drug inventory)
+     */
     DrugInventoryTable getDrugInventory();
+
+    /**
+     * Retrieves the table of drug replenish requests.
+     *
+     * @return the DrugReplenishRequestTable containing replenish requests.
+     */
     DrugReplenishRequestTable getDrugReplenishRequestTable();
 }
