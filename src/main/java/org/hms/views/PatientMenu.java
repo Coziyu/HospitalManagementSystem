@@ -189,6 +189,49 @@ public class PatientMenu extends AbstractMainMenu {
         System.out.println("\n" + Colour.BLUE + "=== Update Personal Information ===" + Colour.RESET);
         String patientID = (app.getUserContext().getHospitalID());
 
+        System.out.println(Colour.GREEN + " == Contact Information == " + Colour.RESET);
+        String contactInfo = app.getMedicalRecordService().getPatientContactInformation(patientID);
+        System.out.println(contactInfo);
+
+
+        // Choose what information to update
+        try {
+            while (true) {
+                System.out.println("What information would you like to update?");
+                System.out.println("1. Phone Number");
+                System.out.println("2. Email");
+                System.out.println("3. Address");
+                System.out.println("4. Back to Main Menu");
+
+                int choice = Integer.parseInt(scanner.nextLine());
+                switch (choice) {
+                    case 1 -> {
+                        System.out.print("Enter new phone number: ");
+                        String newPhoneNumber = scanner.nextLine();
+                        app.getMedicalRecordService().updatePatientPhoneNumber(patientID, newPhoneNumber);
+                        System.out.println(Colour.GREEN + "Phone number updated successfully." + Colour.RESET);
+                    }
+                    case 2 -> {
+                        System.out.print("Enter new email: ");
+                        String newEmail = scanner.nextLine();
+                        app.getMedicalRecordService().updatePatientEmail(patientID, newEmail);
+                        System.out.println(Colour.GREEN + "Email updated successfully." + Colour.RESET);
+                    }
+                    case 3 -> {
+                        System.out.print("Enter new address: ");
+                        String newAddress = scanner.nextLine();
+                        app.getMedicalRecordService().updatePatientAddress(patientID, newAddress);
+                        System.out.println(Colour.GREEN + "Address updated successfully." + Colour.RESET);
+                    }
+                    case 4 -> {
+                        return;
+                    }
+                }
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a number.");
+        }
+
 
     }
     // TODO: Decide if deprecated
