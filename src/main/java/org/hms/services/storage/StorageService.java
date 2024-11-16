@@ -11,6 +11,8 @@ import org.hms.services.medicalrecord.ContactInformation;
 import org.hms.services.medicalrecord.IMedicalDataInterface;
 import org.hms.services.medicalrecord.MedicalEntry;
 import org.hms.services.medicalrecord.MedicalRecord;
+import org.hms.services.staffmanagement.Staff;
+import org.hms.services.staffmanagement.StaffTable;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -378,4 +380,13 @@ public class StorageService
             e.printStackTrace();
         }
     }
+
+    public Staff getStaffForSchedule(String staffId) {
+        StaffTable staffTable = new StaffTable();
+        return staffTable.getEntries().stream()
+                .filter(staff -> staff.getStaffId().equals(staffId))
+                .findFirst()
+                .orElse(null);
+    }
 }
+

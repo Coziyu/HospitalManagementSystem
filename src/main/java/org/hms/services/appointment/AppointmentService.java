@@ -261,6 +261,23 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
+    public void viewUpcomingAppointments(String patientID) {
+        boolean found = false;
+        for (AppointmentInformation appointment : appointments) {
+            if (appointment.getPatientID().equals(patientID)) {
+                // Check if the appointment status is PENDING or CONFIRMED
+                if (appointment.getAppointmentStatus() == AppointmentStatus.PENDING
+                        || appointment.getAppointmentStatus() == AppointmentStatus.CONFIRMED) {
+                    displayOneAppointment(appointment); // Display the appointment details
+                    found = true;
+                }
+            }
+        }
+
+        if (!found) {
+            System.out.println("No upcoming appointments found for patient ID: " + patientID);
+        }
+    }
 
     public void addAppointment(String timeSlotString, int appointmentID, String patientID, String doctorID) {
         try {
@@ -313,9 +330,47 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
                 // Only add a tab and print header if the cell contains "1"
                 if ("available".equals(row[j])) {
                     System.out.print("\t" + headers[j]);
+                    //String doctorName = storageServiceInterface.getStaffForSchedule(headers[j]).getName();
+                    //System.out.print("\t" + doctorName + "(ID = " + headers[1] + ")");
+                    //Not sure can work or not until the the staff.csv and schedule csv files have same doctors
                 }
             }
             System.out.println(); // Move to the next row
+
+        }
+    }
+
+    public void displayAppointmentOutcomesByPatient(String patientID) {
+        boolean found = false;
+        System.out.println("Appointment Outcomes for Patient ID: " + patientID);
+        System.out.println("--------------------------------------------------");
+
+        for (AppointmentOutcome outcome : appointmentOutcomes) {
+            // Check if the patient ID matches
+            if (outcome.getPatientID().equals(patientID)) {
+                found = true;
+
+                // Display the details of the appointment outcome
+                System.out.println("Appointment ID: " + outcome.getAppointmentID());
+                System.out.println("Type of Appointment: " + outcome.getTypeOfAppointment());
+                System.out.println("Consultation Notes: " + outcome.getConsultationNotes());
+                System.out.println("Prescribed Medication:");
+
+                if (outcome.getPrescribedMedication().isEmpty()) {
+                    System.out.println("No prescribed medication.");
+                } else {
+                    for (DrugDispenseRequest drug : outcome.getPrescribedMedication()) {
+                        System.out.println("- Drug Name: " + drug.getDrugName());
+                        System.out.println("  Quantity: " + drug.getQuantity());
+                        System.out.println("  Status: " + drug.getStatus());
+                    }
+                }
+                System.out.println("--------------------------------------------------");
+            }
+        }
+
+        if (!found) {
+            System.out.println("No appointment outcomes found for patient ID: " + patientID);
         }
     }
 
@@ -503,6 +558,25 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         int dummyID = 1000;
         // Create and return the AppointmentOutcome object
         return new AppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
+    }
+
+    public void displayAppointmentsForDoctor(String date, String doctorID) {
+        boolean found = false;
+        System.out.println("Appointments for Doctor ID: " + doctorID + " on " + date);
+        System.out.println("--------------------------------------------------");
+
+        for (AppointmentInformation appointment : appointments) {
+            // Check if the appointment matches the given date and doctor ID
+            String appointmentDate = new SimpleDateFormat("yyyyMMdd").format(appointment.getAppointmentTimeSlot());
+            if (appointmentDate.equals(date) && appointment.getDoctorID().equals(doctorID) && appointment.getAppointmentStatus() == AppointmentStatus.CONFIRMED) {
+                displayOneAppointment(appointment);
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println("No appointments found for Doctor ID: " + doctorID + " on " + date);
+        }
     }
 
 
