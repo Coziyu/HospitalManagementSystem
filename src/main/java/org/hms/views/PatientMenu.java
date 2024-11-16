@@ -43,8 +43,7 @@ public class PatientMenu extends AbstractMainMenu {
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
                 switch (choice) {
-                    //case 1 -> handleViewMedicalRecord();
-                    case 1 ->handleAddDoctor();
+                    case 1 -> handleViewMedicalRecord();
                     case 2 -> handleUpdateInformation();
                     case 3 -> handleViewAvailableAppointmentSlot();
                     case 4 -> handleScheduleAppointment();
