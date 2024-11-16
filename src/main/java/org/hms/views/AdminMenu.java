@@ -46,7 +46,7 @@ public class AdminMenu extends AbstractMainMenu {
             System.out.println("1. View and Manage Hospital Staff");
             System.out.println("2. View Scheduled Appointments Details");
             System.out.println("3. View and Manage Medication Inventory");
-            System.out.println("4. Approve Replenishment Requests");
+            System.out.println("4. Approve/Reject Replenishment Requests");
             System.out.println("5. Logout");
             System.out.print("Select an option: ");
 
@@ -326,9 +326,55 @@ public class AdminMenu extends AbstractMainMenu {
 
 
 
-    // TODO: For Nich to implement
     private void handleApproveReplenishmentRequests() {
+        // Print out the list of all replenishment requests
+        System.out.println(Colour.BLUE + "=== Replenishment Requests ===" + Colour.RESET);
+        System.out.println(app.getDrugDispensaryService().getDrugReplenishRequestsAsString());
 
+        while (true) {
+            System.out.println("Select the replenishment request EntryID to approve: (-1 to go back) (a to approve all) ");
+            try {
+                String rawInput = scanner.nextLine();
+                if (rawInput.equals("a")) {
+                    app.getDrugDispensaryService().approveAllReplenishRequests();
+                    logAdminAction("Approved all replenishment requests");
+                    System.out.println(Colour.GREEN + "All replenishment requests approved successfully." + Colour.RESET);
+                    return;
+                }
+                int choice = Integer.parseInt(rawInput);
+                // Check that entry is a valid entry
+                boolean valid = app.getDrugDispensaryService().isValidReplenishRequestID(choice);
+                if (!valid) {
+                    if (choice == -1) {
+                        return;
+                    }
+                    System.out.println(Colour.RED + "Invalid EntryID. Please try again." + Colour.RESET);
+                    continue;
+                }
+
+                System.out.println("You have selected EntryID: " + choice + ". Approve or Reject?");
+                System.out.println("1. Approve");
+                System.out.println("2. Reject");
+                System.out.print("Enter your choice: ");
+                int option = Integer.parseInt(scanner.nextLine());
+                if (option == 1) {
+                    app.getDrugDispensaryService().processReplenishRequest(choice, true);
+                    logAdminAction("Approved replenishment request with EntryID " + choice);
+                    System.out.println(Colour.GREEN + "Replenishment request approved successfully." + Colour.RESET);
+                } else if (option == 2) {
+                    app.getDrugDispensaryService().processReplenishRequest(choice, false);
+                    logAdminAction("Rejected replenishment request with EntryID " + choice);
+                    System.out.println(Colour.GREEN + "Replenishment request rejected successfully." + Colour.RESET);
+                }
+                else {
+                    System.out.println(Colour.RED + "Invalid option. Please try again." + Colour.RESET);
+                }
+                System.out.println(Colour.BLUE + "=== Replenishment Requests ===" + Colour.RESET);
+                System.out.println(app.getDrugDispensaryService().getDrugReplenishRequestsAsString());
+            } catch (NumberFormatException e) {
+                System.out.println(Colour.RED + "Please enter a valid number." + Colour.RESET);
+            }
+        }
     }
 
     // TODO: For Amos to implement Staff related methods.

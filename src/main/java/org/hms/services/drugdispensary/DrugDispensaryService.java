@@ -4,6 +4,7 @@ import org.hms.services.AbstractService;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -154,7 +155,6 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
      * @return          True if request was successfully processed, false otherwise
      */
     public boolean processReplenishRequest(int replenishRequestID, boolean accept){
-        // TODO: Decide if we are keeping records of past requests.
         DrugReplenishRequest request = drugReplenishRequestTable.getEntry(replenishRequestID);
         if (accept){
             boolean success = addDrugStockQuantity(request.getDrugName(), request.getAddQuantity());
@@ -170,6 +170,19 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
             return false;
         }
 
+        return true;
+    }
+
+    /**
+     * Processes all pending replenish requests and accepts them.
+     *
+     * @return true if all requests were successfully processed, false otherwise
+     */
+    public boolean approveAllReplenishRequests(){
+        List<DrugReplenishRequest> requests = drugReplenishRequestTable.getEntries();
+        for (DrugReplenishRequest request : requests){
+            processReplenishRequest(request.getTableEntryID(), true);
+        }
         return true;
     }
 
@@ -257,6 +270,10 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
          return !drugInventory.searchByAttribute(DrugInventoryEntry::getTableEntryID, entryID).isEmpty();
     }
 
+    public boolean isValidReplenishRequestID(int entryID){
+        return !drugReplenishRequestTable.searchByAttribute(DrugReplenishRequest::getTableEntryID, entryID).isEmpty();
+    }
+
     /**
      * Checks if a drug exists in the inventory.
      *
@@ -292,6 +309,11 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         return true;
     }
 
+    /**
+     * Removes a drug from the inventory.
+     * @param entryID the ID of the drug to remove.
+     * @return true if the drug was successfully removed, false otherwise.
+     */
     public boolean removeDrugFromInventory(int entryID){
         // Check if the entryID is valid
         if (!isValidDrugEntryID(entryID)){
@@ -299,6 +321,12 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         }
         try {
             drugInventory.removeEntry(entryID);
+    /**
+     * Retrieves the name of the drug specified by its entry ID.
+     *
+     * @param entryID the unique identifier of the drug in the inventory.
+     * @return the name of the drug if found, otherwise null.
+     */
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return false;
@@ -306,6 +334,11 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         return true;
     }
 
+    /**
+     * Retrieves the name of the drug specified by its entry ID.
+     * @param entryID the unique identifier of the drug in the inventory.
+     * @return the name of the drug if found, otherwise null.
+     */
     public String getDrugName(int entryID){
         ArrayList<DrugInventoryEntry> results = drugInventory.searchByAttribute(DrugInventoryEntry::getTableEntryID, entryID);
         if (results.isEmpty()){
