@@ -4,6 +4,8 @@ import org.hms.entities.UserContext;
 import org.hms.services.appointment.AppointmentService;
 import org.hms.services.drugdispensary.DrugDispensaryService;
 import org.hms.services.medicalrecord.MedicalRecordService;
+import org.hms.services.staffmanagement.Staff;
+import org.hms.services.staffmanagement.StaffManagementService;
 import org.hms.services.storage.StorageService;
 import org.hms.services.authentication.AuthenticationService;
 import org.hms.views.AuthenticationMenu;
@@ -15,6 +17,7 @@ public class App {
     private final AppointmentService appointmentService;
     private final DrugDispensaryService drugDispensaryService;
     private final AuthenticationService authenticationService;
+    private final StaffManagementService staffManagementService;
 
     private UserContext userContext;
     private AbstractMenu currentMenu;
@@ -25,6 +28,7 @@ public class App {
         this.appointmentService = new AppointmentService(storageService);
         this.drugDispensaryService = new DrugDispensaryService(storageService);
         this.authenticationService = new AuthenticationService();
+        this.staffManagementService = new StaffManagementService();
         this.userContext = null;
     }
 
@@ -57,6 +61,8 @@ public class App {
     public DrugDispensaryService getDrugDispensaryService(){
         return drugDispensaryService;
     }
+
+    public StaffManagementService getStaffManagementService() { return staffManagementService; }
 
     public UserContext getUserContext() {
         return userContext;
