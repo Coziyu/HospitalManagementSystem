@@ -117,11 +117,13 @@ public class DoctorMenu extends AbstractMainMenu {
 
         String doctorID = (app.getUserContext().getHospitalID());
         //doctorID = "D1001" ;  //remove this line after real doctor ID have appointments
-        app.getAppointmentService().viewRequest(doctorID);
+        boolean request = app.getAppointmentService().viewRequest(doctorID);
+        if(request == true){
         System.out.println("key in appointment ID");
         int appointmentID = Integer.parseInt(scanner.nextLine());
 
         app.getAppointmentService().manageAppointmentRequests(appointmentID, doctorID);
+        }
     }
 
     private void handleSetAppointmentAvailability() {
