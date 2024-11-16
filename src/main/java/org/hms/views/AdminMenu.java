@@ -55,7 +55,7 @@ public class AdminMenu extends AbstractMainMenu {
                         app.setCurrentMenu(new AuthenticationMenu(app));
                         return;
                     }
-                    default -> System.out.println("Invalid option. Please try again.");
+                    default -> System.out.println(Colour.RED + "Invalid option. Please try again." + Colour.RESET);
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Please enter a valid number.");
@@ -63,7 +63,11 @@ public class AdminMenu extends AbstractMainMenu {
         }
     }
 
-    // TODO: For Nich to implement
+    /**
+     * Prints a low stock alert message indicating which drugs are running low in inventory.
+     * This method retrieves drugs that are marked as low in stock from the DrugDispensaryService,
+     * and if there are any such drugs, it prints their details to the console in a formatted string.
+     */
     private void printLowStockAlertMessage() {
         DrugInventoryTable lowStockView = app.getDrugDispensaryService().getLowStockDrugs();
         if (!lowStockView.getEntries().isEmpty()) {
@@ -72,14 +76,92 @@ public class AdminMenu extends AbstractMainMenu {
         }
     }
 
-    // TODO: For Yingjie to implement
+    // TODO: Look into beautifying print.
     private void handleViewAppointments() {
         app.getAppointmentService().displayAllAppointments();
     }
     // TODO: For Nich to implement
     private void handleManageDrugInventory() {
+        while (true) {
+            System.out.println("=== Manage Drug Inventory ===");
+            System.out.println("1. View Drug Stock");
+            System.out.println("2. Add New Drug");
+            System.out.println("3. Delete Drug");
+            System.out.println("4. Update Drug Quantity");
+            System.out.println("5. Update Low Stock Threshold");
+            System.out.println("6. Back to Main Menu");
+            System.out.print("Select an option: ");
 
+            try {
+                int choice = Integer.parseInt(scanner.nextLine());
+                switch (choice) {
+                    case 1 -> handleDisplayAllDrugs();
+                    case 2 -> handleAddNewDrug();
+                    case 3 -> handleDeleteDrug();
+                    case 4 -> handleUpdateDrugQuantity();
+                    case 5 -> handleUpdateLowStockThreshold();
+                    case 6 -> {
+                        logAdminAction("Exited drug inventory management");
+                        return;
+                    }
+                    default -> System.out.println(Colour.RED + "Invalid option. Please try again." + Colour.RESET);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
     }
+
+    private void handleDisplayAllDrugs() {
+        System.out.println("=== Drug Inventory ===");
+        String drugInventoryString = app.getDrugDispensaryService().getDrugInventoryAsString();
+        System.out.println(drugInventoryString);
+    }
+
+    private void handleAddNewDrug() {
+
+        System.out.println("=== Add New Drug ===");
+        System.out.println("Enter Drug Name: ");
+        String drugName = scanner.nextLine();
+        int quantity = -1;
+        int lowStockAlertThreshold = -2;
+        // Check if the drug already exists
+        if (app.getDrugDispensaryService().doesDrugExist(drugName)) {
+            System.out.println("Drug already exists.");
+            return;
+        }
+
+        while (quantity < 0) {
+            try {
+                System.out.println("Enter Drug Quantity: ");
+                quantity = Integer.parseInt(scanner.nextLine());
+            }
+            catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
+
+        while (lowStockAlertThreshold < -1) {
+            try {
+                System.out.println("Enter Low Stock Alert Threshold: (-1 to disable) ");
+                lowStockAlertThreshold = Integer.parseInt(scanner.nextLine());
+            }
+            catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
+
+        boolean success = app.getDrugDispensaryService().addNewDrug(drugName, quantity, lowStockAlertThreshold);
+        if (success) {
+            System.out.println(Colour.GREEN + "Drug added successfully." + Colour.RESET);
+        }
+        else {
+            System.out.println(Colour.RED + "Failed to add drug. Please try again." + Colour.RESET);
+        }
+    }
+
+
+
     // TODO: For Nich to implement
     private void handleApproveReplenishmentRequests() {
 

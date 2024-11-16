@@ -225,4 +225,43 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
     public boolean isValidDrugEntryID(int entryID){
          return !drugInventory.searchByAttribute(DrugInventoryEntry::getTableEntryID, entryID).isEmpty();
     }
+
+    /**
+     * Checks if a drug exists in the inventory.
+     *
+     * @param drugName the name of the drug to search for.
+     * @return true if the drug exists, false otherwise.
+     */
+    public boolean doesDrugExist(String drugName){
+        return !drugInventory.searchByAttribute(DrugInventoryEntry::getName, drugName).isEmpty();
+    }
+
+    /**
+     * Adds a new drug to the inventory.
+     *
+     * @param drugName               the name of the drug.
+     * @param quantity               the initial quantity of the drug.
+     * @param lowStockAlertThreshold the low stock alert threshold for the drug.
+     * @return true if the drug was successfully added, false otherwise.
+     */
+    public boolean addNewDrug(String drugName, int quantity, int lowStockAlertThreshold){
+        DrugInventoryEntry newDrug = drugInventory.createValidEntryTemplate();
+
+        newDrug.setName(drugName);
+        newDrug.setQuantity(quantity);
+        newDrug.setLowStockAlertThreshold(lowStockAlertThreshold);
+
+        try {
+            drugInventory.addEntry(newDrug);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean removeDrug(int entryID){
+
+    }
 }
