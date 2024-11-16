@@ -5,6 +5,9 @@ import org.hms.entities.UserContext;
 import org.hms.entities.UserRole;
 import org.hms.services.appointment.AppointmentOutcome;
 import org.hms.services.drugdispensary.DrugDispenseRequest;
+import org.hms.services.logging.AuditLogger;
+import org.hms.services.medicalrecord.MedicalRecord;
+
 import org.hms.entities.Colour;
 
 import java.time.LocalDateTime;
@@ -328,11 +331,11 @@ public class DoctorMenu extends AbstractMainMenu {
     }
 
     private void logDoctorAction(String action) {
-        String logMessage = String.format("Doctor Action - Dr. %s (UserID: %s) - %s",
+        AuditLogger.logAction(
                 userContext.getName(),
-                userContext.getHospitalID(),
+                "DOCTOR",
+                String.valueOf(userContext.getHospitalID()),
                 action
         );
-        System.out.println("LOG: " + LocalDateTime.now() + " - " + logMessage);
     }
 }

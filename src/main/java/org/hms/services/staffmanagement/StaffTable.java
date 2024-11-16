@@ -146,7 +146,7 @@ public class StaffTable extends AbstractTable<Staff> {
         }
 
         Map<String, User> users = loadUsers();
-        users.put(staff.getStaffId(), new User(staff.getStaffId(), "password", parseUserRole(staff.getRole()), true));
+        users.put(staff.getStaffId(), new User(staff.getStaffId(), "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8", parseUserRole(staff.getRole()), true));
         saveUsers(users);
 
     }

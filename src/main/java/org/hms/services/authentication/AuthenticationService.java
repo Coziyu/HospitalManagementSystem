@@ -3,6 +3,7 @@ package org.hms.services.authentication;
 import org.hms.entities.User;
 import org.hms.entities.UserRole;
 import org.hms.services.authentication.AuthenticationResult;
+import org.hms.utils.PasswordUtils;
 
 import java.io.*;
 import java.nio.file.*;
@@ -15,6 +16,7 @@ public class AuthenticationService {
     private static final String USER_DB_FILE = dataRoot + "users.csv";
     private Map<String, User> users;
     private User currentUser;
+    private final LoginAttemptTracker loginAttemptTracker;
 
     // Role-specific ID prefixes and counters
     private static final Map<UserRole, String> ID_PREFIXES = Map.of(
@@ -26,6 +28,7 @@ public class AuthenticationService {
 
     public AuthenticationService() {
         users = new HashMap<>();
+        loginAttemptTracker = new LoginAttemptTracker();
         initializeUserDatabase();
         loadUsers();
     }
@@ -37,8 +40,9 @@ public class AuthenticationService {
             if (!Files.exists(Paths.get(USER_DB_FILE))) {
                 try (PrintWriter writer = new PrintWriter(USER_DB_FILE)) {
                     writer.println("id,password,role,isFirstLogin");
-                    // Add default admin account for first-time setup
-                    writer.println("ADMIN001,password,ADMINISTRATOR,true");
+                    // Add default admin account with hashed password
+                    String hashedPassword = PasswordUtils.hashPassword("password");
+                    writer.println("ADMIN001," + hashedPassword + ",ADMINISTRATOR,true");
                 }
             }
         } catch (IOException e) {
@@ -54,7 +58,7 @@ public class AuthenticationService {
                 if (parts.length == 4) {
                     User user = new User(
                             parts[0],
-                            parts[1],
+                            parts[1], // Password is already hashed in the file
                             UserRole.valueOf(parts[2].toUpperCase()),
                             Boolean.parseBoolean(parts[3])
                     );
@@ -72,7 +76,7 @@ public class AuthenticationService {
             for (User user : users.values()) {
                 writer.printf("%s,%s,%s,%b%n",
                         user.getId(),
-                        user.getPassword(),
+                        user.getPassword(), // Password is already hashed
                         user.getRole().toString(),
                         user.isFirstLogin()
                 );
@@ -88,12 +92,33 @@ public class AuthenticationService {
             return new AuthenticationResult(false, null, "User not found");
         }
 
-        if (!user.getPassword().equals(password)) {
-            return new AuthenticationResult(false, null, "Invalid password");
+        // Check if account is locked
+        if (loginAttemptTracker.isAccountLocked(id)) {
+            return new AuthenticationResult(false, null,
+                    "Account is locked. Try again after " +
+                            loginAttemptTracker.getLockoutEndTime(id).toString());
         }
 
+        // Hash the provided password and compare with stored hash
+        String hashedPassword = PasswordUtils.hashPassword(password);
+        if (!user.getPassword().equals(hashedPassword)) {
+            loginAttemptTracker.recordFailedAttempt(id);
+            int remainingAttempts = loginAttemptTracker.getRemainingAttempts(id);
+
+            if (remainingAttempts > 0) {
+                return new AuthenticationResult(false, null,
+                        "Invalid password. " + remainingAttempts + " attempts remaining");
+            } else {
+                return new AuthenticationResult(false, null,
+                        "Account locked due to too many failed attempts");
+            }
+        }
+
+        // Successful login
+        loginAttemptTracker.clearAttempts(id);
         currentUser = user;
-        return new AuthenticationResult(true, user, user.isFirstLogin() ? "Password change required" : "Login successful");
+        return new AuthenticationResult(true, user,
+                user.isFirstLogin() ? "Password change required" : "Login successful");
     }
 
     public boolean changePassword(String oldPassword, String newPassword) {
@@ -101,11 +126,20 @@ public class AuthenticationService {
             return false;
         }
 
-        if (!currentUser.getPassword().equals(oldPassword)) {
+        // Verify old password
+        String hashedOldPassword = PasswordUtils.hashPassword(oldPassword);
+        if (!currentUser.getPassword().equals(hashedOldPassword)) {
             return false;
         }
 
-        currentUser.setPassword(newPassword);
+        // Validate new password
+        if (!PasswordUtils.isPasswordValid(newPassword)) {
+            return false;
+        }
+
+        // Update password
+        String hashedNewPassword = PasswordUtils.hashPassword(newPassword);
+        currentUser.setPassword(hashedNewPassword);
         currentUser.setFirstLogin(false);
         saveUsers();
         return true;
@@ -119,11 +153,6 @@ public class AuthenticationService {
         return currentUser;
     }
 
-    /**
-     * Generates a new unique ID for a user based on their role
-     * @param role The role of the new user
-     * @return A unique ID string
-     */
     private String generateUniqueId(UserRole role) {
         String prefix = ID_PREFIXES.get(role);
         int counter = 1;
@@ -135,70 +164,44 @@ public class AuthenticationService {
                     int existingNumber = Integer.parseInt(existingId.substring(prefix.length()));
                     counter = Math.max(counter, existingNumber + 1);
                 } catch (NumberFormatException e) {
-                    // Skip if the number part isn't properly formatted
                     continue;
                 }
             }
         }
 
-        // Format: PREFIX + padded number (e.g., DOC001)
         return String.format("%s%03d", prefix, counter);
     }
 
-    /**
-     * Adds a new user to the system with an automatically generated ID
-     * @param role The role of the new user
-     * @return The generated user ID
-     */
     public String addUser(UserRole role) {
         String newId = generateUniqueId(role);
-        User newUser = new User(newId, "password", role, true);
+        String hashedPassword = PasswordUtils.hashPassword("password"); // Hash default password
+        User newUser = new User(newId, hashedPassword, role, true);
         users.put(newId, newUser);
         saveUsers();
         return newId;
     }
 
-    /**
-     * Attempts to add a user with a specific ID
-     * @param id Desired user ID
-     * @param role User role
-     * @return true if successful, false if ID already exists
-     */
     public boolean addUserWithId(String id, UserRole role) {
         if (users.containsKey(id)) {
             return false;
         }
-        User newUser = new User(id, "password", role, true);
+        String hashedPassword = PasswordUtils.hashPassword("password"); // Hash default password
+        User newUser = new User(id, hashedPassword, role, true);
         users.put(id, newUser);
         saveUsers();
         return true;
     }
 
-    /**
-     * Gets all users in the system
-     * @return List of all users
-     */
     public List<User> getAllUsers() {
         return new ArrayList<>(users.values());
     }
 
-    /**
-     * Gets users filtered by role
-     * @param role Role to filter by
-     * @return List of users with the specified role
-     */
     public List<User> getUsersByRole(UserRole role) {
         return users.values().stream()
                 .filter(user -> user.getRole() == role)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Gets users filtered by role and sorted by ID
-     * @param role Role to filter by
-     * @param sortById Whether to sort by ID
-     * @return List of filtered and optionally sorted users
-     */
     public List<User> getUsersByRole(UserRole role, boolean sortById) {
         Stream<User> userStream = users.values().stream()
                 .filter(user -> user.getRole() == role);
@@ -210,31 +213,16 @@ public class AuthenticationService {
         return userStream.collect(Collectors.toList());
     }
 
-    /**
-     * Searches for users based on ID prefix
-     * @param idPrefix The prefix to search for
-     * @return List of users whose IDs start with the given prefix
-     */
     public List<User> searchUsersByIdPrefix(String idPrefix) {
         return users.values().stream()
                 .filter(user -> user.getId().toLowerCase().startsWith(idPrefix.toLowerCase()))
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Checks if a user ID already exists
-     * @param id The ID to check
-     * @return true if the ID exists, false otherwise
-     */
     public boolean userExists(String id) {
         return users.containsKey(id);
     }
 
-    /**
-     * Deletes a user from the system
-     * @param id The ID of the user to delete
-     * @return true if user was deleted, false if user was not found
-     */
     public boolean deleteUser(String id) {
         if (!users.containsKey(id)) {
             return false;
@@ -244,28 +232,14 @@ public class AuthenticationService {
         return true;
     }
 
-    /**
-     * Gets a user by their ID
-     * @param id The ID of the user to get
-     * @return Optional containing the user if found, empty otherwise
-     */
     public Optional<User> getUser(String id) {
         return Optional.ofNullable(users.get(id));
     }
 
-    /**
-     * Returns total count of users in the system
-     * @return Total number of users
-     */
     public int getUserCount() {
         return users.size();
     }
 
-    /**
-     * Returns count of users by role
-     * @param role Role to count
-     * @return Number of users with the specified role
-     */
     public long getUserCountByRole(UserRole role) {
         return users.values().stream()
                 .filter(user -> user.getRole() == role)
