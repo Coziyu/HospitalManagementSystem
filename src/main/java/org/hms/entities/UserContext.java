@@ -3,9 +3,9 @@ package org.hms.entities;
 public class UserContext {
     private String name;
     private UserRole userRole;
-    private Integer hospitalID;
+    private String hospitalID;
 
-    public UserContext(String name, UserRole userRole, Integer hospitalID) {
+    public UserContext(String name, UserRole userRole, String hospitalID) {
         this.name = name;
         this.userRole = userRole;
         this.hospitalID = hospitalID;
@@ -19,7 +19,7 @@ public class UserContext {
         return userRole;
     }
 
-    public Integer getHospitalID() {
+    public String getHospitalID() {
         return hospitalID;
     }
 }

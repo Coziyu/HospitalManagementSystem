@@ -330,7 +330,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
                 // Only add a tab and print header if the cell contains "1"
                 if ("available".equals(row[j])) {
                     System.out.print("\t" + headers[j]);
-                    //String doctorName = storageServiceInterface.getStaffForSchedule(headers[j]).getName();
+                    String doctorName = storageServiceInterface.getStaffForSchedule(headers[j]).getName();
                     //System.out.print("\t" + doctorName + "(ID = " + headers[1] + ")");
                     //Not sure can work or not until the the staff.csv and schedule csv files have same doctors
                 }

@@ -2,13 +2,13 @@ package org.hms.entities;
 
 public class PatientContext extends UserContext {
 
-    private Integer patientID;
+    private String patientID;
 
-    public PatientContext(UserContext userContext, Integer patientID) {
+    public PatientContext(UserContext userContext, String patientID) {
         super(userContext.getName(), userContext.getUserType(), userContext.getHospitalID());
         this.patientID = patientID;
     }
-    public Integer getPatientID() {
+    public String getPatientID() {
         return patientID;
     }
 
