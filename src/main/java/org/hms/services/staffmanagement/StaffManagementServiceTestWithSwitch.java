@@ -24,9 +24,9 @@ public class StaffManagementServiceTestWithSwitch {
             System.out.println("8 - Assign Role");
             System.out.println("9 - Change Status");
             System.out.println("10 - Archive Staff");
-            System.out.println("11 - Save to File");
-            System.out.println("12 - Load from File");
-            System.out.println("13 - Search Staff");
+            System.out.println("11 - Search Staff");
+            System.out.println("12 - Save to File");
+            System.out.println("13 - Load from File");
             System.out.println("0 - Exit");
 
             int choice = scanner.nextInt();
@@ -119,16 +119,6 @@ public class StaffManagementServiceTestWithSwitch {
                     break;
 
                 case 11:
-                    boolean saveSuccess = service.saveToFile();
-                    System.out.println("Save to File: " + (saveSuccess ? "Success" : "Failed"));
-                    break;
-
-                case 12:
-                    boolean loadSuccess = service.loadFromFile();
-                    System.out.println("Load from File: " + (loadSuccess ? "Success" : "Failed"));
-                    break;
-
-                case 13:
                     System.out.print("Enter search criteria (role, gender, status): ");
                     String criteria = scanner.nextLine().toLowerCase();
                     System.out.print("Enter value to search for: ");
@@ -141,6 +131,17 @@ public class StaffManagementServiceTestWithSwitch {
                         searchResults.forEach(System.out::println);
                     }
                     break;
+
+                case 12:
+                    boolean saveSuccess = service.saveToFile();
+                    System.out.println("Save to File: " + (saveSuccess ? "Success" : "Failed"));
+                    break;
+
+                case 13:
+                    boolean loadSuccess = service.loadFromFile();
+                    System.out.println("Load from File: " + (loadSuccess ? "Success" : "Failed"));
+                    break;
+
 
                 case 0:
                     running = false;

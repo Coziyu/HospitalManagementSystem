@@ -1,3 +1,2 @@
 id,password,role,isFirstLogin
-DOC002,password,doctor,true
-DOC001,password,doctor,true
+DOC001,password,Doctor,true

@@ -61,11 +61,14 @@ public class StaffManagementService {
             // Retain the existing numeric ID to ensure compatibility
             updatedStaff.setTableEntryID(existingStaff.getTableEntryID());
 
-            // Locate and replace the existing staff entry
-            staffTable.getEntries().remove(existingStaff); // Remove the old entry
-            staffTable.addEntry(updatedStaff); // Add the updated entry
+            // Replace the existing entry directly
+            if (!staffTable.replaceEntry(updatedStaff)) {
+                System.err.println("Error updating staff: Entry not found for replacement.");
+                return false;
+            }
 
-            staffTable.saveToFile(); // Save after updating
+            // Save changes to the file
+            staffTable.saveToFile();
         } catch (Exception e) {
             System.err.println("Error updating staff: " + e.getMessage());
             return false;
