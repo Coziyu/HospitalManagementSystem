@@ -2,17 +2,21 @@ package org.hms.views;
 
 import org.hms.App;
 import org.hms.entities.PatientContext;
+import org.hms.entities.Colour;
 import org.hms.services.appointment.AppointmentStatus;
-import org.w3c.dom.ls.LSOutput;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class PatientMenu extends AbstractMainMenu {
     private final PatientContext patientContext;
     private final Scanner scanner;
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{8}$");
 
     public PatientMenu(App app, PatientContext patientContext) {
         this.app = app;
@@ -23,14 +27,14 @@ public class PatientMenu extends AbstractMainMenu {
     @Override
     public void displayAndExecute() {
         while (true) {
-            System.out.println("\n=== Patient Menu ===");
-            System.out.println("1. View Medical Records");
+            System.out.println("\n" + Colour.BLUE + "=== Patient Menu ===" + Colour.RESET);
+            System.out.println("1. View Medical Record");
             System.out.println("2. Update Personal Information");
             System.out.println("3. View Available Appointment Slots");
             System.out.println("4. Schedule Appointment");
             System.out.println("5. Reschedule Appointment");
             System.out.println("6. Cancel Appointment");
-            System.out.println("7. View Upcoming Appointments");
+            System.out.println("7. View Scheduled Appointments");
             System.out.println("8. View Past Appointment Outcomes");
             System.out.println("9. Logout");
             System.out.print("Select an option: ");
@@ -51,10 +55,10 @@ public class PatientMenu extends AbstractMainMenu {
                         app.setCurrentMenu(new AuthenticationMenu(app));
                         return;
                     }
-                    default -> System.out.println("Invalid option. Please try again.");
+                    default -> System.out.println(Colour.RED + "Invalid option. Please try again." + Colour.RESET);
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Please enter a valid number.");
+                System.out.println(Colour.RED + "Please enter a valid number." + Colour.RESET);
             }
         }
     }
@@ -144,12 +148,12 @@ public class PatientMenu extends AbstractMainMenu {
     }
 
     private void handleViewMedicalRecord() {
-        System.out.println("\n=== Medical Records ===");
+        System.out.println("\n" + Colour.BLUE + "=== Medical Records ===" + Colour.RESET);
         Integer patientID = patientContext.getHospitalID();
 
         //TODO: For Elijah to refactor this part. Since his method was refactored to use Optional<>
         // Also, is this meant to be `records` or `record` singular? If it's singular, consider
-        // somemthing like this line below:
+        // something like this line below:
         // Optional<MedicalRecord> record = app.getMedicalRecordService().getMedicalRecord();
         // If it's all the records, then you have to implement the method / declare the method in
         // the DataInterface
