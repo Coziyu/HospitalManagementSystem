@@ -11,6 +11,7 @@ class MedicalRecordTest {
 
     @Test
     void loadingFromCSV() {
+        // TODO: Replace this with real test data
         String filePath = System.getProperty("user.dir") + "/data/medical_records.csv";
         medicalRecord = new MedicalRecord(filePath);
 
@@ -22,6 +23,6 @@ class MedicalRecordTest {
 
         System.out.println(medicalRecord.toPrintString());
 
-        assertEquals(2, medicalRecord.getEntries().size());
+        assertEquals(6, medicalRecord.getEntries().size());
     }
 }

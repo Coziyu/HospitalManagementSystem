@@ -109,7 +109,7 @@ public class AuthenticationMenu extends AbstractMenu {
 
     private void navigateToAppropriateMenu(User user) {
         // Create UserContext with hospital ID parsed from user ID
-        String hospitalId = null; // Default hospital ID
+        String hospitalId = user.getId(); // Default hospital ID
         UserContext userContext = new UserContext(user.getId(), user.getRole(), hospitalId);
         app.setUserContext(userContext);
 

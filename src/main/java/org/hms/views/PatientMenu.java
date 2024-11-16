@@ -5,6 +5,7 @@ import org.hms.entities.PatientContext;
 import org.hms.entities.Colour;
 import org.hms.services.appointment.AppointmentStatus;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -143,20 +144,28 @@ public class PatientMenu extends AbstractMainMenu {
         }
     }
 
+
+    /**
+     * Handles the "View Medical Record" option.
+     * Will display the patient's medical record.
+     * If the patient does not have a medical record,
+     * a blank record will be displayed.
+     */
     private void handleViewMedicalRecord() {
-        System.out.println("\n" + Colour.BLUE + "=== Medical Records ===" + Colour.RESET);
+        System.out.println("\n" + Colour.BLUE + "=== Medical Records for Patient: " + patientContext.getHospitalID() + "===" + Colour.RESET);
         String patientID = patientContext.getHospitalID();
 
-        //TODO: For Elijah to refactor this part. Since his method was refactored to use Optional<>
-        // Also, is this meant to be `records` or `record` singular? If it's singular, consider
-        // something like this line below:
-        // Optional<MedicalRecord> record = app.getMedicalRecordService().getMedicalRecord();
-        // If it's all the records, then you have to implement the method / declare the method in
-        // the DataInterface
-//        String medicalRecords = app.getMedicalRecordService().getMedicalRecords(patientID);
-        String medicalRecords = "placeholder";
+        System.out.println(Colour.GREEN + " == Personal Particulars == " + Colour.RESET);
+        String personalParticulars = app.getMedicalRecordService().getPatientPersonalParticulars(patientID);
+        System.out.println(personalParticulars);
 
-        System.out.println(medicalRecords);
+        System.out.println(Colour.GREEN + " == Contact Information == " + Colour.RESET);
+        String contactInfo = app.getMedicalRecordService().getPatientContactInformation(patientID);
+        System.out.println(contactInfo);
+
+        System.out.println(Colour.GREEN + " == Medical History == " + Colour.RESET);
+        String medicalRecordString = app.getMedicalRecordService().getPatientMedicalRecord(patientID);
+        System.out.println(medicalRecordString);
     }
 
     // TODO: For Yingjie to implement
@@ -168,9 +177,10 @@ public class PatientMenu extends AbstractMainMenu {
     }
 
     private void handleUpdateInformation() {
-        System.out.println("\n=== Update Personal Information ===");
-        // Implementation would allow updating contact info, etc.
-        System.out.println("Feature coming soon...");
+        System.out.println("\n" + Colour.BLUE + "=== Update Personal Information ===" + Colour.RESET);
+        String patientID = (app.getUserContext().getHospitalID());
+
+
     }
     // TODO: Decide if deprecated
     private void handleViewPrescriptions() {
