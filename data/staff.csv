@@ -1,2 +1,8 @@
 staffId,age,name,role,status,gender
 DOC001,23,Amos,Doctor,active,M
+DOC002,49,Vi,Doctor,active,F
+PHARM001,33,John,Pharmacist,active,M
+DOC003,23,Freya Johnson,Doctor,active,F
+DOC004,27,John,Doctor,active,M
+DOC005,10,Janet,Doctor,active,F
+DOC006,66,Chris,Doctor,active,M

@@ -131,4 +131,37 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
         return (MedicalRecord) medicalRecordsTable.filterByAttribute(MedicalEntry::getPatientID, patientID);
     }
 
+    private ContactInformation getPatientContactInformationEntry(String patientID){
+        return contactInformationTable.searchByAttribute(ContactInformation::getPatientID,patientID).getFirst();
+    }
+
+    public void updatePatientPhoneNumber(String patientID, String newPhoneNumber) {
+        ContactInformation contactInfo = getPatientContactInformationEntry(patientID);
+        contactInfo.setPhoneNumber(newPhoneNumber);
+        try {
+            contactInformationTable.replaceEntry(contactInfo);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updatePatientEmail(String patientID, String newEmail) {
+        ContactInformation contactInfo = getPatientContactInformationEntry(patientID);
+        contactInfo.setEmail(newEmail);
+        try {
+            contactInformationTable.replaceEntry(contactInfo);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updatePatientAddress(String patientID, String newAddress) {
+        ContactInformation contactInfo = getPatientContactInformationEntry(patientID);
+        contactInfo.setAddress(newAddress);
+        try {
+            contactInformationTable.replaceEntry(contactInfo);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
