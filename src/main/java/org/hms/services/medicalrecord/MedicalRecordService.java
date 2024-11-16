@@ -4,6 +4,10 @@ import org.hms.entities.UserContext;
 import org.hms.entities.UserRole;
 import org.hms.services.AbstractService;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
+
 public class MedicalRecordService extends AbstractService<IMedicalDataInterface> {
     // CSV paths
     private static final String DATA_DIRECTORY = "data";
@@ -35,6 +39,42 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
     public String getPatientMedicalRecord(String patientID) {
         MedicalRecord medicalRecord = (MedicalRecord) medicalRecordsTable.filterByAttribute(MedicalEntry::getPatientID, patientID);
         return medicalRecord.toPrintString();
+    }
+    public String getPatientMedicalRecord(String doctorID, String patientID) {
+        MedicalRecord medicalRecord =
+                (MedicalRecord) medicalRecordsTable
+                        .filterByAttribute(MedicalEntry::getPatientID, patientID)
+                        .filterByAttribute(MedicalEntry::getDoctorID, doctorID);
+        return medicalRecord.toPrintString();
+    }
+
+    /**
+     * This method returns a PrintString of a MedicalEntry, containing a single MedicalEntry
+     * @param entryID
+     * @return A printString for the patient's medical record
+     */
+    public String getMedicalRecordEntry(int entryID) {
+        MedicalRecord medicalRecord = (MedicalRecord) medicalRecordsTable.filterByAttribute(MedicalEntry::getTableEntryID, entryID);
+        return medicalRecord.toPrintString();
+    }
+
+    /**
+     * This method returns a list of all valid entry IDs for a patient
+     * @param patientID
+     * @return A list of valid entry IDs
+     */
+    public List<Integer> getPatientMedicalRecordEntryIDs(String patientID) {
+        MedicalRecord medicalRecord = (MedicalRecord) medicalRecordsTable.filterByAttribute(MedicalEntry::getPatientID, patientID);
+        return medicalRecord.getValidEntryNumbers();
+    }
+
+    public List<Integer> getPatientMedicalRecordEntryIDs(String doctorID, String patientID) {
+        MedicalRecord medicalRecord =
+                (MedicalRecord) medicalRecordsTable
+                        .filterByAttribute(MedicalEntry::getDoctorID, doctorID)
+                        .filterByAttribute(MedicalEntry::getPatientID, patientID);
+
+        return medicalRecord.getValidEntryNumbers();
     }
 
     /**
@@ -160,6 +200,89 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
         contactInfo.setAddress(newAddress);
         try {
             contactInformationTable.replaceEntry(contactInfo);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Returns a list of unique patient IDs that have been treated by a specific doctor
+     * @param doctorID
+     * @return
+     */
+    public String[] getPatientIDsTreatedByDoctor(String doctorID) {
+        return medicalRecordsTable.searchByAttribute(MedicalEntry::getDoctorID, doctorID)
+                .stream()
+                .map(MedicalEntry::getPatientID).
+                distinct().
+                toArray(String[]::new);
+    }
+
+    /**
+     * Returns a list of unique patient particulars that have been treated by a specific doctor
+     * @param doctorID
+     * @return
+     */
+    public String getPatientParticularsTreatedByDoctor(String doctorID) {
+        List<String> patientIDs = Arrays.asList(getPatientIDsTreatedByDoctor(doctorID));
+
+        Predicate<String> isInPatientIDs = patientIDs::contains;
+
+        return ( (PatientTable) patientTable.filterByCondition(PatientParticulars::getPatientID, isInPatientIDs)).toPrintString();
+
+    }
+
+    /**
+     * Returns whether a patient has been treated by a specific doctor
+     * @param patientID
+     * @param doctorID
+     * @return True if the patient has been treated by the doctor
+     */
+    public boolean isPatientTreatedByDoctor(String patientID, String doctorID) {
+        return medicalRecordsTable.searchByAttribute(MedicalEntry::getPatientID, patientID)
+                .stream()
+                .anyMatch(medicalEntry -> medicalEntry.getDoctorID().equals(doctorID));
+    }
+
+    /**
+     * Returns whether a patient exists
+     * @param patientID
+     * @return True if the patient exists
+     */
+    public boolean patientExists(String patientID) {
+        return !patientTable.searchByAttribute(PatientParticulars::getPatientID, patientID).isEmpty();
+    }
+
+    /**
+     * TODO
+     * @param entryID
+     * @param diagnosis
+     */
+    public void updateDiagnosis(int entryID, String diagnosis) {
+        MedicalEntry medicalEntry = medicalRecordsTable.filterByAttribute(MedicalEntry::getTableEntryID, entryID).getEntry(entryID);
+        medicalEntry.setDiagnosis(diagnosis);
+        try {
+            medicalRecordsTable.replaceEntry(medicalEntry);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updateTreatmentPlan(int entryID, String treatmentPlan) {
+        MedicalEntry medicalEntry = medicalRecordsTable.filterByAttribute(MedicalEntry::getTableEntryID, entryID).getEntry(entryID);
+        medicalEntry.setTreatmentPlan(treatmentPlan);
+        try {
+            medicalRecordsTable.replaceEntry(medicalEntry);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updateConsultationNotes(int entryID, String consultationNotes) {
+        MedicalEntry medicalEntry = medicalRecordsTable.filterByAttribute(MedicalEntry::getTableEntryID, entryID).getEntry(entryID);
+        medicalEntry.setConsultationNotes(consultationNotes);
+        try {
+            medicalRecordsTable.replaceEntry(medicalEntry);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -7,13 +7,13 @@ import org.hms.services.appointment.AppointmentOutcome;
 import org.hms.services.drugdispensary.DrugDispenseRequest;
 import org.hms.services.logging.AuditLogger;
 import org.hms.services.medicalrecord.MedicalRecord;
+
 import org.hms.entities.Colour;
 
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.Scanner;
 import java.util.List;
 
@@ -120,11 +120,13 @@ public class DoctorMenu extends AbstractMainMenu {
 
         String doctorID = (app.getUserContext().getHospitalID());
         //doctorID = "D1001" ;  //remove this line after real doctor ID have appointments
-        app.getAppointmentService().viewRequest(doctorID);
+        boolean request = app.getAppointmentService().viewRequest(doctorID);
+        if(request == true){
         System.out.println("key in appointment ID");
         int appointmentID = Integer.parseInt(scanner.nextLine());
 
         app.getAppointmentService().manageAppointmentRequests(appointmentID, doctorID);
+        }
     }
 
     private void handleSetAppointmentAvailability() {
@@ -178,60 +180,143 @@ public class DoctorMenu extends AbstractMainMenu {
 
     }
 
+    /**
+     * This method handles the user's request to access patient records.
+     * It displays a list of patients under the doctor's care and allows the user to select a patient to view.
+     */
     private void handleAccessPatientRecords() {
         System.out.println("\n" + Colour.BLUE + "=== Access Patient Records ===" + Colour.RESET);
         System.out.println("Accessing as: Dr. " + userContext.getName());
-        System.out.print("Enter patient ID: ");
+
+        String doctorID = app.getUserContext().getHospitalID();
+
+        // Display a list of patients under the doctor's care
+        System.out.println("Patients under your care:");
+        System.out.println(app.getMedicalRecordService().getPatientParticularsTreatedByDoctor(doctorID));
 
         try {
-            int patientId = Integer.parseInt(scanner.nextLine());
+            //TODO: Nich: consider change to ID selection
+            System.out.print("Enter PatientID to view: ");
+            String patientID = scanner.nextLine();
 
-            // Verify doctor's access rights for this patient
-            if (!canAccessPatientRecords(patientId)) {
-                System.out.println(Colour.RED + "Access denied: Patient not assigned to you." + Colour.RESET);
-                logDoctorAction("Attempted unauthorized access to patient records: " + patientId);
+            // Ensure that the patient exists
+            if (!app.getMedicalRecordService().patientExists(patientID)) {
+                System.out.println(Colour.RED + "Patient not found." + Colour.RESET);
+                logDoctorAction("Attempted access to non-existent patient: " + patientID);
                 return;
             }
 
-            //TODO: For Elijah to refactor this part. Since his method was refactored to use Optional<>
-            // Also, is this meant to be `records` or `record` singular? If it's singular, consider
-            // somemthing like this line below:
-            // Optional<MedicalRecord> record = app.getMedicalRecordService().getMedicalRecord();
-            // If it's all the records, then you have to implement the method / declare the method in
-            // the DataInterface
+            // Verify doctor's access rights for this patient
+            if (!app.getMedicalRecordService().isPatientTreatedByDoctor(patientID, doctorID)) {
+                System.out.println(Colour.RED + "Access denied: Patient not assigned to you." + Colour.RESET);
+                logDoctorAction("Unauthorized access to patient records: " + patientID);
+                return;
+            }
 
-            // String records = app.getMedicalRecordService().getMedicalRecords(patientId);
-            String records = "placeholder";
+            // Display patient's personal particulars
+            System.out.println("\n" + Colour.GREEN + " == Patient Personal Particulars == " + Colour.RESET);
+            System.out.println(app.getMedicalRecordService().getPatientPersonalParticulars(patientID));
 
-            System.out.println(records);
+            // Display patient's Medical Records
+            System.out.println("\n" + Colour.GREEN + " == Patient Medical Records == " + Colour.RESET);
+            System.out.println(app.getMedicalRecordService().getPatientMedicalRecord(patientID));
 
-            logDoctorAction("Accessed medical records for patient: " + patientId);
-        } catch (NumberFormatException e) {
-            System.out.println(Colour.RED + "Invalid patient ID format." + Colour.RESET);
+            logDoctorAction("Accessed medical records for patient: " + patientID);
+
+        } catch (Exception e) {
+            System.out.println(Colour.RED + "An error occurred." + Colour.RESET);
         }
     }
 
     private void handleUpdateMedicalRecords() {
         System.out.println("\n" + Colour.BLUE + "=== Update Medical Records ===" + Colour.RESET);
         System.out.println("Updating as: Dr. " + userContext.getName());
-        System.out.print("Enter patient ID: ");
+
+        String doctorID = app.getUserContext().getHospitalID();
+
+        // Display a list of patients under the doctor's care
+        System.out.println("Patients under your care:");
+        System.out.println(app.getMedicalRecordService().getPatientParticularsTreatedByDoctor(doctorID));
 
         try {
-            int patientId = Integer.parseInt(scanner.nextLine());
+            System.out.print("Enter PatientID to update: ");
 
-            if (!canAccessPatientRecords(patientId)) {
-                System.out.println(Colour.RED + "Access denied: Patient not assigned to you." + Colour.RESET);
-                logDoctorAction("Attempted unauthorized update to patient records: " + patientId);
+            String patientID = scanner.nextLine();
+
+            // Ensure that the patient exists
+            if (!app.getMedicalRecordService().patientExists(patientID)) {
+                System.out.println(Colour.RED + "Patient not found." + Colour.RESET);
+                logDoctorAction("Attempted access to non-existent patient: " + patientID);
                 return;
             }
 
-            System.out.print("Enter medical notes: ");
-            String notes = scanner.nextLine();
+            if (!app.getMedicalRecordService().isPatientTreatedByDoctor(patientID, userContext.getHospitalID())) {
+                System.out.println(Colour.RED + "Access denied: Patient not assigned to you." + Colour.RESET);
+                logDoctorAction("Attempted unauthorized update to patient records: " + patientID);
+                return;
+            }
 
-            logDoctorAction("Updated medical records for patient: " + patientId);
-            System.out.println("Feature coming soon...");
-        } catch (NumberFormatException e) {
-            System.out.println(Colour.RED + "Invalid input format." + Colour.RESET);
+            // Display Patient's Medical Records
+            System.out.println("\n" + Colour.GREEN + " == Patient Medical Records == " + Colour.RESET);
+            System.out.println(app.getMedicalRecordService().getPatientMedicalRecord(doctorID, patientID));
+
+            List<Integer> validEntryNumbers = app.getMedicalRecordService().getPatientMedicalRecordEntryIDs(doctorID, patientID);
+
+
+            // Prompt select MedicalEntry to update from the MedicalRecord
+            System.out.print("Enter entryID to update: ");
+            int entryID = scanner.nextInt();
+            scanner.nextLine();
+
+            // TODO: Do not return
+            if (!validEntryNumbers.contains(entryID)) {
+                System.out.println(Colour.RED + "Invalid entryID." + Colour.RESET);
+                logDoctorAction("Attempted access to non-existent medical record entry: " + entryID);
+                return;
+            }
+
+            // Display the MedicalEntry to be updated
+            System.out.println("\n" + Colour.GREEN + " == Medical Entry to Update == " + Colour.RESET);
+            System.out.println(app.getMedicalRecordService().getMedicalRecordEntry(entryID));
+
+            // Update the MedicalEntry
+            // Select to change Diagnosis, Treatment Plan, or Consultation Notes
+            System.out.println("\n" + Colour.GREEN + " == Update Medical Entry == " + Colour.RESET);
+            System.out.println("Select an option:");
+            System.out.println("1. Update Diagnosis");
+            System.out.println("2. Update Treatment Plan");
+            System.out.println("3. Update Consultation Notes");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Diagnosis: ");
+                    String diagnosis = scanner.nextLine();
+                    app.getMedicalRecordService().updateDiagnosis(entryID, diagnosis);
+                    break;
+                case 2:
+                    System.out.print("Enter Treatment Plan: ");
+                    String treatmentPlan = scanner.nextLine();
+                    app.getMedicalRecordService().updateTreatmentPlan(entryID, treatmentPlan);
+                    break;
+                case 3:
+                    System.out.print("Enter Consultation Notes: ");
+                    String consultationNotes = scanner.nextLine();
+                    app.getMedicalRecordService().updateConsultationNotes(entryID, consultationNotes);
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
+
+            // Display the updated MedicalEntry
+            System.out.println("\n" + Colour.GREEN + " == Updated Medical Entry == " + Colour.RESET);
+            System.out.println(app.getMedicalRecordService().getMedicalRecordEntry(entryID));
+
+            logDoctorAction("Updated medical records for patient: " + patientID);
+        } catch (Exception e) {
+            System.out.println(Colour.RED + "An error occurred." + Colour.RESET);
         }
     }
 
@@ -243,13 +328,6 @@ public class DoctorMenu extends AbstractMainMenu {
         logDoctorAction("Viewed weekly schedule");
         // Implementation would show doctor's schedule
         System.out.println("Feature coming soon...");
-    }
-
-    private boolean canAccessPatientRecords(int patientId) {
-        // TODO: For implementation
-        // In a real implementation, this would check if the patient is assigned to this doctor
-        // For now, returning true for demonstration
-        return true;
     }
 
     private void logDoctorAction(String action) {

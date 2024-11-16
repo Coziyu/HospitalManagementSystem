@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public abstract class AbstractTable<T extends AbstractTableEntry> implements Serializable {
@@ -245,6 +246,31 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
         return results;
     }
 
+    public <U> AbstractTable<T> filterByCondition(Function<T, U> keyExtractor, Predicate<U> pred) {
+        if (keyExtractor == null || pred == null) {
+            throw new IllegalArgumentException("Key extractor, predicate, and predicate value cannot be null");
+        }
+
+        AbstractTable<T> results = createEmpty();
+
+        entries.stream()
+                .filter(entry -> {
+                    U extractedValue = keyExtractor.apply(entry);
+                    return pred.test(extractedValue);
+                })
+                .forEach(entry -> {
+                    try {
+                        results.addEntry(entry);
+                    } catch (Exception e) {
+                        // This shouldn't happen as we are copying from a valid table.
+                        throw new RuntimeException("Error adding entry to result table.", e);
+                    }
+                });
+
+        return results;
+    }
+
+
     public <U, V> AbstractTable<T> filterByCondition(Function<T, U> keyExtractorA, Function<T, V> keyExtractorB, BiPredicate<U,V> pred) {
         if (keyExtractorA == null || keyExtractorB == null || pred == null) {
             throw new IllegalArgumentException("Key extractors and predicate cannot be null");
@@ -268,6 +294,18 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
                 });
 
         return results;
+    }
+
+    /**
+     * Returns a list of numbers, not necessarily contiguous, of the valid entries in the table
+     * @return
+     */
+    public List<Integer> getValidEntryNumbers() {
+        return entries.stream()
+                .map(AbstractTableEntry::getTableEntryID)
+                .distinct()
+                .sorted()
+                .toList();
     }
 
     // Load from CSV file

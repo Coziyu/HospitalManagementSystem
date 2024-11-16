@@ -52,6 +52,7 @@ public class PatientMenu extends AbstractMainMenu {
                     case 6 -> handleCancelAppointment();
                     case 7 -> handleViewUpcomingAppointments();
                     case 8 -> handleViewPastAppointmentOutcome();
+                    case 10 -> handleAddDoctor();
                     case 9 -> {
                         app.getAuthenticationService().logout();
                         app.setCurrentMenu(new AuthenticationMenu(app));
@@ -68,9 +69,9 @@ public class PatientMenu extends AbstractMainMenu {
     private void handleAddDoctor(){
         System.out.print("Enter Doctor ID: ");
         String docID = scanner.nextLine();
-        System.out.print("Enter date: ");
-        String date = scanner.nextLine();
-        app.getAppointmentService().addNewDoctorToSchedule(docID, date);
+        //System.out.print("Enter date: ");
+        //String date = scanner.nextLine();
+        app.getAppointmentService().updateAllSchedulesWithNewDoctor(docID);
     }
 
     private void handleViewPastAppointmentOutcome() {
