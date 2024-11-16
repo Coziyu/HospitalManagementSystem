@@ -93,7 +93,9 @@ public class StaffManagementService {
      * @return a List of Staff objects with a status of "active"
      */
     public List<Staff> listAllActiveStaff() {
-        return staffTable.filterByAttribute(Staff::getStatus, "active").getEntries();
+        return staffTable.getEntries().stream()
+                .filter(staff -> "active".equalsIgnoreCase(staff.getStatus())) // Case-insensitive comparison
+                .collect(Collectors.toList());
     }
 
     /**

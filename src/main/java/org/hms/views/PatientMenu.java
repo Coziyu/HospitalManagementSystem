@@ -61,7 +61,8 @@ public class PatientMenu extends AbstractMainMenu {
 
     // TODO: For implementation
     private void handleViewPastAppointmentOutcome() {
-
+        String patientID = Integer.toString(app.getUserContext().getHospitalID());
+        app.getAppointmentService().displayAppointmentOutcomesByPatient(patientID);
 
     }
 
@@ -162,7 +163,7 @@ public class PatientMenu extends AbstractMainMenu {
     private void handleViewUpcomingAppointments() {
         System.out.println("\n=== Upcoming Appointments ===");
         String patienID = Integer.toString(app.getUserContext().getHospitalID());
-        app.getAppointmentService().viewAppointmentStatus(patienID);
+        app.getAppointmentService().viewUpcomingAppointments(patienID);
 
     }
 

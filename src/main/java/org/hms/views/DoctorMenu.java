@@ -9,6 +9,7 @@ import org.hms.services.medicalrecord.MedicalRecord;
 
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Scanner;
@@ -166,7 +167,12 @@ public class DoctorMenu extends AbstractMainMenu {
         logDoctorAction("Viewed today's appointments");
         // Implementation would show today's appointments
 
-        System.out.println("Feature coming soon...");
+        String doctorID = Integer.toString(app.getUserContext().getHospitalID());
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String formattedDate = currentDate.format(formatter);
+        app.getAppointmentService().displayAppointmentsForDoctor(formattedDate, doctorID);
+
     }
 
     private void handleAccessPatientRecords() {
