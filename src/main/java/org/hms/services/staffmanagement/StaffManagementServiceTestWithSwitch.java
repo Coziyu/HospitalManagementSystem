@@ -1,5 +1,7 @@
 package org.hms.services.staffmanagement;
 
+import org.hms.services.storage.StorageService;
+
 import java.util.List;
 import java.util.Scanner;
 
@@ -7,7 +9,7 @@ public class StaffManagementServiceTestWithSwitch {
 
     public static void main(String[] args) {
         // Initialize StaffManagementService with StaffTable backed by staff.csv
-        StaffManagementService service = new StaffManagementService();
+        StaffManagementService service = new StaffManagementService(new StorageService());
 
         Scanner scanner = new Scanner(System.in);
         boolean running = true;

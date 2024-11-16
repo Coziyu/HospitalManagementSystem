@@ -28,7 +28,7 @@ public class App {
         this.appointmentService = new AppointmentService(storageService);
         this.drugDispensaryService = new DrugDispensaryService(storageService);
         this.authenticationService = new AuthenticationService();
-        this.staffManagementService = new StaffManagementService();
+        this.staffManagementService = new StaffManagementService(storageService);
         this.userContext = null;
     }
 
