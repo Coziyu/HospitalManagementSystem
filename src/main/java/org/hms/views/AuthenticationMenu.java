@@ -6,6 +6,7 @@ import org.hms.entities.PatientContext;
 import org.hms.entities.UserContext;
 import org.hms.services.authentication.AuthenticationResult;
 import org.hms.entities.User;
+import org.hms.utils.PasswordUtils;
 
 import java.util.Scanner;
 
@@ -20,118 +21,184 @@ public class AuthenticationMenu extends AbstractMenu {
 
     @Override
     public void displayAndExecute() {
-        System.out.println(Colour.BLUE + "=== Hospital Management System ===" + Colour.RESET);
-        System.out.println("1. Login");
-        System.out.println("2. Exit");
-        System.out.print("Select an option: ");
+        while (true) {
+            System.out.println("\n" + Colour.BLUE + "=== Hospital Management System ===" + Colour.RESET);
+            System.out.println("1. Login");
+            System.out.println("2. Exit");
+            System.out.print("Select an option: ");
 
-        try {
-            int choice = Integer.parseInt(scanner.nextLine());
-            switch (choice) {
-                case 1:
-                    handleLogin();
-                    break;
-                case 2:
-                    System.out.println("Goodbye!");
-                    app.setCurrentMenu(null);
-                    break;
-                default:
-                    System.out.println("Invalid option. Please try again.");
+            try {
+                String input = scanner.nextLine().trim();
+                if (input.isEmpty()) {
+                    System.out.println(Colour.RED + "Please enter a valid option." + Colour.RESET);
+                    continue;
+                }
+
+                int choice = Integer.parseInt(input);
+                switch (choice) {
+                    case 1:
+                        handleLogin();
+                        break;
+                    case 2:
+                        System.out.println(Colour.GREEN + "Thank you for using the Hospital Management System. Goodbye!" + Colour.RESET);
+                        app.setCurrentMenu(null);
+                        return;
+                    default:
+                        System.out.println(Colour.RED + "Invalid option. Please enter 1 or 2." + Colour.RESET);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println(Colour.RED + "Please enter a valid number." + Colour.RESET);
             }
-        } catch (NumberFormatException e) {
-            System.out.println("Please enter a valid number.");
         }
     }
 
     private void handleLogin() {
-        int attempts = 0;
-        while (attempts < MAX_LOGIN_ATTEMPTS) {
-            System.out.print("Enter your ID (e.g., PAT001, DOC001): ");
-            String id = scanner.nextLine();
+        while (true) {
+            System.out.println("\n" + Colour.BLUE + "=== Login ===" + Colour.RESET);
 
+            // Get user ID
+            System.out.print("Enter your ID (or 'back' to return): ");
+            String id = scanner.nextLine().trim();
+
+            if (id.equalsIgnoreCase("back")) {
+                return;
+            }
+
+            if (id.isEmpty()) {
+                System.out.println(Colour.RED + "ID cannot be empty." + Colour.RESET);
+                continue;
+            }
+
+            // Get password
             System.out.print("Enter your password: ");
             String password = scanner.nextLine();
 
+            if (password.isEmpty()) {
+                System.out.println(Colour.RED + "Password cannot be empty." + Colour.RESET);
+                continue;
+            }
+
+            // Attempt login
             AuthenticationResult result = app.getAuthenticationService().login(id, password);
 
             if (result.isSuccess()) {
                 User user = result.getUser();
+
+                // Handle first-time login and password change
                 if (user.isFirstLogin()) {
+                    System.out.println(Colour.YELLOW + "\n=== First Time Login - Password Change Required ===" + Colour.RESET);
                     if (!handlePasswordChange(user)) {
+                        System.out.println(Colour.RED + "Password change failed. Please try logging in again." + Colour.RESET);
                         continue;
                     }
                 }
-                navigateToAppropriateMenu(user);
+
+                // Navigate to appropriate menu
+                handleSuccessfulLogin(user);
                 return;
+
             } else {
                 System.out.println(Colour.RED + "Login failed: " + result.getMessage() + Colour.RESET);
-                attempts++;
-                if (attempts < MAX_LOGIN_ATTEMPTS) {
-                    System.out.println("Attempts remaining: " + (MAX_LOGIN_ATTEMPTS - attempts));
+
+                // If the message indicates account lockout, provide more information
+                if (result.getMessage().contains("locked")) {
+                    System.out.println(Colour.YELLOW + "For security reasons, the account has been temporarily locked." + Colour.RESET);
+                    System.out.println("Please try again later or contact an administrator for assistance.");
                 }
             }
         }
-        System.out.println(Colour.RED + "Maximum login attempts exceeded. Please try again later." + Colour.RESET);
     }
 
     private boolean handlePasswordChange(User user) {
-        System.out.println("=== First Time Login - Password Change Required ===");
+        System.out.println("\nFor security reasons, you must change your password.");
+        System.out.println(Colour.CYAN + "Password Requirements:" + Colour.RESET);
+        System.out.println(PasswordUtils.getPasswordValidationMessage());
 
-        while (true) {
-            System.out.print("Enter current password: ");
+        int attempts = 0;
+        final int MAX_PASSWORD_CHANGE_ATTEMPTS = 3;
+
+        while (attempts < MAX_PASSWORD_CHANGE_ATTEMPTS) {
+            System.out.print("\nEnter current password: ");
             String oldPassword = scanner.nextLine();
 
             System.out.print("Enter new password: ");
             String newPassword = scanner.nextLine();
 
+            if (!PasswordUtils.isPasswordValid(newPassword)) {
+                System.out.println(Colour.RED + "\nPassword does not meet the requirements:" + Colour.RESET);
+                System.out.println(PasswordUtils.getPasswordValidationMessage());
+                attempts++;
+                if (attempts < MAX_PASSWORD_CHANGE_ATTEMPTS) {
+                    System.out.println(Colour.YELLOW + "Attempts remaining: " +
+                            (MAX_PASSWORD_CHANGE_ATTEMPTS - attempts) + Colour.RESET);
+                }
+                continue;
+            }
+
             System.out.print("Confirm new password: ");
             String confirmPassword = scanner.nextLine();
 
             if (!newPassword.equals(confirmPassword)) {
-                System.out.println(Colour.RED + "New passwords do not match. Please try again." + Colour.RESET);
-                continue;
-            }
-
-            if (newPassword.length() < 6) {
-                System.out.println("Password must be at least 6 characters long.");
+                System.out.println(Colour.RED + "Passwords do not match." + Colour.RESET);
+                attempts++;
+                if (attempts < MAX_PASSWORD_CHANGE_ATTEMPTS) {
+                    System.out.println(Colour.YELLOW + "Attempts remaining: " +
+                            (MAX_PASSWORD_CHANGE_ATTEMPTS - attempts) + Colour.RESET);
+                }
                 continue;
             }
 
             if (app.getAuthenticationService().changePassword(oldPassword, newPassword)) {
-                System.out.println("Password changed successfully!");
+                System.out.println(Colour.GREEN + "\nPassword changed successfully!" + Colour.RESET);
                 return true;
             } else {
-                System.out.println("Failed to change password. Please verify your current password.");
-                return false;
+                System.out.println(Colour.RED + "Failed to change password. Please verify your current password." + Colour.RESET);
+                attempts++;
+                if (attempts < MAX_PASSWORD_CHANGE_ATTEMPTS) {
+                    System.out.println(Colour.YELLOW + "Attempts remaining: " +
+                            (MAX_PASSWORD_CHANGE_ATTEMPTS - attempts) + Colour.RESET);
+                }
             }
         }
+
+        System.out.println(Colour.RED + "\nMaximum password change attempts exceeded." + Colour.RESET);
+        return false;
     }
 
-    private void navigateToAppropriateMenu(User user) {
-        // Create UserContext with hospital ID parsed from user ID
-        String hospitalId = user.getId(); // Default hospital ID
-        UserContext userContext = new UserContext(user.getId(), user.getRole(), hospitalId);
+    private void handleSuccessfulLogin(User user) {
+        // Create UserContext using the user ID as both the name and hospital ID
+        UserContext userContext = new UserContext(user.getId(), user.getRole(), user.getId());
         app.setUserContext(userContext);
 
+        // Navigate to appropriate menu based on user role
+        AbstractMenu nextMenu = null;
         switch (user.getRole()) {
             case PATIENT:
                 PatientContext patientContext = new PatientContext(userContext, user.getId());
-                app.setCurrentMenu(new PatientMenu(app, patientContext));
+                nextMenu = new PatientMenu(app, patientContext);
                 break;
             case DOCTOR:
-                app.setCurrentMenu(new DoctorMenu(app));
+                nextMenu = new DoctorMenu(app);
                 break;
             case PHARMACIST:
-                app.setCurrentMenu(new PharmacistMenu(app));
+                nextMenu = new PharmacistMenu(app);
                 break;
             case ADMINISTRATOR:
-                app.setCurrentMenu(new AdminMenu(app));
+                nextMenu = new AdminMenu(app);
                 break;
             default:
-                System.out.println("Unsupported user role: " + user.getRole());
+                System.out.println(Colour.RED + "Unsupported user role: " + user.getRole() + Colour.RESET);
                 return;
         }
 
-        System.out.println(Colour.GREEN +"Welcome, " + user.getRole() + " " + user.getId() + Colour.RESET);
+        // Display welcome message
+        System.out.println(Colour.GREEN + "\nWelcome, " + user.getRole() + " " + user.getId() + Colour.RESET);
+        System.out.println("Login successful! Loading your dashboard...\n");
+
+        // Set and display the new menu
+        app.setCurrentMenu(nextMenu);
+        if (nextMenu != null) {
+            nextMenu.displayAndExecute();
+        }
     }
 }
