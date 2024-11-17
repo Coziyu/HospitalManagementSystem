@@ -33,14 +33,19 @@
 ---
 
 ##  Overview
-
-<code>❯ TODO</code>
+This project was done as part of a graded assignment in our SC2002 Object-Oriented Programming Module. Hospital Management System or HMS for short, is a Java Object-Oriented application that is designed to automate the management of hospital operations like patient or staff management, appointment scheduling and drug inventory management.
 
 ---
 
 ##  Features
 
-<code>❯ TODO</code>
+- Authentication Service
+- Staff Management Service
+- Patient Management Service
+  - Medical Record Service
+  - Appointment Service
+- Drug Dispensary Service
+- Data Storage Service
 
 ---
 
@@ -70,9 +75,13 @@
         ├── main
         └── test
 ```
-
-
 ###  Project Index
+
+ Folder Name 	      | Purpose |
+| ------------- | ------------- |
+| HospitalManagementSystem | HMS Application source code, data files and libraries |
+| UMLClassDiag  | Class Diagram of our HMS Application  |
+| documents  | Report and javadocs of our HMS Application  |
 
 <b>TODO PUT THE JAVADOC LINK</b>
 
@@ -159,6 +168,15 @@ Run HospitalManagementSystem using the following command:
       <img src="https://contrib.rocks/image?repo=Coziyu/HospitalManagementSystem">
    </a>
 </p>
+Lab Group : SCSI
+Group 3
 
+ Name 	      | Github Username |
+| ------------- | ------------- |
+| Chong Zhi Yu  | Coziyu  |
+| Tang Yingjie  | Tyingjie  |
+| Amos Ang Chee Tiong  | mosc0de  |
+| Ng Yuhang Dilon  | dillydecoded  |
+| Yeo Elijah Xuan-Ye  | Tricktail  |
 
 ---
