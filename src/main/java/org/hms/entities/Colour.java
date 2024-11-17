@@ -1,5 +1,23 @@
 package org.hms.entities;
 
+/**
+ * The Colour class provides ANSI escape codes for modifying text colors,
+ * styles, and backgrounds in the console.
+ * <p>
+ * ANSI escape codes are used to control the formatting, color, and other
+ * output options on text terminals. The codes that follow the escape
+ * character (\033) specify different attributes.
+ * <p>
+ * This class includes constants for:
+ * - Text reset
+ * - Regular colors
+ * - Bold colors
+ * - Underlined colors
+ * - Background colors
+ * - High intensity colors
+ * - Bold high intensity colors
+ * - High intensity backgrounds
+ */
 public class Colour {
     // Reset
     public static final String RESET = "\033[0m";  // Text Reset
