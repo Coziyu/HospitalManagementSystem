@@ -54,7 +54,7 @@ public class AppointmentOutcomeTest {
         // Step 4: Write AppointmentOutcome to CSV
         storageService.writeAppointmentOutcomeToCSV(newOutcome);
 
-        System.out.println("AppointmentOutcome has been written to the CSV file.");
+//        System.out.println("AppointmentOutcome has been written to the CSV file.");
         scanner.close();
 
         //ArrayList<AppointmentOutcome> outcomes = storageService.readAppointmentOutcomesFromCSV();

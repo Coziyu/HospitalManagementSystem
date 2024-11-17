@@ -228,7 +228,7 @@ public class StorageService
                         appointment.getAppointmentStatus() + "\n");
             }
 
-            System.out.println("Appointments successfully written to " + filePath);
+//            System.out.println("Appointments successfully written to " + filePath);
         } catch (IOException e) {
             System.err.println("Error writing to CSV file: " + e.getMessage());
         }
@@ -293,7 +293,7 @@ public class StorageService
                 }
                 writer.write("\n");  // Newline after each row
             }
-            System.out.println("Matrix written to " + filePath);
+//            System.out.println("Matrix written to " + filePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
