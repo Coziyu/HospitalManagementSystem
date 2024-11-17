@@ -28,7 +28,7 @@
     - [ Installation](#-installation)
     - [ Usage](#-usage)
     - [ Testing](#-testing)
-- [ Contributing](#-contributing)
+- [ Contributing](#contributing)
 
 ---
 
