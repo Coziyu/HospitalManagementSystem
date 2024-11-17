@@ -1,0 +1,12 @@
+org.hms
+org.hms.entities
+org.hms.services
+org.hms.services.appointment
+org.hms.services.authentication
+org.hms.services.drugdispensary
+org.hms.services.logging
+org.hms.services.medicalrecord
+org.hms.services.staffmanagement
+org.hms.services.storage
+org.hms.utils
+org.hms.views

@@ -74,10 +74,10 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
 
 
     /**
-     * @param newEntry the new entry to replace an existing entry
-     * @return a COPY of the entries.
      * Replaces an existing entry with a new entry based on ID matching.
      * If no entry with the matching ID exists, the new entry is not added.
+     *
+     * @param newEntry the new entry to replace an existing entry
      * @return true if the entry was replaced, false if no matching entry was found
      * @throws IllegalArgumentException if newEntry is null
      */
