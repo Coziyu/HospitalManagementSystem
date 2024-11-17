@@ -40,12 +40,17 @@ This project was done as part of a graded assignment in our SC2002 Object-Orient
 ##  Features
 
 - Authentication Service
+  - Handles user authentication and validation for role-based access control
 - Staff Management Service
+  - Managing manpower related actions like adding, removing, archiving of staff details and assignment of role.
 - Patient Management Service
   - Medical Record Service
+   -Responsible for storing and retrieving patient medical histories + details, also allows patients and doctors to update role-specific details
   - Appointment Service
+   - Managing appointment scheduling and outcomes such as doctor schedule management and time slot allocation
 - Drug Dispensary Service
-- Data Storage Service
+  - Manages drug inventory and stock levels as well as requests to dispense and replenish 
+
 
 ---
 
