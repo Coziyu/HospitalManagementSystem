@@ -5,3 +5,4 @@ A1000,P1000,surgury,The patient need to rest; cannot walk or run,Panado,5,PENDIN
 108,1,consult,The patient; is healthy.,Panado,2,PENDING,chicken rice,1,PENDING,noodles,2,PENDING
 100,333,consult,no problem,drugA,4,PENDING
 102,PAT001,consult,Patient is aggresssive,Paracetamol,25,PENDING,Ibuprofen,50,PENDING,Ozempic,1,PENDING
+115,PAT001,consult,nil,Ozempic,3,PENDING
