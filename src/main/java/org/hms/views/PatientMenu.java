@@ -117,7 +117,6 @@ public class PatientMenu extends AbstractMainMenu {
             }
 
             app.getAppointmentService().displaySchedule(dateStr);
-            System.out.println("Feature coming soon...");
         }catch (DateTimeParseException e) {}
     }
 

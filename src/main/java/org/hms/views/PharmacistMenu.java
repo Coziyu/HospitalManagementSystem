@@ -68,47 +68,19 @@ public class PharmacistMenu extends AbstractMainMenu {
         System.out.println("\n" + Colour.BLUE + "=== View Appointment Outcome Records ===" + Colour.RESET);
         System.out.println("Recent Appointment Outcomes with Prescriptions:");
 
-        // TODO: Implement fetching and displaying actual appointment outcomes
-        System.out.println("\nAppointment ID: APT001");
-        System.out.println("Date: 15/11/2024");
-        System.out.println("Patient: P001");
-        System.out.println("Doctor: Dr. Smith");
-        System.out.println("Prescribed Medications:");
-        System.out.println("1. Amoxicillin 500mg - Status: Pending");
-        System.out.println("2. Paracetamol 500mg - Status: Dispensed");
+        
 
         logPharmacistAction("Viewed appointment outcomes");
     }
 
     private void handleUpdatePrescriptionStatus() {
-        System.out.println("\n" + Colour.BLUE + "=== Update Prescription Status ===" + Colour.RESET);
-
-        // First show pending prescriptions
-        System.out.println("Pending Prescriptions:");
-        System.out.println("1. APT001-1: Amoxicillin 500mg (Patient: P001)");
-        System.out.println("2. APT002-1: Ibuprofen 400mg (Patient: P002)");
-
-        System.out.print("\nEnter prescription number to update (0 to return): ");
-        try {
-            int choice = Integer.parseInt(scanner.nextLine());
-            if (choice > 0) {
-                System.out.println("\nUpdate Status to:");
-                System.out.println("1. Dispensed");
-                System.out.println("2. Out of Stock");
-                System.out.println("3. Cancelled");
-
-                System.out.print("Select new status: ");
-                int statusChoice = Integer.parseInt(scanner.nextLine());
-
-                // TODO: Implement actual status update
-                System.out.println(Colour.GREEN + "Prescription status updated successfully!" + Colour.RESET);
-                logPharmacistAction("Updated prescription status");
-            }
-        } catch (NumberFormatException e) {
-            System.out.println(Colour.RED + "Invalid input. Please enter a number." + Colour.RESET);
-        }
+        // TODO: Nich and Yingjie to Implement
     }
 
+    /**
+     * Handles the viewing of the medication inventory.
+     * This method will display the current medication inventory.
+     */
     private void handleViewMedicationInventory() {
         System.out.println("\n" + Colour.BLUE + "=== Medication Inventory ===" + Colour.RESET);
         String drugInventoryString = app.getDrugDispensaryService().getDrugInventoryAsString();
@@ -117,7 +89,13 @@ public class PharmacistMenu extends AbstractMainMenu {
         logPharmacistAction("Viewed medication inventory");
     }
 
-    // TODO: For Nich to TEST CORRECTNESS
+    /**
+     * Handles the submission of a drug replenishment request.
+     * This method will display the current medication inventory, and then
+     * prompt the pharmacist to select a drug to replenish.
+     * The method will then add a new entry to the drug replenish request table
+     * and update the inventory accordingly.
+     */
     private void handleSubmitDrugReplenishRequest() {
         System.out.println("\n" + Colour.BLUE + "=== Submit Replenishment Request ===" + Colour.RESET);
 

@@ -22,8 +22,6 @@ public class StaffManagementService extends AbstractService<IDrugStockDataInterf
     public StaffManagementService(IDrugStockDataInterface dataInterface) {
         this.storageServiceInterface = dataInterface;
         staffTable = storageServiceInterface.getStaffTable();
-        //TODO: Decide if needed
-        // loadFromFile(); // Optionally load from file on initialization
     }
 
 

@@ -254,7 +254,7 @@ public class MedicalRecordService extends AbstractService<IMedicalDataInterface>
     }
 
     /**
-     * TODO
+     * Updates the diagnosis of a medical entry
      * @param entryID
      * @param diagnosis
      */
