@@ -1,5 +1,6 @@
 package org.hms.services.drugdispensary;
 
+import org.hms.entities.Colour;
 import org.hms.services.AbstractService;
 
 import java.io.IOException;
@@ -70,6 +71,9 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         // If empty, it means Drug doesn't exist.
         // print here?
         if (results.isEmpty()){
+            System.out.println(Colour.RED + "Drug not found: " + drugRequested);
+            System.out.println("A new entry for " + drugRequested + " was added to the inventory.");
+            System.out.println("Please submit a replenish request for this drug." + Colour.RESET);
             return false;
         }
 
@@ -80,6 +84,7 @@ public class DrugDispensaryService extends AbstractService<IDrugStockDataInterfa
         int quantityAvailable = drugStock.getQuantity();
         // If affectedStock doesnt have enough entries, return false;
         if (quantityAvailable < quantityRequested){
+            System.out.println(Colour.RED + "Not enough stock for " + drugRequested + Colour.RESET);
             return false;
         }
 
