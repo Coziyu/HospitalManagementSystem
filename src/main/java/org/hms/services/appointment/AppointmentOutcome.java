@@ -59,6 +59,15 @@ public class AppointmentOutcome implements Serializable {
     public void setPrescribedMedication(ArrayList<DrugDispenseRequest> prescribedMedication) {
         this.prescribedMedication = prescribedMedication;
     }
+
+    public String toPrintString() {
+        StringBuilder printStringBuilder = new StringBuilder(100);
+        printStringBuilder.append("Appointment ID: ").append(appointmentID).append("\n");
+        printStringBuilder.append("Type of Appointment: ").append(typeOfAppointment).append("\n");
+        printStringBuilder.append("Consultation Notes: ").append(consultationNotes);
+
+        return printStringBuilder.toString();
+    }
 }
 
 
