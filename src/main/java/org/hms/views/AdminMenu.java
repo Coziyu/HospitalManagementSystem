@@ -477,6 +477,9 @@ public class AdminMenu extends AbstractMainMenu {
 
             // Provide feedback to the user
             if (success) {
+                if (role.equals("Doctor")) {
+                    app.getAppointmentService().updateAllSchedulesWithNewDoctor(staffId);
+                }
                 logAdminAction("Added new staff member: " + staffId);
                 System.out.println(Colour.GREEN + "Staff member added successfully!" + Colour.RESET);
             } else {

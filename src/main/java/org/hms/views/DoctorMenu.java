@@ -77,7 +77,7 @@ public class DoctorMenu extends AbstractMainMenu {
     }
 
     private void handleRecordAppointmentOutcome() {
-        // TODO: For Yingjie to implement
+        // TODO: For nicholas to check
 
         ArrayList<DrugDispenseRequest> prescribedMedication = app.getAppointmentService().createNewArrayOfDrugDispenseRequest();
 
