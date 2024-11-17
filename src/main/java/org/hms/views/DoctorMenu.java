@@ -338,6 +338,12 @@ public class DoctorMenu extends AbstractMainMenu {
         System.out.print("Enter date (YYYYMMDD): ");
 
         String dateStr = scanner.nextLine();
+        /******this part for check does schedule alr exists in the folder, if no, initialize a new date******/
+        if(!app.getAppointmentService().checkExistingSchedule(dateStr)){
+            app.getAppointmentService().createNewSchedule(dateStr);
+        }
+
+        /******************/
 
         System.out.println("\n=== Daily Schedule ===");
         System.out.println("Schedule for: Dr. " + userContext.getName());
