@@ -4,6 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Abstract base class for table entries in the Hospital Management System (HMS).
+ * <p>
+ * This class provides common functionality for handling CSV data and managing
+ * unique identifiers for table entries.
+ */
 public abstract class AbstractTableEntry implements Serializable {
 
     /**

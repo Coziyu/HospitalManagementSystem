@@ -11,6 +11,10 @@ import org.hms.services.authentication.AuthenticationService;
 import org.hms.views.AuthenticationMenu;
 import org.hms.views.AbstractMenu;
 
+/**
+ * Main application class for the Hospital Management System (HMS).
+ * This class initializes and runs the application, managing various services and user interactions.
+ */
 public class App {
     private final StorageService storageService;
     private final MedicalRecordService medicalRecordService;
