@@ -1,7 +1,2 @@
 AppointmentID,PatientID,TypeOfAppointment,ConsultationNotes,DrugName,Quantity,Status
-A1234,P123,consult,he; need to eat panado or sleep.,Panado,2,PENDING,Some medicine,3,PENDING
-A333,P1234,consult,no note,qqq,1,DISPENSED,bbb,2,DISPENSED,drug,3,DISPENSED
-A1000,P1000,surgury,The patient need to rest; cannot walk or run,Panado,5,PENDING,grass,1,PENDING
-108,1,consult,The patient; is healthy.,Panado,2,PENDING,chicken rice,1,PENDING,noodles,2,PENDING
-100,333,consult,no problem,drugA,4,PENDING
-102,PAT001,consult,Patient is aggresssive,Paracetamol,25,PENDING,Ibuprofen,50,PENDING,Ozempic,1,PENDING
+100,PAT001,consult,Patient is aggresssive,Paracetamol,25,PENDING,Ibuprofen,50,PENDING,Ozempic,1,PENDING
