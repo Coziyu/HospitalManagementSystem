@@ -60,9 +60,6 @@ public class PharmacistMenu extends AbstractMainMenu {
             } catch (NumberFormatException e) {
                 System.out.println(Colour.RED + "Please enter a valid number." + Colour.RESET);
             }
-
-            System.out.println("\nPress Enter to continue...");
-            scanner.nextLine();
         }
     }
 
@@ -116,11 +113,6 @@ public class PharmacistMenu extends AbstractMainMenu {
         System.out.println("\n" + Colour.BLUE + "=== Medication Inventory ===" + Colour.RESET);
         String drugInventoryString = app.getDrugDispensaryService().getDrugInventoryAsString();
         System.out.println(drugInventoryString);
-
-        System.out.println("\nLow Stock Alerts:");
-        // TODO: Implement low stock checking logic
-        System.out.println("- Amoxicillin 500mg (5 units remaining)");
-        System.out.println("- Paracetamol 500mg (10 units remaining)");
 
         logPharmacistAction("Viewed medication inventory");
     }

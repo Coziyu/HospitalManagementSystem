@@ -77,7 +77,7 @@ public class DoctorMenu extends AbstractMainMenu {
     }
 
     private void handleRecordAppointmentOutcome() {
-        // TODO: For Yingjie to implement
+        // TODO: For nicholas to check
 
         ArrayList<DrugDispenseRequest> prescribedMedication = app.getAppointmentService().createNewArrayOfDrugDispenseRequest();
 
@@ -211,7 +211,7 @@ public class DoctorMenu extends AbstractMainMenu {
             // Verify doctor's access rights for this patient
             if (!app.getMedicalRecordService().isPatientTreatedByDoctor(patientID, doctorID)) {
                 System.out.println(Colour.RED + "Access denied: Patient not assigned to you." + Colour.RESET);
-                logDoctorAction("Unauthorized access to patient records: " + patientID);
+                logDoctorAction("Unauthorised access to patient records: " + patientID);
                 return;
             }
 
@@ -254,7 +254,7 @@ public class DoctorMenu extends AbstractMainMenu {
 
             if (!app.getMedicalRecordService().isPatientTreatedByDoctor(patientID, userContext.getHospitalID())) {
                 System.out.println(Colour.RED + "Access denied: Patient not assigned to you." + Colour.RESET);
-                logDoctorAction("Attempted unauthorized update to patient records: " + patientID);
+                logDoctorAction("Attempted unauthorised update to patient records: " + patientID);
                 return;
             }
 

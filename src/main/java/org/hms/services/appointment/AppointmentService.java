@@ -1,5 +1,6 @@
 package org.hms.services.appointment;
 
+import org.hms.entities.Colour;
 import org.hms.services.AbstractService;
 import org.hms.services.drugdispensary.DrugDispenseRequest;
 import org.hms.services.drugdispensary.DrugRequestStatus;
@@ -334,6 +335,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
                 if ("available".equals(row[j])) {
                     //System.out.print("\t" + headers[j]);
                     String doctorName = storageServiceInterface.getStaffNameByID(headers[j]);
+                    //TODO: For nich to format this properly
                     System.out.print("\t" + doctorName + "(ID = " + headers[j] + ")");
                     //Not sure can work or not until the the staff.csv and schedule csv files have same doctors
                 }
@@ -587,6 +589,15 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         for (int row = 1; row < matrix.length; row++) { // Skip the header row
             String timeSlot = matrix[row][0]; // First column: Time slot
             String details = matrix[row][doctorCol]; // Corresponding column for doctorID
+            if (details.equals("available")) {
+                details = Colour.GREEN + "Available" + Colour.RESET;
+            }
+            else if (details.equals("unavailable")) {
+                details = Colour.RED + "Unavailable" + Colour.RESET;
+            }
+            else {
+                details = Colour.YELLOW + details + Colour.RESET;
+            }
             System.out.println(timeSlot + "\t" + details);
         }
 
@@ -676,6 +687,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         return true;
     }
 
+    //TODO: For nich to call this method
     public boolean updateAppointmentOutcometoCSV(){
         boolean updated = false;
         storageServiceInterface.writeAllAppointmentOutcomesToCSV(appointmentOutcomes);
@@ -707,6 +719,14 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
             havePendingDrug = 0;
         }
     }
+
+    //TODO: For yingjie: I want a function that returns a list of patientIDs that
+    // have pending prescriptions.
+    // Returns: List<String>
+
+    //TODO: For yingjie: I want a function that returns takes in a patientID
+    // and returns a list of pending prescriptions for that patient.
+    // Takesin: String patientID, Returns: List<DrugDispenseRequest>
 
     //For update appointmentStatus to COMPLETED
     public boolean completeAnAppointment(String appointmentID, String doctorID){
@@ -768,7 +788,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
     public void updateAllSchedulesWithNewDoctor(String doctorID) {
 
-        File[] csvFiles = storageServiceInterface.getALlDateFile();
+        File[] csvFiles = storageServiceInterface.getAllDateFile();
 
         for (File csvFile : csvFiles) {
             try {
