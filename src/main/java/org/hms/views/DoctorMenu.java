@@ -89,9 +89,19 @@ public class DoctorMenu extends AbstractMainMenu {
 
         ArrayList<DrugDispenseRequest> prescribedMedication = app.getAppointmentService().createNewArrayOfDrugDispenseRequest();
 
+        int medicationCount;
+        while (true) {
+            System.out.print("Enter number of medications to prescribe: ");
+            medicationCount = Integer.parseInt(scanner.nextLine());
+            if (medicationCount > 0) {
+                break; // Valid medication count
+            } else {
+                System.out.println(Colour.RED + "Number of medications must be greater than 0. Please re-enter." + Colour.RESET);
+            }
+        }
 
-        System.out.print("Enter number of medications to prescribe: ");
-        int medicationCount = Integer.parseInt(scanner.nextLine());
+        //System.out.print("Enter number of medications to prescribe: ");
+        //int medicationCount = Integer.parseInt(scanner.nextLine());
 
         // Show list of drugs in the pharmacy
         System.out.println(Colour.GREEN + " == Available Drugs == " + Colour.RESET);
@@ -116,8 +126,19 @@ public class DoctorMenu extends AbstractMainMenu {
                 }
             }
 
-            System.out.print("Enter quantity for " + drugName + ": ");
-            int quantity = Integer.parseInt(scanner.nextLine());
+            int quantity;
+            while (true) {
+                System.out.print("Enter quantity for " + drugName + ": ");
+                quantity = Integer.parseInt(scanner.nextLine());
+                if (quantity > 0) {
+                    break; // Valid quantity
+                } else {
+                    System.out.println(Colour.RED + "Quantity must be greater than 0. Please re-enter." + Colour.RESET);
+                }
+            }
+
+            //System.out.print("Enter quantity for " + drugName + ": ");
+            //int quantity = Integer.parseInt(scanner.nextLine());
 
             // Use the addDrugDispenseRequest method to add each DrugDispenseRequest to the list
             app.getAppointmentService().addDrugDispenseRequest(prescribedMedication, drugName, quantity);
