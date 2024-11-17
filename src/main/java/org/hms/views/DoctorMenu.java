@@ -151,6 +151,13 @@ public class DoctorMenu extends AbstractMainMenu {
             System.out.print("Enter the date (YYYYMMDD): ");
             String date = scanner.nextLine();
 
+            /******this part for check does schedule alr exists in the folder, if no, initialize a new date******/
+            if(!app.getAppointmentService().checkExistingSchedule(date)){
+                app.getAppointmentService().createNewSchedule(date);
+            }
+
+            /******************/
+
             System.out.print("Enter the time slot (e.g., 12:00): ");
             String timeSlot = scanner.nextLine();
 
