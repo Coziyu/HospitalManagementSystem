@@ -558,6 +558,41 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
     }
 
+    public boolean viewDoctorDailySchedule(String doctorID, String date) {
+        AppointmentSchedule schedule = storageServiceInterface.loadSchedule(date);
+        String[][] matrix = schedule.getMatrix();
+        boolean found = false;
+
+        // Find the column corresponding to the doctorID
+        int doctorCol = -1;
+        for (int col = 1; col < matrix[0].length; col++) {
+            if (matrix[0][col] != null && matrix[0][col].equals(doctorID)) {
+                doctorCol = col;
+                found = true;
+                break;
+            }
+        }
+
+        // If the doctorID is not found in the schedule
+        if (!found) {
+            System.out.println("No schedule found for Doctor ID: " + doctorID + " on " + date);
+            return false;
+        }
+
+        // Print the time slots and the corresponding schedule for the doctor
+        /*System.out.println("Schedule for Doctor ID: " + doctorID + " on " + date);
+        System.out.println("--------------------------------------------------");
+        System.out.println("Time Slot\tDetails");*/
+
+        for (int row = 1; row < matrix.length; row++) { // Skip the header row
+            String timeSlot = matrix[row][0]; // First column: Time slot
+            String details = matrix[row][doctorCol]; // Corresponding column for doctorID
+            System.out.println(timeSlot + "\t" + details);
+        }
+
+        return true;
+    }
+
     public AppointmentOutcome keyInOutcome(String appointmentID, String patientID, String typeOfAppointment, String consultationNotes, ArrayList<DrugDispenseRequest> prescribedMedication) {
 
         int dummyID = 1000;
@@ -671,6 +706,34 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
             System.out.println("------------------------");
             havePendingDrug = 0;
         }
+    }
+
+    //For update appointmentStatus to COMPLETED
+    public boolean completeAnAppointment(String appointmentID, String doctorID){
+        boolean updated = false;
+        for (AppointmentInformation appointment : appointments) {
+            // Check if the appointmentID and doctorID match
+            if (String.valueOf(appointment.getAppointmentID()).equals(appointmentID)
+                    && appointment.getDoctorID().equals(doctorID)) {
+
+                // Check if the appointmentStatus is CONFIRMED
+                if (appointment.getAppointmentStatus() == AppointmentStatus.CONFIRMED) {
+                    // Update the status to COMPLETED
+                    appointment.setAppointmentStatus(AppointmentStatus.COMPLETED);
+                    System.out.println("Appointment ID: " + appointmentID + " for Doctor ID: " + doctorID + " has been completed.");
+                    updated = true;
+                } else {
+                    System.out.println("Appointment ID: " + appointmentID + " is not in CONFIRMED status and cannot be completed.");
+                }
+                break; // Exit the loop as the appointment has been found
+            }
+        }
+
+        if (!updated) {
+            System.out.println("No matching appointment found for Appointment ID: " + appointmentID + " and Doctor ID: " + doctorID);
+        }
+
+        return updated;
     }
 
     //For admin to add staff and update to the schedule
