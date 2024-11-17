@@ -167,6 +167,7 @@ public class AuthenticationMenu extends AbstractMenu {
 
     private void handleSuccessfulLogin(User user) {
         // Create UserContext using the user ID as both the name and hospital ID
+        // TODO: Find the name of Staff Members and Patients, and slot it inside here.
         UserContext userContext = new UserContext(user.getId(), user.getRole(), user.getId());
         app.setUserContext(userContext);
 

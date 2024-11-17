@@ -1,7 +1,6 @@
 package org.hms.services.appointment;
 
 import org.hms.services.drugdispensary.DrugDispenseRequest;
-import org.hms.services.drugdispensary.DrugRequestStatus;
 import org.hms.services.staffmanagement.Staff;
 import org.hms.services.storage.IDataInterface;
 
@@ -37,6 +36,6 @@ public interface IAppointmentDataInterface extends IDataInterface {
 
     public String getStaffNameByID(String userId);
 
-    public File[] getALlDateFile();
+    public File[] getAllDateFile();
 
 }

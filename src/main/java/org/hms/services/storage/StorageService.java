@@ -413,7 +413,7 @@ public class StorageService
         }
     }
 
-    public File[] getALlDateFile(){
+    public File[] getAllDateFile(){
         String directoryPath = dataRoot + "Appointment/schedules/";
         File directory = new File(directoryPath);
 

@@ -1,5 +1,5 @@
 Entry,PatientID,DoctorID,Date,Diagnosis,Treatment Plan,ConsultationNotes
-0,PAT001,DOC001,2024-03-15,Flu,Rest and fluids,Patient shows typical symptoms
+0,PAT001,DOC001,2024-03-15,Flu,Rest and fluids,Patient exhibit flu symptoms
 1,PAT001,DOC002,2024-03-20,Follow-up,Continue rest,Symptoms improving
 2,PAT002,DOC003,2024-03-25,Flu,Rest and fluids,Patient shows typical symptoms
 3,PAT001,DOC001,2024-03-28,Follow-up,Rest at Home,Symptoms improving
