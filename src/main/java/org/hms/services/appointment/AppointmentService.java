@@ -381,6 +381,19 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
 
     //For doctor
+    public String getPatienIDbyAppointmentID(String appointmentID) {
+        for (AppointmentInformation appointment : appointments) {
+            // Check if the appointment ID matches
+            if (String.valueOf(appointment.getAppointmentID()).equals(appointmentID)) {
+                return appointment.getPatientID(); // Return the patient ID if found
+            }
+        }
+
+        // If no appointment matches, return a suitable message or null
+        System.out.println("No appointment found with ID: " + appointmentID);
+        return null;
+    }
+
     public boolean viewRequest(String doctorID) {
         boolean found = false;
         for (AppointmentInformation appointment : appointments) {
@@ -627,6 +640,26 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
             System.out.println("No appointments found for Doctor ID: " + doctorID + " on " + date);
         }
     }
+
+    public boolean displayAllAppointmentsForDoctor(String doctorID) {
+        boolean found = false;
+        System.out.println("All Confirmed Appointments for Doctor ID: " + doctorID);
+        System.out.println("--------------------------------------------------");
+
+        for (AppointmentInformation appointment : appointments) {
+            // Check if the appointment matches the given doctor ID and is CONFIRMED
+            if (appointment.getDoctorID().equals(doctorID) && appointment.getAppointmentStatus() == AppointmentStatus.CONFIRMED) {
+                displayOneAppointment(appointment);
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println("No confirmed appointments found for Doctor ID: " + doctorID);
+        }
+        return found;
+    }
+
 
 
     public void addAppointmentOutcome(AppointmentOutcome outcome) {

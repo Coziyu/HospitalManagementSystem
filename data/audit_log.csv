@@ -2,3 +2,13 @@ timestamp,user_name,user_role,hospital_id,action
 2024-11-17 13:52:14,DOC001,DOCTOR,DOC001,Viewed today's appointments
 2024-11-17 13:59:25,DOC002,DOCTOR,DOC002,Viewed today's appointments
 2024-11-17 13:59:52,DOC002,DOCTOR,DOC002,Logged out
+2024-11-17 15:33:41,DOC005,DOCTOR,DOC005,Viewed daily schedule
+2024-11-17 15:36:17,DOC005,DOCTOR,DOC005,Viewed daily schedule
+2024-11-17 15:38:49,DOC005,DOCTOR,DOC005,Viewed daily schedule
+2024-11-17 15:42:05,DOC005,DOCTOR,DOC005,Viewed daily schedule
+2024-11-17 15:45:19,DOC005,DOCTOR,DOC005,Viewed daily schedule
+2024-11-17 16:40:08,DOC005,DOCTOR,DOC005,Viewed daily schedule
+2024-11-17 17:29:00,DOC005,DOCTOR,DOC005,Viewed upcoming appointments
+2024-11-17 17:31:31,DOC005,DOCTOR,DOC005,Viewed upcoming appointments
+2024-11-17 17:31:44,DOC005,DOCTOR,DOC005,Logged out
+2024-11-17 17:33:11,DOC005,DOCTOR,DOC005,Logged out

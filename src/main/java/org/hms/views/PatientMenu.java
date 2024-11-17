@@ -114,6 +114,13 @@ public class PatientMenu extends AbstractMainMenu {
                 return;
             }
 
+            /******this part for check does schedule alr exists in the folder, if no, initialize a new date******/
+            if(!app.getAppointmentService().checkExistingSchedule(dateStr)){
+                app.getAppointmentService().createNewSchedule(dateStr);
+            }
+
+            /******************/
+
             app.getAppointmentService().displaySchedule(dateStr);
         }catch (DateTimeParseException e) {}
     }
