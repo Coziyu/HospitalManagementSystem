@@ -408,7 +408,7 @@ public class StorageService
                 writer.write("\n");
             }
 
-            System.out.println("All AppointmentOutcomes have been updated in CSV file.");
+//            System.out.println("All AppointmentOutcomes have been updated in CSV file.");
 
         } catch (IOException e) {
             e.printStackTrace();
