@@ -12,6 +12,8 @@ import org.hms.services.staffmanagement.Staff;
 import org.hms.services.staffmanagement.StaffTable;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -444,6 +446,45 @@ public class StorageService
             return null;
         }
         return target.getFirst().getName();
+    }
+
+    public boolean checkScheduleExist(String date) {
+
+        String folderPath = dataRoot + "Appointment/schedules/";
+        String fileName = date + ".csv";
+        File file = new File(folderPath + fileName);
+
+        return file.exists();
+    }
+
+    public void initializeSchedule(String date){
+        String folderPath = dataRoot + "Appointment/schedules/";
+        String templateFilepath = folderPath + "templateSchedule.csv";
+        String newFilePath = folderPath + date + ".csv";
+
+        File templateFile = new File(templateFilepath);
+        File newFile = new File(newFilePath);
+
+        try {
+            // Ensure the folder exists
+            File folder = new File(folderPath);
+            if (!folder.exists()) {
+                folder.mkdirs(); // Create directories if they don't exist
+            }
+
+            // Check if the new file already exists
+            if (newFile.exists()) {
+                System.out.println("Schedule for " + date + " already exists.");
+                return;
+            }
+
+            // Copy templateSchedule.csv to date.csv
+            Files.copy(templateFile.toPath(), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+            System.out.println("Initialized schedule for " + date + " successfully at: " + newFilePath);
+        } catch (IOException e) {
+            System.out.println("Error initializing schedule for " + date + ": " + e.getMessage());
+        }
     }
 
 }
