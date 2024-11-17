@@ -723,10 +723,36 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
     //TODO: For yingjie: I want a function that returns a list of patientIDs that
     // have pending prescriptions.
     // Returns: List<String>
+    public List<String> getPatientIDsWithPendingDrugRequest() {
+        List<String> patientIDs = new ArrayList<>();
+
+        for (AppointmentOutcome outcome : appointmentOutcomes) {
+            for (DrugDispenseRequest drugRequest : outcome.getPrescribedMedication()) {
+                if (drugRequest.getStatus() == DrugRequestStatus.PENDING) {
+                    if (!patientIDs.contains(outcome.getPatientID())) {   // check if they are already in the list
+                        patientIDs.add(outcome.getPatientID());    //append if they are not in the list
+                    }
+                    break; // Stop checking other drug requests for this appointment since we found a pending one.
+                }
+            }
+        }
+
+        return patientIDs;
+    }
 
     //TODO: For yingjie: I want a function that returns takes in a patientID
     // and returns a list of pending prescriptions for that patient.
     // Takesin: String patientID, Returns: List<DrugDispenseRequest>
+    public ArrayList<DrugDispenseRequest> getDrugRequestsByPatientID(String patientID) {
+        for (AppointmentOutcome outcome : appointmentOutcomes) {
+            if (outcome.getPatientID().equals(patientID)) {
+                return outcome.getPrescribedMedication();
+            }
+        }
+        // Return an empty list if no match is found
+        System.out.println("No drugRequest.");
+        return new ArrayList<>();
+    }
 
     //For update appointmentStatus to COMPLETED
     public boolean completeAnAppointment(String appointmentID, String doctorID){
@@ -740,6 +766,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
                 if (appointment.getAppointmentStatus() == AppointmentStatus.CONFIRMED) {
                     // Update the status to COMPLETED
                     appointment.setAppointmentStatus(AppointmentStatus.COMPLETED);
+                    storageServiceInterface.writeAppointmentsToCsv(appointments);
                     System.out.println("Appointment ID: " + appointmentID + " for Doctor ID: " + doctorID + " has been completed.");
                     updated = true;
                 } else {
