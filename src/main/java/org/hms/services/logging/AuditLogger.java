@@ -49,9 +49,6 @@ public class AuditLogger {
                     StandardOpenOption.CREATE
             );
 
-            // Also print to console for immediate feedback
-            System.out.println("LOG: " + timestamp + " - " + userName + " (" + userRole + ") - " + action);
-
         } catch (IOException e) {
             System.err.println("Error writing to audit log: " + e.getMessage());
         } finally {
