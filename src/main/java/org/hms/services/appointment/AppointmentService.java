@@ -720,6 +720,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
                 if (appointment.getAppointmentStatus() == AppointmentStatus.CONFIRMED) {
                     // Update the status to COMPLETED
                     appointment.setAppointmentStatus(AppointmentStatus.COMPLETED);
+                    storageServiceInterface.writeAppointmentsToCsv(appointments);
                     System.out.println("Appointment ID: " + appointmentID + " for Doctor ID: " + doctorID + " has been completed.");
                     updated = true;
                 } else {
