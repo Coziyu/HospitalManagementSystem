@@ -19,29 +19,56 @@ import java.util.Map;
 public class StaffTable extends AbstractTable<Staff> {
 
 
+    /**
+     * The root directory where all data files are stored. This path is constructed
+     * using the current user directory and appending "/data/". It is used as a
+     * base directory for loading and saving data files specific to the StaffTable.
+     */
+    private static final String dataRoot = System.getProperty("user.dir") + "/data/";
+    /**
+     * A constant that holds the file path for the users' CSV file.
+     * The file path is constructed by appending "users.csv" to the data root directory.
+     */
+    private static final String USERS_FILE = dataRoot + "users.csv";
+
+    /**
+     * Default constructor for the StaffTable class.
+     * Initializes a new instance by invoking the superclass's constructor
+     * to set up necessary fields and structures for managing staff entries.
+     */
     public StaffTable() {
         super();
     }
 
-    public StaffTable(String filePath){
+    /**
+     * Constructor for the StaffTable class.
+     *
+     * @param filePath the file path where the staff data will be stored or loaded from
+     */
+    public StaffTable(String filePath) {
         super();
         this.filePath = filePath;
     }
 
     /**
-     * The root directory for data storage.
-     */
-    private static final String dataRoot = System.getProperty("user.dir") + "/data/";
-
-    /**
-     * The default filenames for staff and user data.
-     */
-    private static final String USERS_FILE = dataRoot + "users.csv";
-
-    /**
-     * Provides the headers for the staff table.
+     * Parses a string representation of a user role and returns the corresponding UserRole enum.
      *
-     * @return an array of header names, representing the attributes of a staff entry.
+     * @param role the string representation of the user role
+     * @return the UserRole enum corresponding to the given role
+     * @throws IllegalArgumentException if the provided role does not correspond to any UserRole
+     */
+    private static UserRole parseUserRole(String role) {
+        try {
+            return UserRole.valueOf(role.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid role: " + role);
+        }
+    }
+
+    /**
+     * Retrieves the headers for the staff table.
+     *
+     * @return an array of strings representing the headers for the staff table
      */
     @Override
     protected String[] getHeaders() {
@@ -49,9 +76,9 @@ public class StaffTable extends AbstractTable<Staff> {
     }
 
     /**
-     * Creates a template for a valid staff entry with default values.
+     * Creates a valid template for a new Staff entry with default values.
      *
-     * @return a Staff object with default values.
+     * @return A new Staff object with a unique ID and default values for all other fields.
      */
     @Override
     protected Staff createValidEntryTemplate() {
@@ -59,9 +86,9 @@ public class StaffTable extends AbstractTable<Staff> {
     }
 
     /**
-     * Creates an empty instance of StaffTable.
+     * Creates an empty StaffTable instance.
      *
-     * @return a new StaffTable instance.
+     * @return a new instance of StaffTable.
      */
     @Override
     protected AbstractTable<Staff> createEmpty() {
@@ -69,25 +96,35 @@ public class StaffTable extends AbstractTable<Staff> {
     }
 
     /**
-     * Saves the staff data to the default file and updates users.csv.
+     * Saves the StaffTable to the designated file.
+     * <p>
+     * This method overrides the superclass method to save the current state of the staff table,
+     * including headers and individual staff entries, to a CSV file. The file location is determined
+     * by the class's filePath property.
      *
-     * @throws IOException if an I/O error occurs.
+     * @throws IOException if an I/O error occurs while writing to the file
      */
     public void saveToFile() throws IOException {
         super.saveToFile();
     }
 
     /**
-     * Loads the staff data from the default file.
+     * Loads the staff entries from a predefined file. This method overrides the
+     * parent class's implementation to load staff data specifically from the designated file.
      *
-     * @throws IOException if an I/O error occurs.
+     * @throws IOException if an I/O error occurs during reading from the file
      */
     public void loadFromFile() throws IOException {
         super.loadFromFile();
     }
 
     /**
-     * Loads user data from users.csv into the users map.
+     * Loads user data from the USERS_FILE into a Map.
+     * Each user is represented as a line in the file, with fields separated by commas.
+     * The first line of the file is assumed to be a header and is skipped.
+     * If a line contains exactly 4 fields, it is parsed into a User object and added to the map.
+     *
+     * @return a Map where the key is the user ID and the value is the corresponding User object
      */
     private Map<String, User> loadUsers() {
         Map<String, User> users = new HashMap<>();
@@ -113,7 +150,9 @@ public class StaffTable extends AbstractTable<Staff> {
     }
 
     /**
-     * Saves user data to users.csv
+     * Saves the provided users to a file.
+     *
+     * @param users a map containing users to be saved, where the key is the user's ID and the value is the User object
      */
     private void saveUsers(Map<String, User> users) {
         try (PrintWriter writer = new PrintWriter(USERS_FILE)) {
@@ -132,9 +171,9 @@ public class StaffTable extends AbstractTable<Staff> {
     }
 
     /**
-     * Adds a new entry to the staff table and updates users.csv.
+     * Adds a new staff entry to the staff table and updates the associated user information.
      *
-     * @param staff the Staff object to add
+     * @param staff The Staff object to be added.
      */
     @Override
     public void addEntry(Staff staff) {
@@ -152,23 +191,11 @@ public class StaffTable extends AbstractTable<Staff> {
     }
 
     /**
-     * Converts a string representation of a user role to a UserRole enum value.
+     * Removes an entry with the specified tableEntryID from the staff table.
+     * This method will update the underlying data file and remove the associated user.
      *
-     * @param role the string representation of the user role
-     * @return the corresponding UserRole enum value
-     */
-    private static UserRole parseUserRole(String role) {
-        try {
-            return UserRole.valueOf(role.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid role: " + role);
-        }
-    }
-
-    /**
-     * Removes an entry from the staff table and users.csv.
-     *
-     * @param tableEntryID the numeric ID of the entry to remove
+     * @param tableEntryID the unique identifier of the table entry to be removed
+     * @return true if the entry is successfully removed, false if the entry with the specified ID is not found
      */
     @Override
     public boolean removeEntry(int tableEntryID) {

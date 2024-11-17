@@ -16,11 +16,42 @@ import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
+/**
+ * The AdminMenu class handles the display and execution of menu options specific to the administrator role.
+ * It provides functionalities for managing hospital staff, viewing scheduled appointments, managing medication inventory,
+ * and other administrative tasks.
+ * This class extends AbstractMainMenu and ensures that only users with administrator privileges can access these functionalities.
+ */
 public class AdminMenu extends AbstractMainMenu {
+    /**
+     * A Scanner instance used to capture input from the console.
+     * This is declared as a final variable to ensure only one
+     * instance is created and used throughout the lifetime of the AdminMenu.
+     */
     private final Scanner scanner;
+    /**
+     * The UserContext associated with the current admin session.
+     * This variable holds the essential user information needed to
+     * validate and authorize administrative actions within the menu.
+     */
     private final UserContext userContext;
+    /**
+     * Service responsible for managing hospital staff operations within
+     * the AdminMenu context. This includes adding, updating, and removing staff,
+     * as well as other staff-related functionalities.
+     * <p>
+     * This service interacts with the main application logic to handle staff-specific
+     * tasks required by the admin.
+     */
     private final StaffManagementService staffManagementService;
 
+    /**
+     * Constructs an instance of AdminMenu, initializing its context with the given App instance.
+     * This constructor initializes the scanner, userContext, and staffManagementService fields,
+     * and ensures that the current user has administrative privileges.
+     *
+     * @param app the instance of the App class that provides the necessary services and context
+     */
     public AdminMenu(App app) {
         this.app = app;
         this.userContext = app.getUserContext();
@@ -30,13 +61,10 @@ public class AdminMenu extends AbstractMainMenu {
     }
 
     /**
-     * Validates if the current user has administrator access.
-     *
-     * This method checks the user's context to determine if the
-     * user has administrator privileges. If the user is not an
-     * administrator or the user context is null, access is denied,
-     * an error message is displayed, and the user is redirected to
-     * the authentication menu.
+     * Validates whether the current user has administrator access.
+     * If the user does not have admin privileges or userContext is null,
+     * an access denied message is displayed, and the application redirects
+     * to the authentication menu.
      */
     private void validateAdminAccess() {
         if (userContext == null || userContext.getUserType() != UserRole.ADMINISTRATOR) {
@@ -46,15 +74,18 @@ public class AdminMenu extends AbstractMainMenu {
     }
 
     /**
-     * Displays the Administrator menu and executes the chosen action.
-     *
-     * The administrator menu provides options to view and manage hospital staff,
-     * view scheduled appointments, view and manage medication inventory, and
-     * approve/reject replenishment requests. The administrator can also logout
-     * from the system.
-     *
-     * The administrator's menu is displayed until the administrator chooses to
-     * logout.
+     * Displays the administrator menu and handles the execution of selected options.
+     * The options provided in the menu include:
+     * <ol>
+     *   <li>View and manage hospital staff</li>
+     *   <li>View scheduled appointments details</li>
+     *   <li>View and manage medication inventory</li>
+     *   <li>Approve or reject replenishment requests</li>
+     *   <li>Logout</li>
+     * </ol>
+     * The method will prompt the administrator to select an option and will
+     * continuously display the menu until the logout option is selected.
+     * This method also prints a low stock alert message upon entering the menu.
      */
     @Override
     public void displayAndExecute() {
@@ -93,9 +124,10 @@ public class AdminMenu extends AbstractMainMenu {
     }
 
     /**
-     * Prints a low stock alert message indicating which drugs are running low in inventory.
-     * This method retrieves drugs that are marked as low in stock from the DrugDispensaryService,
-     * and if there are any such drugs, it prints their details to the console in a formatted string.
+     * Prints a low stock alert message if there are any drugs running low in stock.
+     * This method retrieves the drug entries that are low in stock from the drug dispensary service
+     * and prints them in an ASCII table format to the console with a yellow-colored alert message.
+     * If there are no drugs running low in stock, the method does nothing.
      */
     private void printLowStockAlertMessage() {
         DrugInventoryTable lowStockView = app.getDrugDispensaryService().getLowStockDrugs();
@@ -106,9 +138,11 @@ public class AdminMenu extends AbstractMainMenu {
     }
 
     /**
-     * Handles the "View Scheduled Appointment Details" option by displaying all appointments to the console.
-     * This method simply delegates to the AppointmentService's displayAllAppointments method.
-     * TODO: Look into beautifying print.
+     * Handles the action of viewing all scheduled appointments.
+     * <p>
+     * This method calls the AppointmentService to display all scheduled appointments.
+     * It is intended to be used by administrative users to view detailed appointment information.
+     * The method does not take any parameters and does not return any values.
      */
     private void handleViewAppointments() {
         app.getAppointmentService().displayAllAppointments();
@@ -116,14 +150,22 @@ public class AdminMenu extends AbstractMainMenu {
 
 
     /**
-     * Handles the "Manage Drug Inventory" option by presenting a sub-menu to the admin user and
-     * delegating to specific methods based on the user's selection.
+     * Handles the drug inventory management operations.
+     * This method displays the Manage Drug Inventory menu and allows the user
+     * to choose options related to viewing, adding, deleting, updating drug quantities,
+     * updating low stock thresholds, or exiting back to the main menu.
+     * Users must enter a valid number to select an option, and invalid inputs will
+     * prompt an error message.
      * <p>
-     * This method displays a menu with options to view drug stock, add a new drug, delete a drug,
-     * update drug quantity, or update the low stock threshold.
+     * Options include:
+     * 1. Viewing the current drug stock.
+     * 2. Adding a new drug to the inventory.
+     * 3. Deleting an existing drug from the inventory.
+     * 4. Updating the quantity of an existing drug.
+     * 5. Updating the low stock threshold for alerts.
+     * 6. Exiting to the main menu.
      * <p>
-     * The method loops until the user selects the "Back to Main Menu" option, at which point it logs
-     * the exit and returns.
+     * The method continuously prompts the user until the exit option (6) is selected.
      */
     private void handleManageDrugInventory() {
         while (true) {
@@ -157,12 +199,21 @@ public class AdminMenu extends AbstractMainMenu {
     }
 
     /**
-     * Updates the low stock threshold for a specific drug in the inventory.
-     * This method displays a list of drugs in the inventory and prompts the
-     * administrator to select a drug EntryID to update. It then requests the new
-     * low stock threshold for the selected drug, validates the entry, and
-     * updates the low stock threshold in the inventory. If successful, it logs
-     * the action; otherwise, it outputs an error message.
+     * Handles the update of the low stock threshold for a drug in the inventory.
+     * This method interacts with the user through the console to select a drug entry and set a new low stock threshold.
+     * It displays a list of drug entries, prompts the user to select an entry by ID, and then prompts for a new threshold value.
+     * The updated threshold is applied and confirmed or a failure message is displayed.
+     * <p>
+     * The method uses color coding for console messages to indicate different types of output such as headers, errors, and confirmations.
+     * It validates user inputs to ensure they are correct and handles invalid entries gracefully.
+     * <p>
+     * The Drug Dispansary Service is utilized to perform actions such as fetching the current drug inventory, validating entry IDs,
+     * retrieving drug names and setting new low stock thresholds.
+     * <p>
+     * If the update is successful, the action is logged and a confirmation message is shown to the user. If there is a failure, an error
+     * message is displayed prompting the user to try again.
+     * <p>
+     * The user can return to the previous menu by entering -1 as the drug EntryID.
      */
     private void handleUpdateLowStockThreshold() {
         System.out.println(Colour.BLUE + "=== Update Low Stock Threshold ===" + Colour.RESET);
@@ -194,20 +245,25 @@ public class AdminMenu extends AbstractMainMenu {
                     System.out.println("Failed to update low stock threshold for " + drugName + ". Please try again.");
                 }
                 break;
-            }
-            catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Please enter a valid number.");
             }
         }
     }
 
     /**
-     * Updates the quantity of a specific drug in the inventory.
-     * This method displays a list of drug replenish requests and prompts the
-     * administrator to select a drug EntryID to update. It then requests the new
-     * quantity for the selected drug, validates the entry, and updates the drug
-     * stock quantity in the inventory. If successful, it logs the action; otherwise,
-     * it outputs an error message.
+     * Handles the process of updating the quantity of drugs in the dispensary inventory.
+     * This method displays the current drug inventory, prompts the user to select a drug entry by its ID,
+     * and allows the quantity of the selected drug to be updated.
+     * <p>
+     * The user can input the entry ID of the drug they wish to update. If the entered ID is valid,
+     * they are then prompted to input the new quantity for that drug. The inventory is updated accordingly.
+     * <p>
+     * If the user enters an invalid ID, they are informed of the error and prompted to try again.
+     * If the update is successful, a confirmation message is displayed; otherwise, an error message
+     * is shown. The method also logs the update action if it is successful.
+     * <p>
+     * This method runs in a loop until a valid update is made or the user chooses to exit by entering -1.
      */
     private void handleUpdateDrugQuantity() {
         System.out.println(Colour.BLUE + "=== Update Drug Quantity ===" + Colour.RESET);
@@ -234,8 +290,7 @@ public class AdminMenu extends AbstractMainMenu {
 
                 if (!success) {
                     System.out.println("Failed to update quantity. Please try again.");
-                }
-                else {
+                } else {
                     System.out.println(Colour.GREEN + "Quantity updated successfully." + Colour.RESET);
                     logAdminAction("Updated quantity for " + drugName + " to " + newQuantity);
                 }
@@ -247,11 +302,14 @@ public class AdminMenu extends AbstractMainMenu {
     }
 
     /**
-     * Allows the administrator to delete a drug from the inventory.
-     * This method prompts the administrator to select a drug EntryID from the list of drugs
-     * in the inventory, and then attempts to delete the selected drug from the inventory.
-     * If the deletion is successful, a success message is printed; otherwise, an error message
-     * is printed.
+     * Handles the process of deleting a drug from the dispensary inventory.
+     * <p>
+     * This method displays the current drug inventory to the user and prompts
+     * for the EntryID of the drug to be deleted. The user can enter -1 to go back.
+     * It performs validation on the entered EntryID and attempts to remove the
+     * drug from the inventory if the EntryID is valid. The method logs the actions
+     * taken and provides feedback to the user about the success or failure of the
+     * deletion process.
      */
     private void handleDeleteDrug() {
         System.out.println(Colour.BLUE + "=== Delete Drug ===" + Colour.RESET);
@@ -286,9 +344,11 @@ public class AdminMenu extends AbstractMainMenu {
     }
 
     /**
-     * Displays the current drug inventory.
-     * This method displays a list of all drugs in the inventory, including their EntryID,
-     * name, quantity, and whether they are low in stock.
+     * Displays the entire drug inventory in the console.
+     * <p>
+     * This method prints the drug inventory title with a blue color,
+     * retrieves the current drug inventory as a string from the drug dispensary service,
+     * and prints the result in the console.
      */
     private void handleDisplayAllDrugs() {
         System.out.println(Colour.BLUE + "=== Drug Inventory ===" + Colour.RESET);
@@ -297,11 +357,17 @@ public class AdminMenu extends AbstractMainMenu {
     }
 
     /**
-     * Prompts the user for a drug name, quantity, and low stock alert threshold.
-     * Then, adds the drug to the inventory using the provided parameters.
-     * If the drug already exists, displays an error message and returns.
-     * If the drug is successfully added, displays a success message.
-     * If the drug cannot be added for any reason, displays an error message.
+     * Handles the addition of a new drug to the dispensary.
+     * <p>
+     * This method prompts the administrator to enter the name, quantity,
+     * and low stock alert threshold for a new drug. It handles user input
+     * and validation, ensuring numeric entries where necessary. If the drug
+     * already exists in the system, it notifies the user and terminates the
+     * process. If all inputs are valid and the drug doesn't already exist,
+     * it proceeds to add the new drug to the dispensary via the DrugDispensaryService.
+     * <p>
+     * The method also provides user feedback for successful or failed drug
+     * additions using colored console output to enhance readability.
      */
     private void handleAddNewDrug() {
 
@@ -320,8 +386,7 @@ public class AdminMenu extends AbstractMainMenu {
             try {
                 System.out.println("Enter Drug Quantity: ");
                 quantity = Integer.parseInt(scanner.nextLine());
-            }
-            catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 System.out.println(Colour.RED + "Please enter a valid number." + Colour.RESET);
             }
         }
@@ -330,8 +395,7 @@ public class AdminMenu extends AbstractMainMenu {
             try {
                 System.out.println("Enter Low Stock Alert Threshold: (-1 to disable) ");
                 lowStockAlertThreshold = Integer.parseInt(scanner.nextLine());
-            }
-            catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 System.out.println(Colour.RED + "Please enter a valid number." + Colour.RESET);
             }
         }
@@ -339,21 +403,21 @@ public class AdminMenu extends AbstractMainMenu {
         boolean success = app.getDrugDispensaryService().addNewDrug(drugName, quantity, lowStockAlertThreshold);
         if (success) {
             System.out.println(Colour.GREEN + "Drug added successfully." + Colour.RESET);
-        }
-        else {
+        } else {
             System.out.println(Colour.RED + "Failed to add drug. Please try again." + Colour.RESET);
         }
     }
 
 
-
     /**
-     * Handles the approval of drug replenishment requests.
-     * This method displays a list of all replenishment requests and prompts the administrator
-     * to select a request to approve or reject. If the administrator chooses to approve the request,
-     * the method processes the request and updates the inventory accordingly. If the administrator
-     * chooses to reject the request, the method simply removes the request from the list.
-     * The method continues to loop until the administrator chooses to go back.
+     * Handles the process of approving or rejecting drug replenishment requests.
+     * <p>
+     * This method displays all current replenishment requests and prompts the admin
+     * to approve or reject individual requests by their EntryID. The admin can also
+     * approve all requests at once by entering 'a'. The selection and action are
+     * validated and appropriate messages are displayed based on success or failure.
+     * <p>
+     * The admin's actions are logged for audit purposes.
      */
     private void handleApproveReplenishmentRequests() {
         // Print out the list of all replenishment requests
@@ -394,8 +458,7 @@ public class AdminMenu extends AbstractMainMenu {
                     app.getDrugDispensaryService().processReplenishRequest(choice, false);
                     logAdminAction("Rejected replenishment request with EntryID " + choice);
                     System.out.println(Colour.GREEN + "Replenishment request rejected successfully." + Colour.RESET);
-                }
-                else {
+                } else {
                     System.out.println(Colour.RED + "Invalid option. Please try again." + Colour.RESET);
                 }
                 System.out.println(Colour.BLUE + "=== Replenishment Requests ===" + Colour.RESET);
@@ -406,7 +469,14 @@ public class AdminMenu extends AbstractMainMenu {
         }
     }
 
-    // TODO: For Amos to implement Staff related methods.
+
+    /**
+     * Handles the management of hospital staff, providing options to add, update,
+     * remove, view, and filter staff members. It also allows returning to the main menu.
+     * This method runs in a loop until the user chooses to exit to the main menu.
+     * It presents the user with a menu of options related to staff management and processes
+     * the user's input to call the appropriate handler methods.
+     */
     private void handleManageHospitalStaff() {
         while (true) {
             System.out.println("\n" + Colour.BLUE + "=== Hospital Staff Management ===" + Colour.RESET);
@@ -439,6 +509,27 @@ public class AdminMenu extends AbstractMainMenu {
         }
     }
 
+    /**
+     * Handles the process of adding a new staff member to the system.
+     * <p>
+     * This method prompts the user for the necessary details to create a new
+     * staff member, including staff ID, full name, age, role, status, and gender.
+     * It processes the input to construct a Staff object and then attempts to
+     * add this new staff member to the system. If the addition is successful
+     * and the role is "Doctor", it updates all schedules with the new doctor.
+     * <p>
+     * In case of any invalid numeric input or other exceptions during the
+     * process, appropriate error messages are displayed to the user.
+     * <p>
+     * Positively adds a new staff member and logs the admin action if successful.
+     * Otherwise, it informs the user of the failure and possible reasons.
+     * <p>
+     * Exceptions:
+     * - NumberFormatException: If numeric inputs such as age or role choice
+     * are not valid integers.
+     * - IllegalArgumentException: If an invalid role choice is made.
+     * - Exception: For generic error handling.
+     */
     private void handleAddStaff() {
         System.out.println("\n" + Colour.BLUE + "=== Add New Staff Member ===" + Colour.RESET);
         try {
@@ -493,6 +584,20 @@ public class AdminMenu extends AbstractMainMenu {
     }
 
 
+    /**
+     * Handles the update process for staff information.
+     * <p>
+     * This method prompts the admin to input the staff ID they wish to update and
+     * fetches the corresponding staff details from the system. The admin is then
+     * prompted to enter new values for the staff member's name, age, and role.
+     * If an input is left blank, the corresponding field is not updated.
+     * <p>
+     * The updated staff information is then saved back to the system. If the update
+     * is successful, an appropriate message is displayed and an admin action is logged.
+     * If the update fails or an error occurs, an error message is displayed.
+     * <p>
+     * Exceptions are caught, and relevant error messages are displayed to the console.
+     */
     private void handleUpdateStaff() {
         System.out.println(Colour.BLUE + "=== Update Staff Information ===" + Colour.RESET);
         try {
@@ -536,6 +641,21 @@ public class AdminMenu extends AbstractMainMenu {
     }
 
 
+    /**
+     * Handles the removal of a staff member from the system.
+     * <p>
+     * This method prompts the admin to input the ID of the staff member
+     * to be removed and whether the removal should be a soft delete
+     * (marking the staff member as inactive) or a hard delete. It then
+     * attempts to remove the staff member using the staffManagementService.
+     * <p>
+     * If the removal is successful, a success message is displayed and
+     * the action is logged. If the removal fails, an error message is
+     * displayed indicating the potential non-existence of the staff ID.
+     * <p>
+     * Any exceptions encountered during the process will be caught, and
+     * an appropriate error message will be displayed.
+     */
     private void handleRemoveStaff() {
         System.out.println(Colour.BLUE + "=== Remove Staff Member ===" + Colour.RESET);
         try {
@@ -558,6 +678,17 @@ public class AdminMenu extends AbstractMainMenu {
     }
 
 
+    /**
+     * Displays the list of all staff members in a formatted table.
+     * <p>
+     * This method retrieves the list of all staff members from the
+     * `staffManagementService` and prints the details of each staff member
+     * in a tabular format to the console.
+     * <p>
+     * If no staff members are found, a message indicating this will be printed.
+     * The output is colorized using ANSI escape codes as defined in the `Colour` class.
+     * Additionally, an action log entry is created stating that the staff list was viewed.
+     */
     private void handleViewStaff() {
         System.out.println(Colour.BLUE + "=== Staff List ===" + Colour.RESET);
         List<Staff> staffList = staffManagementService.listAllStaff();
@@ -577,6 +708,12 @@ public class AdminMenu extends AbstractMainMenu {
     }
 
 
+    /**
+     * Handles the filtering of staff based on user-selected criteria such as role, gender, or age range.
+     * <p>
+     * The method displays a set of filtering options to the user, prompts for input based on the chosen option,
+     * and outputs a list of staff members matching the given criteria. It catches and handles invalid user input.
+     */
     private void handleFilterStaff() {
         System.out.println("\n" + Colour.BLUE + "=== Filter Staff ===" + Colour.RESET);
         System.out.println("Filter by:");
@@ -632,6 +769,11 @@ public class AdminMenu extends AbstractMainMenu {
     }
 
 
+    /**
+     * Logs an administrative action performed by the current user within the hospital management system.
+     *
+     * @param action a description of the administrative action performed
+     */
     private void logAdminAction(String action) {
         AuditLogger.logAction(
                 userContext.getName(),

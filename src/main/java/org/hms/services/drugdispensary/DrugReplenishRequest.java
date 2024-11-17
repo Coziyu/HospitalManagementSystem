@@ -2,16 +2,27 @@ package org.hms.services.drugdispensary;
 
 import org.hms.entities.AbstractTableEntry;
 
-
+/**
+ * Represents a request to replenish a specific drug with a specified quantity and optional notes.
+ */
 public class DrugReplenishRequest extends AbstractTableEntry {
+    /**
+     * The name of the drug to be replenished.
+     */
     String drugName;
+    /**
+     * Represents the quantity of a drug to be added in a drug replenish request.
+     */
     int addQuantity;
+    /**
+     * Additional notes for the drug replenish request.
+     */
     String notes;
 
     /**
      * Default constructor intializing DrugReplenishRequest with an Invalid ID
      */
-    public DrugReplenishRequest(){
+    public DrugReplenishRequest() {
         super(-1);
     }
 
@@ -115,10 +126,11 @@ public class DrugReplenishRequest extends AbstractTableEntry {
     /**
      * Generate a string representation of the object with the given format string.
      * Meant to be printed to the console.
+     *
      * @param formatString The format string to use. Must contain 4 placeholders for the entry's ID, drugName, addQuantity and notes.
      * @return A string representation of the object.
      */
-    public String toPrintString(String formatString){
+    public String toPrintString(String formatString) {
         String printString = String.format(formatString,
                 getTableEntryID(),
                 drugName,

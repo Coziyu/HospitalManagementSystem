@@ -2,8 +2,22 @@ package org.hms.services.drugdispensary;
 
 import org.hms.entities.AbstractTable;
 
+/**
+ * DrugInventoryTable is a specialized implementation of AbstractTable for managing drug inventory entries.
+ * It provides functionalities like creating a valid entry template, retrieving headers, and generating
+ * an ASCII string representation of the table.
+ */
 public class DrugInventoryTable extends AbstractTable<DrugInventoryEntry> {
+    /**
+     * Defines the column headers for the drug inventory table.
+     * The headers include "ID", "Name", "Qty", and "lowStockQty".
+     */
     private static final String[] HEADERS = {"ID", "Name", "Qty", "lowStockQty"};
+    /**
+     * Represents the format string used for generating a formatted row in the ASCII drug inventory table.
+     * This format string specifies the alignment and spacing for each column in the table.
+     * The columns displayed are: an ID field, a drug name field, a quantity field, and a low stock alert threshold field.
+     */
     private static final String formatString = "│ %-4s│ %-15s│ %-5s│ %-12s│\n";
 
     /**
@@ -61,8 +75,9 @@ public class DrugInventoryTable extends AbstractTable<DrugInventoryEntry> {
     /**
      * This method will call each entry's toPrintString() method to generate a string representation of the table.
      * It will then add box drawing characters to create an ASCII table.
+     *
      * @return A string representation of the table in an ASCII table format.
-     *         This string is meant to be printed to the console.
+     * This string is meant to be printed to the console.
      */
     public String toPrintString() {
         StringBuilder printStringBuilder = new StringBuilder(entries.size() * 100);

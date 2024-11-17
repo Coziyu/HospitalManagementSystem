@@ -13,18 +13,52 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+/**
+ * The PatientMenu class represents the main menu for a Patient user.
+ * It allows the user to view their medical record, update their personal information,
+ * view available appointment slots, schedule an appointment, reschedule an appointment,
+ * cancel an appointment, view upcoming appointments, view past appointment outcomes, and logout.
+ * The class extends AbstractMainMenu and implements the displayAndExecute method.
+ */
 public class PatientMenu extends AbstractMainMenu {
-    private final PatientContext patientContext;
-    private final Scanner scanner;
+
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
     private static final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{8}$");
+    /**
+     * The PatientContext object to use for the menu.
+     */
+    private final PatientContext patientContext;
+    /**
+     * The Scanner object to use for the menu.
+     */
+    private final Scanner scanner;
 
+
+    /**
+     * Constructor for the PatientMenu class.
+     *
+     * @param app            The App object to use for the menu.
+     * @param patientContext The PatientContext object to use for the menu.
+     */
     public PatientMenu(App app, PatientContext patientContext) {
         this.app = app;
         this.patientContext = patientContext;
         this.scanner = new Scanner(System.in);
     }
 
+    /**
+     * Displays the Patient Menu and executes the selected option.
+     * The user can select from the following options:
+     * 1. View Medical Record
+     * 2. Update Personal Information
+     * 3. View Available Appointment Slots
+     * 4. Schedule Appointment
+     * 5. Reschedule Appointment
+     * 6. Cancel Appointment
+     * 7. View Scheduled Appointments
+     * 8. View Past Appointment Outcomes
+     * 9. Logout
+     */
     @Override
     public void displayAndExecute() {
         while (true) {
@@ -64,20 +98,30 @@ public class PatientMenu extends AbstractMainMenu {
         }
     }
 
-    /*private void handleAddDoctor(){
-        System.out.print("Enter Doctor ID: ");
-        String docID = scanner.nextLine();
-        //System.out.print("Enter date: ");
-        //String date = scanner.nextLine();
-        app.getAppointmentService().updateAllSchedulesWithNewDoctor(docID);
-    }*/
 
+    /**
+     * Handles the "View Past Appointment Outcomes" option.
+     * Will display the patient's past appointment outcomes.
+     * If the patient does not have any past appointments,
+     * a message will be displayed.
+     */
     private void handleViewPastAppointmentOutcome() {
         String patientID = (app.getUserContext().getHospitalID());
         app.getAppointmentService().displayAppointmentOutcomesByPatient(patientID);
 
     }
 
+    /**
+     * Handles the cancellation of an appointment for the patient.
+     * <p>
+     * This method performs the following steps:
+     * - Retrieves the patient's ID and current appointment status.
+     * - Checks if the appointment can be canceled (status must be CONFIRMED or PENDING).
+     * - Retrieves the doctor's ID and appointment date and time slot.
+     * - Sets the appointment status to canceled.
+     * - Resumes the doctor's schedule for the canceled appointment slot.
+     * - Displays a confirmation message.
+     */
     private void handleCancelAppointment() {
         String patientID = (app.getUserContext().getHospitalID());
         AppointmentStatus status = app.getAppointmentService().getCurrentAppointmentStatus(patientID);
@@ -85,7 +129,6 @@ public class PatientMenu extends AbstractMainMenu {
             System.out.println("No appointment can be canceled");
             return;
         }
-
 
 
         String doctorID = app.getAppointmentService().getDoctorID(patientID);
@@ -97,11 +140,28 @@ public class PatientMenu extends AbstractMainMenu {
         //
     }
 
+    /**
+     * Handles the rescheduling of an appointment for the patient.
+     * <p>
+     * This method performs the following steps:
+     * - Retrieves the patient's ID and current appointment status.
+     * - Checks if the appointment can be rescheduled (status must be CONFIRMED or PENDING).
+     * - Retrieves the doctor's ID and appointment date and time slot.
+     * - Sets the appointment status to canceled.
+     * - Resumes the doctor's schedule for the canceled appointment slot.
+     * - Displays a confirmation message.
+     */
     private void handleRescheduleAppointment() {
         handleCancelAppointment();
         handleScheduleAppointment();
     }
 
+    /**
+     * Handles the "View Available Appointment Slots" option.
+     * Will display the available appointment slots for a given date.
+     * The user will be prompted to enter a date in the format YYYYMMDD.
+     * If the date is in the past, an error message will be displayed.
+     */
     private void handleViewAvailableAppointmentSlot() {
         //System.out.println("\n=== Schedule Appointment ===");
         System.out.print("Enter date (YYYYMMDD): ");
@@ -115,17 +175,23 @@ public class PatientMenu extends AbstractMainMenu {
             }
 
             /******this part for check does schedule alr exists in the folder, if no, initialize a new date******/
-            if(!app.getAppointmentService().checkExistingSchedule(dateStr)){
+            if (!app.getAppointmentService().checkExistingSchedule(dateStr)) {
                 app.getAppointmentService().createNewSchedule(dateStr);
             }
 
             /******************/
 
             app.getAppointmentService().displaySchedule(dateStr);
-        }catch (DateTimeParseException e) {}
+        } catch (DateTimeParseException e) {
+        }
     }
 
-    // TODO: For implementation
+    /**
+     * Handles the "Schedule Appointment" option.
+     * The user will be prompted to enter a date, doctor ID, and time slot.
+     * If the date is in the past, an error message will be displayed.
+     * If the appointment is successfully scheduled, a confirmation message will be displayed.
+     */
     private void handleScheduleAppointment() {
         //System.out.println("Feature coming soon...");
         System.out.println("\n=== Schedule Appointment ===");
@@ -140,7 +206,7 @@ public class PatientMenu extends AbstractMainMenu {
             }
 
             /******this part for check does schedule alr exists in the folder, if no, initialize a new date******/
-            if(!app.getAppointmentService().checkExistingSchedule(dateStr)){
+            if (!app.getAppointmentService().checkExistingSchedule(dateStr)) {
                 app.getAppointmentService().createNewSchedule(dateStr);
             }
 
@@ -154,13 +220,13 @@ public class PatientMenu extends AbstractMainMenu {
             System.out.println("Enter time slot : ");
             String timeslot = scanner.nextLine();
             // TODO: scheduleAppointment requires doctorID, patientID, and timeSlot too.
-            if(app.getAppointmentService().checkExistingAppointment(patientID)) {
+            if (app.getAppointmentService().checkExistingAppointment(patientID)) {
                 if (app.getAppointmentService().scheduleAppointment(patientID, doctorID, dateStr, timeslot, app.getAppointmentService().getAppointmentSchedule(dateStr))) {
                     System.out.println("Appointment scheduled for: " + date.format(DateTimeFormatter.ISO_LOCAL_DATE));
                 }
+            } else {
+                System.out.println("can not schedule more than 1 appointment");
             }
-            else{
-                System.out.println("can not schedule more than 1 appointment");}
 
         } catch (DateTimeParseException e) {
             System.out.println("Invalid date format. Please use YYYYMMDD.");
@@ -191,7 +257,12 @@ public class PatientMenu extends AbstractMainMenu {
         System.out.println(medicalRecordString);
     }
 
-    // TODO: For Yingjie to implement
+    /**
+     * Handles the "View Upcoming Appointments" option.
+     * Will display the patient's upcoming appointments.
+     * If the patient does not have any upcoming appointments,
+     * a message will be displayed.
+     */
     private void handleViewUpcomingAppointments() {
         System.out.println("\n=== Upcoming Appointments ===");
         String patienID = (app.getUserContext().getHospitalID());
@@ -199,6 +270,12 @@ public class PatientMenu extends AbstractMainMenu {
 
     }
 
+    /**
+     * Handles the "Update Personal Information" option.
+     * The user can choose to update their phone number, email, or address.
+     * The user will be prompted to enter the new information.
+     * If the information is successfully updated, a confirmation message will be displayed.
+     */
     private void handleUpdateInformation() {
         System.out.println("\n" + Colour.BLUE + "=== Update Personal Information ===" + Colour.RESET);
         String patientID = (app.getUserContext().getHospitalID());
@@ -248,11 +325,5 @@ public class PatientMenu extends AbstractMainMenu {
         }
 
 
-    }
-    // TODO: Decide if deprecated
-    private void handleViewPrescriptions() {
-        System.out.println("\n=== Current Prescriptions ===");
-        // Implementation would use a PrescriptionService to get prescriptions
-        System.out.println("Feature coming soon...");
     }
 }

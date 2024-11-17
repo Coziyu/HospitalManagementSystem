@@ -20,23 +20,80 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-//TODO: Rename var from var to something meaningful
-
+/**
+ * The StorageService class manages the storage and retrieval of various healthcare data tables.
+ * It extends AbstractService and implements IMedicalDataInterface, IAppointmentDataInterface,
+ * and IDrugStockDataInterface to provide a comprehensive storage solution for medical records,
+ * appointments, drug inventory, and other related data.
+ */
 public class StorageService
         extends AbstractService<IDataInterface>
         implements IMedicalDataInterface, IAppointmentDataInterface, IDrugStockDataInterface {
 
+    /**
+     * The root directory for storing data files.
+     * This directory is constructed based on the user's current working directory.
+     */
     private static final String dataRoot = System.getProperty("user.dir") + "/data/";
-    private DrugInventoryTable drugInventoryTable;
-    private DrugReplenishRequestTable drugReplenishRequestTable;
-    private MedicalRecord medicalRecordTable;
-    private PatientTable patientParticularsTable;
-    private ContactInformationTable contactInformationTable;
-    private StaffTable staffTable;
-
+    /**
+     * Counter to track the number of drug dispense requests made.
+     * This field is used to generate unique identifiers for each drug dispense request.
+     * Note: This implementation is a temporary solution and should be refactored.
+     */
     // TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
     private static int drugDispenseRequestCounter = 0;
+    /**
+     * Represents the table that manages the drug inventory.
+     * This field holds an instance of the DrugInventoryTable providing methods
+     * to manipulate and access drug inventory data.
+     */
+    private DrugInventoryTable drugInventoryTable;
+    /**
+     * A private field in the StorageService that manages drug replenish requests.
+     * It utilizes the DrugReplenishRequestTable class to store and handle operations related to drug replenishments.
+     */
+    private DrugReplenishRequestTable drugReplenishRequestTable;
+    /**
+     * Represents a table of medical records within the storage service.
+     * This variable stores an instance of the MedicalRecord class,
+     * which contains a collection of medical entries.
+     */
+    private MedicalRecord medicalRecordTable;
+    /**
+     * Represents the table containing patient particulars.
+     * This table is responsible for managing and maintaining
+     * entries related to patient data, including patient ID,
+     * name, birthdate, gender, and blood type.
+     */
+    private PatientTable patientParticularsTable;
+    /**
+     * Holds the table of contact information, which includes entries
+     * such as phone numbers, emails, and addresses associated with patients.
+     * This table provides the functionality to manage, format, and
+     * render contact information entries.
+     */
+    private ContactInformationTable contactInformationTable;
+    /**
+     * Represents the table containing all staff-related information.
+     * This table is used to store and manage data pertaining to staff members,
+     * including their details, roles, and other pertinent information required
+     * for hospital management and scheduling.
+     */
+    private StaffTable staffTable;
 
+    /**
+     * Constructs a StorageService instance and initializes various data tables necessary for the application.
+     * <p>
+     * The constructor is responsible for initializing the following tables:
+     * - Drug Inventory Table
+     * - Drug Replenish Request Table
+     * - Medical Record Table
+     * - Patient Particulars Table
+     * - Contact Information Table
+     * - Staff Table
+     * <p>
+     * Each table is initialized by invoking its respective initialization method that loads data from a CSV file.
+     */
     public StorageService() {
         storageServiceInterface = this;
         initializeDrugInventoryTable();
@@ -47,6 +104,12 @@ public class StorageService
         initializeStaffTable();
     }
 
+    /**
+     * Initializes the staff table by loading data from the staff CSV file.
+     * The CSV file is located at the path specified by the dataRoot field.
+     * If an IOException occurs during the loading process, it is wrapped
+     * in a RuntimeException and thrown.
+     */
     private void initializeStaffTable() {
         staffTable = new StaffTable(dataRoot + "staff.csv");
         try {
@@ -59,8 +122,10 @@ public class StorageService
 
     /**
      * Initializes the contact information table by loading data from a CSV file.
-     * The CSV file is located at the dataRoot directory.
-     * If an IOException occurs during loading, a RuntimeException is thrown.
+     * It constructs a new ContactInformationTable instance using a file path
+     * provided by the `dataRoot` field and attempts to load the contact data.
+     *
+     * @throws RuntimeException if an IOException occurs while loading the file
      */
     private void initializeContactInformationTable() {
         contactInformationTable = new ContactInformationTable(dataRoot + "contact_information.csv");
@@ -72,9 +137,19 @@ public class StorageService
     }
 
     /**
-     * Initializes the patient particulars table by loading data from a CSV file.
-     * The CSV file is located at the dataRoot directory.
-     * If an IOException occurs during loading, a RuntimeException is thrown.
+     * Initializes the patient particulars table by loading patient data from a CSV file.
+     * <p>
+     * This method sets up the `patientParticularsTable` field by creating a new instance
+     * of `PatientTable` using the path to the `PatientList.csv` file. It then attempts
+     * to load the data from the specified file. If an I/O error occurs during this process,
+     * a `RuntimeException` is thrown.
+     * </p>
+     * <p>
+     * The `PatientTable` class is designed to handle the storage and management of patient
+     * particulars. It reads from the CSV file and populates the table accordingly.
+     * </p>
+     *
+     * @throws RuntimeException if there is an issue with loading the patient data from the file.
      */
     private void initializePatientParticularsTable() {
         patientParticularsTable = new PatientTable(dataRoot + "PatientList.csv");
@@ -86,9 +161,9 @@ public class StorageService
     }
 
     /**
-     * Initializes the drug replenish request table by loading data from a CSV file.
-     * The CSV file is located at the dataRoot directory.
-     * If an IOException occurs during loading, a RuntimeException is thrown.
+     * Initializes the DrugReplenishRequestTable by setting its file path to the specified CSV file
+     * and loading its contents from the file.
+     * If an I/O error occurs while loading the data, a RuntimeException is thrown.
      */
     private void initializeDrugReplenishRequestTable() {
         drugReplenishRequestTable = new DrugReplenishRequestTable(dataRoot + "drugReplenishRequests.csv");
@@ -100,9 +175,10 @@ public class StorageService
     }
 
     /**
-     * Initializes the drug inventory table by loading data from a CSV file.
-     * The CSV file is located at the dataRoot directory.
-     * If an IOException occurs during loading, a RuntimeException is thrown.
+     * Initializes the drug inventory table by linking it to a CSV file and loading its contents.
+     * This method sets up the `drugInventoryTable` using the path provided by the `dataRoot`,
+     * and calls `loadFromFile` to populate it with data from the specified file.
+     * If an IOException occurs during the file loading process, a RuntimeException is thrown.
      */
     private void initializeDrugInventoryTable() {
         drugInventoryTable = new DrugInventoryTable(dataRoot + "drugInventory.csv");
@@ -114,10 +190,9 @@ public class StorageService
     }
 
     /**
-     * Initialzes the medical record table by loading data from a CSV file.
-     * The CSV file is located at the dataRoot directory.
-     * If an IOException occurs during loading, a RuntimeException is thrown.
-     * @return
+     * Initializes the medical records table for the application.
+     * This method sets up the medicalRecordTable by loading data from the specified CSV file.
+     * If an I/O error occurs while loading the file, it throws a RuntimeException.
      */
     private void initializeMedicalRecordTable() {
         medicalRecordTable = new MedicalRecord(dataRoot + "medical_records.csv");
@@ -129,6 +204,11 @@ public class StorageService
     }
 
 
+    /**
+     * Retrieves a list of appointment IDs that are pending for dispensary.
+     *
+     * @return ArrayList of appointment IDs that are pending dispensary.
+     */
     @Override
     public ArrayList<String> getAppointmentsPendingDispensary() {
         // TODO: Implement fetching from AppointmentService
@@ -139,37 +219,75 @@ public class StorageService
         return appointmentsPendingDispensary;
     }
 
+    /**
+     * Retrieves the current drug inventory table managed by the storage service.
+     *
+     * @return An instance of DrugInventoryTable representing the current drug inventory.
+     */
     @Override
     public DrugInventoryTable getDrugInventory() {
         return drugInventoryTable;
     }
 
+    /**
+     * Retrieves the table used for managing and storing drug replenish requests.
+     *
+     * @return an instance of DrugReplenishRequestTable representing the drug replenish requests table.
+     */
     @Override
     public DrugReplenishRequestTable getDrugReplenishRequestTable() {
         return drugReplenishRequestTable;
     }
 
+    /**
+     * Retrieves the staff table.
+     *
+     * @return the current instance of StaffTable containing staff information.
+     */
     @Override
     public StaffTable getStaffTable() {
         return staffTable;
     }
 
+    /**
+     * Retrieves the patient particulars table.
+     *
+     * @return an instance of PatientTable containing patient-related data.
+     */
     @Override
     public PatientTable getPatientTable() {
         return patientParticularsTable;
     }
 
+    /**
+     * Retrieve the table containing medical records.
+     *
+     * @return MedicalRecord table containing medical entries.
+     */
     @Override
     public MedicalRecord getMedicalRecordTable() {
         return medicalRecordTable;
     }
 
+    /**
+     * Retrieves the ContactInformationTable, which contains and manages contact information entries
+     * such as phone numbers, emails, and addresses associated with patients.
+     *
+     * @return an instance of ContactInformationTable providing access to contact information entries.
+     */
     @Override
     public ContactInformationTable getContactInformationTable() {
         return contactInformationTable;
     }
 
-    public DrugDispenseRequest createNewDrugDispenseRequest(String drugName, int addQuantity){
+    /**
+     * Creates a new DrugDispenseRequest with the specified drug name and quantity, and assigns it a unique ID.
+     *
+     * @param drugName    The name of the drug to be dispensed.
+     * @param addQuantity The quantity of the drug to be added to the dispense request.
+     * @return A newly created DrugDispenseRequest object with the given drug name and quantity, set to pending status.
+     */
+    public DrugDispenseRequest createNewDrugDispenseRequest(String drugName, int addQuantity) {
         //TODO: THIS IS A DIRTY HACK! REFACTOR IT ASAP
         // Requires cooperation with Yingjie for this
         DrugDispenseRequest newDispenseRequest = new DrugDispenseRequest(drugDispenseRequestCounter, drugName, addQuantity, DrugRequestStatus.PENDING);
@@ -178,9 +296,11 @@ public class StorageService
     }
 
     /**
-     * Initializes the Array of AppointmentInfo by loading data from a CSV file.
-     * The CSV file path is absolute address for now
-     * If an IOException occurs during loading, a RuntimeException is thrown.
+     * Reads appointment data from a CSV file and returns a list of appointment information.
+     * The method parses the CSV file line by line, extracting details for each appointment
+     * and creating corresponding AppointmentInformation objects.
+     *
+     * @return List of AppointmentInformation objects representing the appointments read from the CSV file.
      */
 
     public List<AppointmentInformation> readAppointments() {
@@ -208,6 +328,11 @@ public class StorageService
         return appointments;
     }
 
+    /**
+     * Writes a list of appointments to a CSV file at the designated location.
+     *
+     * @param appointments List of {@link AppointmentInformation} objects representing the appointments to be written to the CSV file.
+     */
     public void writeAppointmentsToCsv(List<AppointmentInformation> appointments) {
         String filePath = dataRoot + "Appointment/" + "Appointments.csv";
         SimpleDateFormat timeSlotFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm-HH:mm");
@@ -234,6 +359,12 @@ public class StorageService
         }
     }
 
+    /**
+     * Loads the appointment schedule for a specific date from a CSV file.
+     *
+     * @param date The date for which the schedule should be loaded, in the format "YYYY-MM-DD".
+     * @return An AppointmentSchedule object containing the loaded schedule data.
+     */
     public AppointmentSchedule loadSchedule(String date) {
         int numRows = 0;
         int numCols = 0;
@@ -260,10 +391,10 @@ public class StorageService
 
             String line;
 
-            for(int row = 0; (line = br.readLine()) != null; ++row) {
+            for (int row = 0; (line = br.readLine()) != null; ++row) {
                 String[] values = line.split(",");
 
-                for(int col = 0; col < values.length; ++col) {
+                for (int col = 0; col < values.length; ++col) {
                     schedule.getMatrix()[row][col] = values[col];
                 }
             }
@@ -276,6 +407,12 @@ public class StorageService
         return schedule;
     }
 
+    /**
+     * Writes the scheduling matrix of an AppointmentSchedule object to a CSV file.
+     *
+     * @param schedule The AppointmentSchedule object containing the scheduling matrix to be written.
+     * @param date     The date used to name the CSV file, indicating the schedule's date.
+     */
     public void writeScheduleToCSV(AppointmentSchedule schedule, String date) {
         String[][] matrix = schedule.getMatrix();  // Retrieve the matrix from the AppointmentSchedule object
         //String fileName = date + ".csv";  // Use the date to create the file name
@@ -299,6 +436,13 @@ public class StorageService
         }
     }
 
+    /**
+     * Writes the outcome of an appointment to a CSV file. The method captures details such as
+     * appointment ID, patient ID, type of appointment, consultation notes, and prescribed medications.
+     *
+     * @param outcome The outcome of the appointment, encapsulating appointment ID, patient ID,
+     *                type of appointment, consultation notes, and prescribed medications.
+     */
     public void writeAppointmentOutcomeToCSV(AppointmentOutcome outcome) {
         try (FileWriter writer = new FileWriter(dataRoot + "Appointment/" + "AppointmentOutcome.csv", true)) { // Append mode
 
@@ -333,6 +477,15 @@ public class StorageService
         }
     }
 
+    /**
+     * Reads appointment outcomes from a CSV file and returns a list of AppointmentOutcome objects.
+     * Each line in the CSV represents an appointment outcome with various fields such as
+     * appointment ID, patient ID, type of appointment, consultation notes, and prescribed medications.
+     * <p>
+     * The method handles potential IOExceptions and formats errors gracefully.
+     *
+     * @return an ArrayList of AppointmentOutcome objects parsed from the CSV file.
+     */
     public ArrayList<AppointmentOutcome> readAppointmentOutcomesFromCSV() {
         ArrayList<AppointmentOutcome> appointmentOutcomes = new ArrayList<>();
 
@@ -382,6 +535,12 @@ public class StorageService
         return appointmentOutcomes;
     }
 
+    /**
+     * Writes a list of {@code AppointmentOutcome} objects to a CSV file.
+     *
+     * @param appointmentOutcomes an {@code ArrayList} of {@code AppointmentOutcome} objects representing
+     *                            the outcomes of various appointments.
+     */
     public void writeAllAppointmentOutcomesToCSV(ArrayList<AppointmentOutcome> appointmentOutcomes) {
         try (FileWriter writer = new FileWriter(dataRoot + "Appointment/" + "AppointmentOutcome.csv", false)) { // Overwrite mode
 
@@ -415,7 +574,16 @@ public class StorageService
         }
     }
 
-    public File[] getAllDateFile(){
+    /**
+     * Retrieves all CSV files containing appointment scheduling data from the specified directory.
+     * The method fetches files from the directory path constructed using the root data directory
+     * and the "Appointment/schedules/" subpath.
+     *
+     * @return An array of File objects representing all CSV files in the specified directory.
+     * If no CSV files are found or the directory is invalid, the method returns null.
+     * @throws IllegalArgumentException if the directory does not exist or is not a valid directory.
+     */
+    public File[] getAllDateFile() {
         String directoryPath = dataRoot + "Appointment/schedules/";
         File directory = new File(directoryPath);
 
@@ -431,6 +599,12 @@ public class StorageService
         return csvFiles;
     }
 
+    /**
+     * Retrieves the Staff object associated with the given staff ID.
+     *
+     * @param staffId The ID of the staff member whose information is to be fetched.
+     * @return The Staff object corresponding to the given staff ID, or null if no such staff member exists.
+     */
     public Staff getStaffForSchedule(String staffId) {
         StaffTable staffTable = new StaffTable();
         return staffTable.getEntries().stream()
@@ -439,15 +613,27 @@ public class StorageService
                 .orElse(null);
     }
 
+    /**
+     * Retrieves the name of the staff member corresponding to the given user ID.
+     *
+     * @param userId the ID of the staff member whose name is to be retrieved
+     * @return the name of the staff member with the provided ID, or null if no such staff member is found
+     */
     @Override
-    public String getStaffNameByID(String userId){
+    public String getStaffNameByID(String userId) {
         ArrayList<Staff> target = staffTable.searchByAttribute(Staff::getStaffId, userId);
-        if (target.isEmpty()){
+        if (target.isEmpty()) {
             return null;
         }
         return target.getFirst().getName();
     }
 
+    /**
+     * Checks if a schedule file exists for the given date.
+     *
+     * @param date The date in "yyyyMMdd" format for which the schedule existence needs to be verified.
+     * @return true if a schedule file exists for the given date, false otherwise.
+     */
     public boolean checkScheduleExist(String date) {
 
         String folderPath = dataRoot + "Appointment/schedules/";
@@ -457,7 +643,12 @@ public class StorageService
         return file.exists();
     }
 
-    public void initializeSchedule(String date){
+    /**
+     * Initializes the appointment schedule for the specified date by copying a template schedule file.
+     *
+     * @param date The date for which to initialize the schedule, formatted as YYYYMMDD.
+     */
+    public void initializeSchedule(String date) {
         String folderPath = dataRoot + "Appointment/schedules/";
         String templateFilepath = folderPath + "templateSchedule.csv";
         String newFilePath = folderPath + date + ".csv";

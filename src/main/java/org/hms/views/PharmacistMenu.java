@@ -16,10 +16,23 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * PharmacistMenu class is a view class that displays the main menu for the pharmacist user.
+ * The pharmacist user can view appointment outcomes, update prescription status, view medication inventory,
+ * and submit a drug replenishment request.
+ * The class extends AbstractMainMenu and implements the displayAndExecute method to display the menu options.
+ * The class also contains methods to handle the different menu options.
+ *
+ * @see AbstractMainMenu
+ */
 public class PharmacistMenu extends AbstractMainMenu {
     private final Scanner scanner;
     private final UserContext userContext;
 
+    /**
+     * Constructor for the PharmacistMenu class.
+     * @param app
+     */
     public PharmacistMenu(App app) {
         this.app = app;
         this.userContext = app.getUserContext();
@@ -27,6 +40,9 @@ public class PharmacistMenu extends AbstractMainMenu {
         validatePharmacistAccess();
     }
 
+    /**
+     * Validates that the user has pharmacist access.
+     */
     private void validatePharmacistAccess() {
         if (userContext == null || userContext.getUserType() != UserRole.PHARMACIST) {
             System.out.println(Colour.RED + "Access Denied: Pharmacist privileges required." + Colour.RESET);
@@ -34,6 +50,9 @@ public class PharmacistMenu extends AbstractMainMenu {
         }
     }
 
+    /**
+     * Displays the main menu for the pharmacist user.
+     */
     @Override
     public void displayAndExecute() {
         while (true) {
@@ -69,6 +88,16 @@ public class PharmacistMenu extends AbstractMainMenu {
         }
     }
 
+    /**
+     * Handles the viewing of appointment outcomes.
+     * This method will display a list of patients with pending prescriptions.
+     * The pharmacist can then select a patient to view the appointment outcomes and pending prescriptions.
+     * The method will display the appointment outcomes and pending prescriptions for the selected patient.
+     * The method will also log the action in the audit log.
+     * @see AppointmentOutcome
+     * @see DrugDispenseRequest
+     * @see AuditLogger
+     */
     private void handleViewAppointmentOutcomes() {
         System.out.println("\n" + Colour.BLUE + "=== View Appointment Outcome Records ===" + Colour.RESET);
         System.out.println("Recent patients with pending Prescriptions:");
@@ -122,8 +151,16 @@ public class PharmacistMenu extends AbstractMainMenu {
         logPharmacistAction("Viewed appointment outcomes");
     }
 
+    /**
+     * Handles the updating of prescription status.
+     * This method will display a list of patients with pending prescriptions.
+     * The pharmacist can then select a patient to view the appointment outcomes and pending prescriptions.
+     * The method will display the appointment outcomes and pending prescriptions for the selected patient.
+     * The pharmacist can then choose to dispense the prescription or not.
+     * The method will update the prescription status and log the action in the audit log.
+     * @see AppointmentOutcome
+     */
     private void handleUpdatePrescriptionStatus() {
-        // TODO: Nich and Yingjie to Implement
 
         System.out.println("\n" + Colour.BLUE + "=== Dispense Pending Prescriptions ===" + Colour.RESET);
         System.out.println("Recent patients with pending Prescriptions:");
@@ -277,6 +314,10 @@ public class PharmacistMenu extends AbstractMainMenu {
         logPharmacistAction("Submitted replenishment request for medication ID: " + entryID);
     }
 
+    /**
+     * Logs the pharmacist action in the audit log.
+     * @param action The action to log
+     */
     private void logPharmacistAction(String action) {
         AuditLogger.logAction(
                 userContext.getName(),

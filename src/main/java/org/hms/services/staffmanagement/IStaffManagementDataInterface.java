@@ -1,6 +1,7 @@
 package org.hms.services.staffmanagement;
 
 import org.hms.services.storage.IDataInterface;
+
 import java.util.List;
 
 /**
@@ -20,7 +21,7 @@ public interface IStaffManagementDataInterface extends IDataInterface {
      * Updates existing staff information.
      *
      * @param staffId the ID of the staff member to update
-     * @param staff the updated Staff object
+     * @param staff   the updated Staff object
      */
     void updateStaff(int staffId, Staff staff);
 
@@ -50,7 +51,7 @@ public interface IStaffManagementDataInterface extends IDataInterface {
     /**
      * Removes a staff member, with an option for soft or hard deletion.
      *
-     * @param staffId the ID of the staff member to remove
+     * @param staffId    the ID of the staff member to remove
      * @param softDelete true for a soft delete (mark as inactive), false for a hard delete
      */
     void removeStaff(int staffId, boolean softDelete);
@@ -59,7 +60,7 @@ public interface IStaffManagementDataInterface extends IDataInterface {
      * Assigns a role to a staff member.
      *
      * @param staffId the ID of the staff member
-     * @param role the role to be assigned to the staff member
+     * @param role    the role to be assigned to the staff member
      */
     void assignRole(int staffId, String role);
 
@@ -67,7 +68,7 @@ public interface IStaffManagementDataInterface extends IDataInterface {
      * Changes the status (e.g., active, inactive, archived) of a staff member.
      *
      * @param staffId the ID of the staff member
-     * @param status the new status to assign to the staff member
+     * @param status  the new status to assign to the staff member
      */
     void changeStatus(int staffId, String status);
 

@@ -17,10 +17,32 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.List;
 
+/**
+ * The DoctorMenu class provides a menu interface for doctors to perform various actions
+ * related to appointment management, medical record handling, and schedule viewing.
+ * It extends the AbstractMainMenu class to leverage common menu functionalities.
+ */
 public class DoctorMenu extends AbstractMainMenu {
+    /**
+     * Scanner instance for capturing user input within the DoctorMenu.
+     * <p>
+     * This Scanner object is utilized to read various inputs from the console,
+     * allowing the doctor to interact with different menu options and execute commands accordingly.
+     */
     private final Scanner scanner;
+    /**
+     * The userContext field holds the context data of the currently logged-in user,
+     * including their name, role, and associated hospital ID.
+     * It is used for validating and authorizing user actions within the DoctorMenu.
+     */
     private final UserContext userContext;
 
+    /**
+     * Constructs a DoctorMenu object with the specified App instance.
+     * This constructor initializes the DoctorMenu by setting the application context,
+     * user context, and input scanner. Additionally, it validates that the user has
+     * the appropriate doctor access
+     */
     public DoctorMenu(App app) {
         this.app = app;
         this.userContext = app.getUserContext();
@@ -28,6 +50,11 @@ public class DoctorMenu extends AbstractMainMenu {
         validateDoctorAccess();
     }
 
+    /**
+     * Validates if the current user has the necessary doctor privileges to access specific functionalities
+     * within the application. If the user context is null or the user role is not a doctor, access is denied,
+     * a message is printed, and the application redirects to the authentication menu.
+     */
     private void validateDoctorAccess() {
         if (userContext == null || userContext.getUserType() != UserRole.DOCTOR) {
             System.out.println(Colour.RED + "Access Denied: Doctor privileges required." + Colour.RESET);
@@ -35,6 +62,17 @@ public class DoctorMenu extends AbstractMainMenu {
         }
     }
 
+    /**
+     * Displays the doctor menu and processes user selections.
+     * <p>
+     * This method continuously displays the doctor menu with various options including:
+     * viewing and updating patient medical records, managing appointment slots and requests,
+     * viewing personal schedules and upcoming appointments, recording appointment outcomes, and logging out.
+     * <p>
+     * The method reads user input and executes the corresponding actions based on the selected option.
+     * If the user chooses to log out, the method logs the action, calls the logout service, and
+     * navigates back to the authentication
+     */
     @Override
     public void displayAndExecute() {
         while (true) {
@@ -76,12 +114,22 @@ public class DoctorMenu extends AbstractMainMenu {
         }
     }
 
+    /**
+     * Handles the recording of the outcome for a specific appointment. This method:
+     * - Displays all confirmed appointments for the currently logged-in doctor.
+     * - Prompts the doctor to enter the Appointment ID.
+     * - Allows the doctor to prescribe medications and checks the current drug inventory.
+     * - Prompts the doctor to enter various details including diagnosis, treatment plan, and consultation notes.
+     * - Adds a new medical entry into the patient's record.
+     * - Comple
+     */
     private void handleRecordAppointmentOutcome() {
         // TODO: For nicholas to check
 
-        if(!app.getAppointmentService().displayAllAppointmentsForDoctor(userContext.getHospitalID())){
+        if (!app.getAppointmentService().displayAllAppointmentsForDoctor(userContext.getHospitalID())) {
             return;
-        };
+        }
+        ;
 
         System.out.print("Enter Appointment ID: ");
         String appointmentID = scanner.nextLine();
@@ -117,9 +165,8 @@ public class DoctorMenu extends AbstractMainMenu {
                 System.out.println("Do you want to add a record for this drug? Note that drug will only be in stock once the administrator approves it. (y/n)");
                 String response = scanner.nextLine();
                 if (response.equalsIgnoreCase("y")) {
-                    app.getDrugDispensaryService().addNewDrug(drugName, 0,0);
-                }
-                else {
+                    app.getDrugDispensaryService().addNewDrug(drugName, 0, 0);
+                } else {
                     // Return to the start of the loop
                     i--;
                     continue;
@@ -160,7 +207,7 @@ public class DoctorMenu extends AbstractMainMenu {
         System.out.print("Enter Consultation Notes (use ',' and '/' if needed): ");
         String consultationNotes = scanner.nextLine();
 
-        if(!app.getMedicalRecordService().addMedicalEntry(app.getUserContext(), patientID, diagnosis, treatmentPlan, consultationNotes)) {
+        if (!app.getMedicalRecordService().addMedicalEntry(app.getUserContext(), patientID, diagnosis, treatmentPlan, consultationNotes)) {
             System.out.println(Colour.RED + "Failed to add medical entry" + Colour.RESET);
         }
 
@@ -172,22 +219,30 @@ public class DoctorMenu extends AbstractMainMenu {
         System.out.println("Appointment is completed and outcome has been recorded");
     }
 
+    /**
+     * Handles appointment requests by retrieving the doctor's ID from the user context
+     * and checking for pending requests. If there are any pending requests, it prompts
+     * the doctor to input the appointment ID to manage the request.
+     */
     private void handleAppointmentRequests() {
-        // TODO: For Yingjie to implement
 
         String doctorID = (app.getUserContext().getHospitalID());
-        //doctorID = "D1001" ;  //remove this line after real doctor ID have appointments
         boolean request = app.getAppointmentService().viewRequest(doctorID);
-        if(request == true){
-        System.out.println("key in appointment ID");
-        int appointmentID = Integer.parseInt(scanner.nextLine());
+        if (request == true) {
+            System.out.println("key in appointment ID");
+            int appointmentID = Integer.parseInt(scanner.nextLine());
 
-        app.getAppointmentService().manageAppointmentRequests(appointmentID, doctorID);
+            app.getAppointmentService().manageAppointmentRequests(appointmentID, doctorID);
         }
     }
 
+    /**
+     * Handles setting the appointment availability for a doctor.
+     * The method allows the doctor to set their schedule as either available or unavailable for a specific date and time slot.
+     * The doctor can input their desired availability and the system will check if a schedule exists for that date.
+     * If the schedule does not exist, it will create a new one and then update the schedule with
+     */
     private void handleSetAppointmentAvailability() {
-        // TODO: For Yingjie to implement
         String doctorID = (app.getUserContext().getHospitalID());
 
         System.out.println("Do you want to set the schedule as:");
@@ -207,7 +262,7 @@ public class DoctorMenu extends AbstractMainMenu {
             String date = scanner.nextLine();
 
             /******this part for check does schedule alr exists in the folder, if no, initialize a new date******/
-            if(!app.getAppointmentService().checkExistingSchedule(date)){
+            if (!app.getAppointmentService().checkExistingSchedule(date)) {
                 app.getAppointmentService().createNewSchedule(date);
             }
 
@@ -230,6 +285,13 @@ public class DoctorMenu extends AbstractMainMenu {
 
     }
 
+    /**
+     * Displays the upcoming appointments for the doctor currently logged into the system.
+     * <p>
+     * This method prints the doctor's name and logs the action of viewing upcoming appointments.
+     * It then retrieves the doctor's ID from the user context and uses the appointment service to
+     * display all confirmed appointments for the doctor.
+     */
     private void handleViewAppointments() {
         System.out.println("\n=== Upcoming Appointments ===");
         System.out.println("Doctor: Dr. " + userContext.getName());
@@ -246,8 +308,13 @@ public class DoctorMenu extends AbstractMainMenu {
     }
 
     /**
-     * This method handles the user's request to access patient records.
-     * It displays a list of patients under the doctor's care and allows the user to select a patient to view.
+     * Handles the process of accessing patient records for a doctor.
+     * <p>
+     * This method performs the following actions:
+     * 1. Displays the header indicating that the access patient records section is being accessed.
+     * 2. Retrieves and displays the doctor's name.
+     * 3. Retrieves and displays the list of patients under the doctor's care.
+     * 4. Prompts the doctor to enter
      */
     private void handleAccessPatientRecords() {
         System.out.println("\n" + Colour.BLUE + "=== Access Patient Records ===" + Colour.RESET);
@@ -293,6 +360,13 @@ public class DoctorMenu extends AbstractMainMenu {
         }
     }
 
+    /**
+     * Handles the process of updating medical records for patients under the doctor's care.
+     * This method performs the following steps:
+     * - Displays a list of patients under the doctor's care.
+     * - Prompts the doctor to enter the PatientID of the patient whose records need updating.
+     * - Validates whether the patient exists and whether they are assigned to the current doctor
+     */
     private void handleUpdateMedicalRecords() {
         System.out.println("\n" + Colour.BLUE + "=== Update Medical Records ===" + Colour.RESET);
         System.out.println("Updating as: Dr. " + userContext.getName());
@@ -331,7 +405,7 @@ public class DoctorMenu extends AbstractMainMenu {
             // Prompt select MedicalEntry to update from the MedicalRecord
             int entryID = -1;
             while (!validEntryNumbers.contains(entryID)) {
-                if(entryID != -1){
+                if (entryID != -1) {
                     System.out.println(Colour.RED + "Invalid entryID." + Colour.RESET);
                     logDoctorAction("Attempted access to non-existent medical record entry: " + entryID);
                 }
@@ -339,7 +413,7 @@ public class DoctorMenu extends AbstractMainMenu {
                 entryID = scanner.nextInt();
                 scanner.nextLine();
 
-                if(entryID == -1){
+                if (entryID == -1) {
                     return;
                 }
             }
@@ -389,6 +463,14 @@ public class DoctorMenu extends AbstractMainMenu {
         }
     }
 
+    /**
+     * Handles the action for viewing a doctor's daily schedule.
+     * <p>
+     * This method prompts the user to input a date in "YYYYMMDD" format. It then checks
+     * if a schedule for that date already exists. If not, it initializes a new schedule.
+     * The method proceeds to display the doctor's schedule for the specified date
+     * and logs the action of viewing the schedule. The schedule includes time slots
+     */
     private void handleViewSchedule() {
         // TODO: Implement this.
         String doctorID = app.getUserContext().getHospitalID();
@@ -396,7 +478,7 @@ public class DoctorMenu extends AbstractMainMenu {
 
         String dateStr = scanner.nextLine();
         /******this part for check does schedule alr exists in the folder, if no, initialize a new date******/
-        if(!app.getAppointmentService().checkExistingSchedule(dateStr)){
+        if (!app.getAppointmentService().checkExistingSchedule(dateStr)) {
             app.getAppointmentService().createNewSchedule(dateStr);
         }
 
@@ -410,6 +492,12 @@ public class DoctorMenu extends AbstractMainMenu {
         app.getAppointmentService().viewDoctorDailySchedule(doctorID, dateStr);
     }
 
+    /**
+     * Logs an action performed by a doctor in the hospital management system.
+     * The action details are recorded including the doctor's name, role, hospital ID, and a description of the action.
+     *
+     * @param action a description of the action performed by the doctor
+     */
     private void logDoctorAction(String action) {
         AuditLogger.logAction(
                 userContext.getName(),

@@ -5,6 +5,9 @@ import org.hms.services.storage.IDataInterface;
 
 import java.util.ArrayList;
 
+/**
+ * Interface defining methods to interact with drug stock data in a healthcare management system.
+ */
 public interface IDrugStockDataInterface extends IDataInterface {
     /**
      * Retrieves list of appointment IDs pending dispensary.
@@ -27,5 +30,10 @@ public interface IDrugStockDataInterface extends IDataInterface {
      */
     DrugReplenishRequestTable getDrugReplenishRequestTable();
 
+    /**
+     * Retrieves the table containing staff data.
+     *
+     * @return the StaffTable containing details of staff members.
+     */
     StaffTable getStaffTable();
 }

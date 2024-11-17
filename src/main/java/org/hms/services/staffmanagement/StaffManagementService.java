@@ -13,6 +13,10 @@ import java.util.stream.Collectors;
  */
 public class StaffManagementService extends AbstractService<IDrugStockDataInterface> {
 
+    /**
+     * Instance of StaffTable used to manage staff-related operations such as
+     * adding, updating, retrieving, and removing staff records.
+     */
     private StaffTable staffTable;
 
     /**
@@ -51,7 +55,7 @@ public class StaffManagementService extends AbstractService<IDrugStockDataInterf
     /**
      * Updates an existing staff entry in the staff table and saves the changes to a file.
      *
-     * @param staffId the alphanumerical ID of the staff to update
+     * @param staffId      the alphanumerical ID of the staff to update
      * @param updatedStaff the updated Staff object
      * @return true if the update was successful, false if the staff was not found
      */
@@ -117,7 +121,7 @@ public class StaffManagementService extends AbstractService<IDrugStockDataInterf
     /**
      * Removes a staff entry based on alphanumerical staff ID. Supports both soft and hard deletion.
      *
-     * @param staffId the alphanumerical ID of the staff to remove
+     * @param staffId    the alphanumerical ID of the staff to remove
      * @param softDelete true for soft delete (mark as inactive), false for hard delete
      * @return true if the removal was successful, false otherwise
      */
@@ -146,7 +150,7 @@ public class StaffManagementService extends AbstractService<IDrugStockDataInterf
      * Assigns a specific role to the staff member.
      *
      * @param staffId the alphanumerical ID of the staff to assign the role to
-     * @param role the role to be assigned to the staff member
+     * @param role    the role to be assigned to the staff member
      * @return true if the role was assigned successfully, false otherwise
      */
     public boolean assignRole(String staffId, String role) {
@@ -163,7 +167,7 @@ public class StaffManagementService extends AbstractService<IDrugStockDataInterf
      * Changes the status (e.g., active/inactive) of a staff member.
      *
      * @param staffId the alphanumerical ID of the staff to change the status
-     * @param status the new status to be assigned to the staff member
+     * @param status  the new status to be assigned to the staff member
      * @return true if the status was changed successfully, false otherwise
      */
     public boolean changeStatus(String staffId, String status) {
@@ -190,7 +194,7 @@ public class StaffManagementService extends AbstractService<IDrugStockDataInterf
      * Searches for staff based on a specified criterion such as role, gender, or status.
      *
      * @param criteria the criterion to filter by ("role", "gender", or "status")
-     * @param value the value to match for the specified criterion
+     * @param value    the value to match for the specified criterion
      * @return a List of Staff objects that match the search criteria
      */
     public List<Staff> searchStaff(String criteria, String value, int minAge, int maxAge) {
@@ -217,13 +221,14 @@ public class StaffManagementService extends AbstractService<IDrugStockDataInterf
      * Overloaded searchStaff method for searching without age range filtering.
      *
      * @param criteria the criterion to filter by ("role", "gender", or "status")
-     * @param value the value to match for the specified criterion
+     * @param value    the value to match for the specified criterion
      * @return a List of Staff objects that match the search criteria
      */
     public List<Staff> searchStaff(String criteria, String value) {
         // Pass default age range (no filtering) to the main method
         return searchStaff(criteria, value, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
+
     /**
      * Saves the current staff data to a file.
      *
