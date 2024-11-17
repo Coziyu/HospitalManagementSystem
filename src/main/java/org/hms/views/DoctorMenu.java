@@ -151,8 +151,18 @@ public class DoctorMenu extends AbstractMainMenu {
         System.out.print("Enter Type of Appointment: ");
         String typeOfAppointment = scanner.nextLine();
 
+        System.out.println("Enter Diagnosis: ");
+        String diagnosis = scanner.nextLine();
+
+        System.out.println("Enter Treatment Plan: ");
+        String treatmentPlan = scanner.nextLine();
+
         System.out.print("Enter Consultation Notes (use ',' and '/' if needed): ");
         String consultationNotes = scanner.nextLine();
+
+        if(!app.getMedicalRecordService().addMedicalEntry(app.getUserContext(), patientID, diagnosis, treatmentPlan, consultationNotes)) {
+            System.out.println(Colour.RED + "Failed to add medical entry" + Colour.RESET);
+        }
 
         // Use createNewAppointmentOutcome to create an AppointmentOutcome object
         AppointmentOutcome newOutcome = app.getAppointmentService().createNewAppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);

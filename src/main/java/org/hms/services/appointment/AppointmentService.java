@@ -466,49 +466,6 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
-    /*public AppointmentOutcome keyInOutcome(String appointmentID, String patientID) {
-        Scanner scanner = new Scanner(System.in);
-
-        // Ask for type of appointment
-        System.out.print("Enter the type of appointment: ");
-        String typeOfAppointment = scanner.nextLine();
-
-        // Ask for consultation notes
-        System.out.print("Enter consultation notes: ");
-        String consultationNotes = scanner.nextLine();
-
-        // Create a list to store prescribed medications
-        ArrayList<DrugDispenseRequest> prescribedMedication = new ArrayList<>();
-        // Ask user to input drugs
-        System.out.print("Enter the number of drugs to prescribe: ");
-        int numDrugs = Integer.parseInt(scanner.nextLine());
-
-        for (int i = 0; i < numDrugs; i++) {
-            System.out.println("\nEntering details for drug " + (i + 1));
-
-            // Ask for drug name
-            System.out.print("Enter drug name: ");
-            String drugName = scanner.nextLine();
-
-            // Ask for quantity to add
-            System.out.print("Enter quantity: ");
-            int addQuantity = Integer.parseInt(scanner.nextLine());
-
-            // Ask for additional notes
-            System.out.print("Enter notes for this drug: ");
-            String notes = scanner.nextLine();
-
-            // Create a new DrugDispenseRequest object and add it to the list
-            // DrugDispenseRequest drugRequest = new DrugDispenseRequest(drugName, addQuantity, notes);
-            // TODO: Consider adding a drugNotes field to the DrugDispenseRequest
-            DrugDispenseRequest drugRequest = storageServiceInterface.createNewDrugDispenseRequest(drugName, addQuantity);
-
-            prescribedMedication.add(drugRequest);
-        }
-
-        // Create and return the AppointmentOutcome object
-        return new AppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
-    }*/
 
     public void setDoctorSchedule(String doctorID, String Date, String timeSlot) {
         AppointmentSchedule schedule = storageServiceInterface.loadSchedule(Date);
@@ -720,7 +677,6 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         return true;
     }
 
-    //TODO: For nich to call this method
     public boolean updateAppointmentOutcometoCSV() {
         boolean updated = false;
         storageServiceInterface.writeAllAppointmentOutcomesToCSV(appointmentOutcomes);
