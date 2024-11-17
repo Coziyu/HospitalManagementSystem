@@ -38,4 +38,8 @@ public interface IAppointmentDataInterface extends IDataInterface {
 
     public File[] getAllDateFile();
 
+    public void initializeSchedule(String date);
+
+    public boolean checkScheduleExist(String date);
+
 }

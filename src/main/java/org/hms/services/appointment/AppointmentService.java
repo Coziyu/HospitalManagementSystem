@@ -744,14 +744,23 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
     // and returns a list of pending prescriptions for that patient.
     // Takesin: String patientID, Returns: List<DrugDispenseRequest>
     public ArrayList<DrugDispenseRequest> getDrugRequestsByPatientID(String patientID) {
+        ArrayList<DrugDispenseRequest> pendingDrugRequests = new ArrayList<>();
+        ArrayList<DrugDispenseRequest> drugRequests = new ArrayList<>();
         for (AppointmentOutcome outcome : appointmentOutcomes) {
             if (outcome.getPatientID().equals(patientID)) {
-                return outcome.getPrescribedMedication();
+                drugRequests = outcome.getPrescribedMedication();
+                for (DrugDispenseRequest drugRequest : drugRequests) {
+                    if (drugRequest.getStatus() == DrugRequestStatus.PENDING) {
+                        pendingDrugRequests.add(drugRequest);
+                    }
+                }
             }
         }
-        // Return an empty list if no match is found
-        System.out.println("No drugRequest.");
-        return new ArrayList<>();
+
+        if (pendingDrugRequests.isEmpty()) {
+            System.out.println("No pending drug requests for Patient ID: " + patientID);
+        }
+        return pendingDrugRequests;
     }
 
     //For update appointmentStatus to COMPLETED
@@ -829,6 +838,13 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
                 System.err.println("Failed to update schedule for file: " + csvFile.getName());
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void createNewSchedule(String date){
+        boolean existingSchedule = storageServiceInterface.checkScheduleExist(date);
+        if(!existingSchedule){
+            storageServiceInterface.initializeSchedule(date);
         }
     }
 
