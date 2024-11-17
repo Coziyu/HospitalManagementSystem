@@ -45,9 +45,9 @@ This project was done as part of a graded assignment in our SC2002 Object-Orient
   - Managing manpower related actions like adding, removing, archiving of staff details and assignment of role.
 - Patient Management Service
   - Medical Record Service
-   -Responsible for storing and retrieving patient medical histories + details, also allows patients and doctors to update role-specific details
+  	 - Responsible for storing and retrieving patient medical histories + details, also allows patients and doctors to update role-specific details
   - Appointment Service
-   - Managing appointment scheduling and outcomes such as doctor schedule management and time slot allocation
+   	- Managing appointment scheduling and outcomes such as doctor schedule management and time slot allocation
 - Drug Dispensary Service
   - Manages drug inventory and stock levels as well as requests to dispense and replenish 
 
