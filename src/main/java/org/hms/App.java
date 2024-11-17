@@ -37,6 +37,7 @@ public class App {
 
     /**
      * Get the current menu
+     *
      * @return the current menu
      */
     public void setCurrentMenu(AbstractMenu menu) {
@@ -71,11 +72,13 @@ public class App {
         return authenticationService;
     }
 
-    public DrugDispensaryService getDrugDispensaryService(){
+    public DrugDispensaryService getDrugDispensaryService() {
         return drugDispensaryService;
     }
 
-    public StaffManagementService getStaffManagementService() { return staffManagementService; }
+    public StaffManagementService getStaffManagementService() {
+        return staffManagementService;
+    }
 
     public UserContext getUserContext() {
         return userContext;
