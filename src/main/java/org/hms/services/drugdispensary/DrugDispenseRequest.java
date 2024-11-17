@@ -3,9 +3,21 @@ package org.hms.services.drugdispensary;
 import org.hms.entities.AbstractTableEntry;
 import org.hms.entities.Colour;
 
+/**
+ * Represents a request to dispense a specific drug with a defined quantity and status.
+ */
 public class DrugDispenseRequest extends AbstractTableEntry {
+    /**
+     * The name of the drug requested for dispensing.
+     */
     String drugName;
+    /**
+     * The quantity of the drug requested in the dispense request.
+     */
     int quantity;
+    /**
+     * Indicates the current status of the drug dispense request.
+     */
     DrugRequestStatus status;
 
     /**
@@ -96,6 +108,11 @@ public class DrugDispenseRequest extends AbstractTableEntry {
         status = DrugRequestStatus.valueOf(parts[3]);
     }
 
+    /**
+     * Converts the drug dispense request to a printable colored string.
+     *
+     * @return a formatted string containing the drug name, quantity, and status, with appropriate color codes.
+     */
     public String toPrintString() {
         return (String.format(Colour.YELLOW + "Drug Requested: %s, Quantity: %s,Status: %s" + Colour.RESET,
                 preprocessCSVString(drugName),

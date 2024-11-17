@@ -10,15 +10,54 @@ import org.hms.utils.PasswordUtils;
 
 import java.util.Scanner;
 
+/**
+ * AuthenticationMenu is responsible for managing the user authentication flow.
+ * <p>
+ * This class extends the AbstractMenu and provides functionality for login attempts,
+ * handling first-time login scenarios, and delegating users to the appropriate menu
+ * based on their roles.
+ */
 public class AuthenticationMenu extends AbstractMenu {
+    /**
+     * The maximum number of unsuccessful login attempts allowed.
+     *
+     * <p>This constant is used in the {@code AuthenticationMenu} class to limit the number
+     * of times a user can attempt to log in before being temporarily locked out or
+     * required to take additional steps to verify their identity.
+     */
     private static final int MAX_LOGIN_ATTEMPTS = 3;
+    /**
+     * Scanner for reading user input.
+     * <p>
+     * This is a final instance of the Scanner class used to read input from the
+     * standard input stream (typically, the keyboard). It is used within the
+     * AuthenticationMenu class to handle various user interactions, such as login,
+     * password changes, and other authentication-related tasks.
+     */
     private final Scanner scanner;
 
+    /**
+     * Constructs an AuthenticationMenu object with the specified App instance.
+     *
+     * @param app the App instance used to initialize the menu
+     */
     public AuthenticationMenu(App app) {
         this.app = app;
         this.scanner = new Scanner(System.in);
     }
 
+    /**
+     * Displays the authentication menu for the Hospital Management System and executes the selected option.
+     * This menu provides two options:
+     * 1. Login: Initiates the login process.
+     * 2. Exit: Terminates the application.
+     * <p>
+     * The method continuously prompts the user for input until a valid option (Login or Exit) is selected.
+     * Invalid inputs (non-numeric values, out-of-range numbers, or empty inputs) are handled by displaying
+     * appropriate error messages and re-prompting the user.
+     * <p>
+     * Upon selecting the Exit option, the method terminates and sets the current menu to null.
+     */
     @Override
     public void displayAndExecute() {
         while (true) {
@@ -52,6 +91,23 @@ public class AuthenticationMenu extends AbstractMenu {
         }
     }
 
+    /**
+     * Handles the login process for users. This method repeatedly prompts the
+     * user to enter their ID and password until a successful login is achieved
+     * or the user opts to go back.
+     * <p>
+     * The method performs the following steps:
+     * 1. Displays a login prompt to the user.
+     * 2. Prompts the user to enter their ID. Allows the user to cancel the login
+     * process by typing 'back'.
+     * 3. Prompts the user to enter their password.
+     * 4. Validates the entered credentials using the authentication service.
+     * 5. If the login is successful and it is the user's first login, prompts the
+     * user to change their password.
+     * 6. Navigates to the appropriate menu upon successful login.
+     * 7. Displays error messages for failed login attempts, with specific handling
+     * for accounts that are locked.
+     */
     private void handleLogin() {
         while (true) {
             System.out.println("\n" + Colour.BLUE + "=== Login ===" + Colour.RESET);
@@ -109,6 +165,14 @@ public class AuthenticationMenu extends AbstractMenu {
         }
     }
 
+    /**
+     * Handles the process of changing the user's password. Ensures that the
+     * new password meets specified requirements and verifies the user's current
+     * password before allowing changes.
+     *
+     * @param user The user object for which the password change is to be handled.
+     * @return true if the password is successfully changed, false otherwise.
+     */
     private boolean handlePasswordChange(User user) {
         System.out.println("\nFor security reasons, you must change your password.");
         System.out.println(Colour.CYAN + "Password Requirements:" + Colour.RESET);
@@ -165,6 +229,12 @@ public class AuthenticationMenu extends AbstractMenu {
         return false;
     }
 
+    /**
+     * Handles the actions to be performed after a successful login.
+     * This includes setting up the user's context and navigating to the appropriate menu based on the user's role.
+     *
+     * @param user The User object representing the logged-in user, containing user information such as ID and role.
+     */
     private void handleSuccessfulLogin(User user) {
         // Create UserContext using the user ID as both the name and hospital ID
         // TODO: Find the name of Staff Members and Patients, and slot it inside here.

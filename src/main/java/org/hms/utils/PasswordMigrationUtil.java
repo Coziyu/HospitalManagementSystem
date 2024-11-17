@@ -6,10 +6,29 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * Utility class for migrating passwords stored in a CSV file.
+ * The migration process involves backing up the original file,
+ * reading user data, hashing the passwords, and writing the updated
+ * data back to the CSV file.
+ */
 public class PasswordMigrationUtil {
+    /**
+     * The root directory where data files are stored.
+     * Typically resolves to the "data" subdirectory within the user's current working directory.
+     */
     private static final String DATA_ROOT = System.getProperty("user.dir") + "/data/";
+    /**
+     * The file path to the user database CSV file. This variable is constructed
+     * by appending "users.csv" to the root data directory.
+     */
     private static final String USER_DB_FILE = DATA_ROOT + "users.csv";
 
+    /**
+     * The main method to initiate the password migration process.
+     *
+     * @param args Command-line arguments, not used in this implementation.
+     */
     public static void main(String[] args) {
         try {
             migratePasswords();
@@ -19,6 +38,16 @@ public class PasswordMigrationUtil {
         }
     }
 
+    /**
+     * Migrates the passwords of all users listed in the `users.csv` file.
+     * The migration process involves the following steps:
+     * 1. Creating a backup of the original `users.csv` file.
+     * 2. Reading user data from the original file.
+     * 3. Hashing the plaintext passwords using SHA-256.
+     * 4. Writing the updated user data with hashed passwords back to the `users.csv` file.
+     *
+     * @throws IOException If an I/O error occurs during file operations.
+     */
     public static void migratePasswords() throws IOException {
         // Step 1: Create backup
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));

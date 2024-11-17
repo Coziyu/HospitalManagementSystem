@@ -22,6 +22,9 @@ public class App {
     private UserContext userContext;
     private AbstractMenu currentMenu;
 
+    /**
+     * Constructor for App
+     */
     public App() {
         this.storageService = new StorageService();
         this.medicalRecordService = new MedicalRecordService(storageService);
@@ -32,16 +35,26 @@ public class App {
         this.userContext = null;
     }
 
+    /**
+     * Get the current menu
+     * @return the current menu
+     */
     public void setCurrentMenu(AbstractMenu menu) {
         this.currentMenu = menu;
     }
 
+    /**
+     * Run the application
+     */
     public void run() {
         while (currentMenu != null) {
             currentMenu.displayAndExecute();
         }
     }
 
+    /**
+     * Initialise the application
+     */
     public void initialise() {
         setCurrentMenu(new AuthenticationMenu(this));
     }
