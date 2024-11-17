@@ -31,6 +31,7 @@ public class PharmacistMenu extends AbstractMainMenu {
 
     /**
      * Constructor for the PharmacistMenu class.
+     *
      * @param app
      */
     public PharmacistMenu(App app) {
@@ -94,6 +95,7 @@ public class PharmacistMenu extends AbstractMainMenu {
      * The pharmacist can then select a patient to view the appointment outcomes and pending prescriptions.
      * The method will display the appointment outcomes and pending prescriptions for the selected patient.
      * The method will also log the action in the audit log.
+     *
      * @see AppointmentOutcome
      * @see DrugDispenseRequest
      * @see AuditLogger
@@ -158,6 +160,7 @@ public class PharmacistMenu extends AbstractMainMenu {
      * The method will display the appointment outcomes and pending prescriptions for the selected patient.
      * The pharmacist can then choose to dispense the prescription or not.
      * The method will update the prescription status and log the action in the audit log.
+     *
      * @see AppointmentOutcome
      */
     private void handleUpdatePrescriptionStatus() {
@@ -316,6 +319,7 @@ public class PharmacistMenu extends AbstractMainMenu {
 
     /**
      * Logs the pharmacist action in the audit log.
+     *
      * @param action The action to log
      */
     private void logPharmacistAction(String action) {
