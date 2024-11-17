@@ -14,13 +14,41 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * AppointmentService provides functionalities to manage medical appointments.
+ * This includes scheduling, rescheduling, and canceling appointments.
+ * It also provides methods for viewing and updating appointment details.
+ */
 public class AppointmentService extends AbstractService<IAppointmentDataInterface> {
 
+    /**
+     * A list of appointment details managed by the AppointmentService.
+     * Each appointment is represented as an instance of
+     * {@link AppointmentInformation}, encapsulating details such as
+     * appointment ID, patient ID, doctor ID, appointment time slot, and status.
+     */
     private List<AppointmentInformation> appointments;
+    /**
+     * Represents the schedule for appointments within the appointment service.
+     * This field encapsulates the data and methods related to appointment scheduling.
+     * It is used to manage the schedule for appointments, including creation, modification,
+     * and retrieval of appointment times and related information.
+     */
     private AppointmentSchedule appointmentSchedule;
+    /**
+     * List of all appointment outcomes managed by the AppointmentService.
+     * Each entry represents the outcome of a specific appointment, including
+     * details such as diagnosis, prescribed medications, and consultation notes.
+     */
     private ArrayList<AppointmentOutcome> appointmentOutcomes;
 
 
+    /**
+     * Constructs an AppointmentService instance with the provided data interface.
+     * Initializes the appointment service by reading existing appointments and their outcomes from CSV storage.
+     *
+     * @param dataInterface an instance of IAppointmentDataInterface for accessing appointment-related data
+     */
     public AppointmentService(IAppointmentDataInterface dataInterface) {
         this.storageServiceInterface = dataInterface;
         StorageService storageService = new StorageService();
@@ -28,6 +56,11 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         appointmentOutcomes = storageService.readAppointmentOutcomesFromCSV();
     }
 
+    /**
+     * Displays the details of a single appointment.
+     *
+     * @param appointment An object containing the information of the appointment to be displayed.
+     */
     public void displayOneAppointment(AppointmentInformation appointment) {
         System.out.println("Appointment ID: " + appointment.getAppointmentID());
         System.out.println("Patient ID: " + appointment.getPatientID());
@@ -37,18 +70,34 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         System.out.println("--------------------------------------------------");
     }
 
+    /**
+     * Retrieves the appointment schedule for a given date.
+     *
+     * @param date The date for which the appointment schedule is requested.
+     * @return The appointment schedule for the specified date.
+     */
     public AppointmentSchedule getAppointmentSchedule(String date) {
         return storageServiceInterface.loadSchedule(date);
     }
 
+    /**
+     * Retrieves the doctor's unique identifier associated with a patient's appointment.
+     * The method searches through the list of appointments to find a matching patient ID with
+     * an appointment status of either PENDING or CONFIRMED.
+     *
+     * @param patientID The unique identifier for the patient whose doctor's ID is to be retrieved.
+     * @return The doctor's unique identifier if a matching appointment with the patient ID is found and the appointment is PENDING or CONFIRMED;
+     * null if no such appointment is found.
+     */
     //For patient
     public String getDoctorID(String patientID) {
         for (AppointmentInformation appointment : appointments) {
             // Check if the patientID matches
             if (appointment.getPatientID().equals(patientID)) {
-                if((appointment.getAppointmentStatus() == AppointmentStatus.PENDING) || (appointment.getAppointmentStatus() == AppointmentStatus.CONFIRMED)){
-                // Return the doctor's ID for the matching appointment
-                return appointment.getDoctorID();}
+                if ((appointment.getAppointmentStatus() == AppointmentStatus.PENDING) || (appointment.getAppointmentStatus() == AppointmentStatus.CONFIRMED)) {
+                    // Return the doctor's ID for the matching appointment
+                    return appointment.getDoctorID();
+                }
             }
         }
         // If no appointment is found for the given patientID
@@ -56,6 +105,12 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         return null; // or throw an exception if preferred
     }
 
+    /**
+     * Gets the current appointment status for a patient identified by the given patientID.
+     *
+     * @param patientID The unique identifier for the patient whose appointment status is to be retrieved.
+     * @return The current status of the patient's appointment. If no appointment is found, returns null.
+     */
     public AppointmentStatus getCurrentAppointmentStatus(String patientID) {
         for (AppointmentInformation appointment : appointments) {
             // Check if the patientID matches
@@ -69,6 +124,15 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         return null; // or throw an exception if preferred
     }
 
+    /**
+     * Checks for an existing active appointment for a given patient.
+     * <p>
+     * An appointment is considered active if its status is not COMPLETED or CANCELLED.
+     *
+     * @param patientID The unique identifier for the patient.
+     * @return {@code true} if there are no active appointments for the specified patient,
+     * {@code false} if there is an active appointment.
+     */
     public Boolean checkExistingAppointment(String patientID) {
         for (AppointmentInformation appointment : appointments) {
             // Check if the patientID matches
@@ -84,6 +148,14 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         return true;
     }
 
+    /**
+     * Retrieves the date and time slot of the appointment for a given patient.
+     *
+     * @param patientID the ID of the patient whose appointment details are being requested
+     * @return an array of Strings where the first element is the appointment date in "yyyyMMdd" format
+     * and the second element is the appointment time slot in "HH:mm" format.
+     * Returns null if no matching appointment is found.
+     */
     public String[] getAppointmentDateTime(String patientID) {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
         SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
@@ -104,6 +176,13 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         return null; // or throw an exception if preferred
     }//return array of string, index 0 is date, index 1 is timeslot
 
+    /**
+     * Resumes the doctor's schedule by setting a specific time slot to "available".
+     *
+     * @param doctorID The unique identifier for the doctor.
+     * @param Date     The date for which the schedule needs to be resumed.
+     * @param timeSlot The time slot that needs to be set to "available".
+     */
     public void resumeDoctorSchedule(String doctorID, String Date, String timeSlot) {
         AppointmentSchedule schedule = storageServiceInterface.loadSchedule(Date);
         int doctorCol = -1;  // Find doctor column
@@ -138,6 +217,12 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
     }
 
+    /**
+     * Sets the status of the first confirmed or pending appointment for the given patient ID to CANCELED.
+     * If no matching appointment is found, the method does nothing.
+     *
+     * @param patientID the ID of the patient whose appointment is to be canceled
+     */
     public void setAppointmentToCanceled(String patientID) {
         for (AppointmentInformation appointment : appointments) {
             // Check if the patientID matches
@@ -157,6 +242,16 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
     }
 
 
+    /**
+     * Schedules an appointment for a patient with a specific doctor at a given date and time slot.
+     *
+     * @param patientID The ID of the patient for whom the appointment is being scheduled.
+     * @param doctorID  The ID of the doctor with whom the appointment is being scheduled.
+     * @param Date      The date for which the appointment is scheduled.
+     * @param timeSlot  The specific time slot for the appointment.
+     * @param schedule  The current appointment schedule.
+     * @return true if the appointment was successfully scheduled, false otherwise.
+     */
     public boolean scheduleAppointment(String patientID, String doctorID, String Date, String timeSlot, AppointmentSchedule schedule) {
         //before calling any function related to schedule/reschedule appointment, use storageservice to get schedule of wanted date first;
 
@@ -195,6 +290,14 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
+    /**
+     * Reschedules an appointment for a patient with a specified doctor at a new date and time slot.
+     *
+     * @param patientID The ID of the patient whose appointment is being rescheduled.
+     * @param doctorID  The ID of the doctor with whom the appointment is being rescheduled.
+     * @param date      The new date for the rescheduled appointment in YYYYMMDD format.
+     * @param timeSlot  The new time slot for the rescheduled appointment in HH:mm format.
+     */
     public void rescheduleAppointment(String patientID, String doctorID, String date, String timeSlot) {
 
 
@@ -253,6 +356,13 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
+    /**
+     * Displays the appointment status for a specified patient ID.
+     * If appointments are found for the given patient ID, it displays each appointment's details.
+     * If no appointments are found, it notifies that no appointments were found for the provided patient ID.
+     *
+     * @param patientID The unique identifier of the patient whose appointment status needs to be viewed.
+     */
     public void viewAppointmentStatus(String patientID) {
         boolean found = false;
         for (AppointmentInformation appointment : appointments) {
@@ -268,6 +378,12 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
+    /**
+     * Displays the details of the upcoming appointments for the specified patient.
+     * An appointment is considered upcoming if its status is either PENDING or CONFIRMED.
+     *
+     * @param patientID the unique identifier of the patient whose upcoming appointments are to be viewed.
+     */
     public void viewUpcomingAppointments(String patientID) {
         boolean found = false;
         for (AppointmentInformation appointment : appointments) {
@@ -286,6 +402,17 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
+    /**
+     * Adds a new appointment to the system. This method takes in the details of the appointment,
+     * including the time slot, appointment ID, patient ID, and doctor ID, and creates
+     * an appointment record with a pending status. The appointment record is then saved
+     * to persistent storage.
+     *
+     * @param timeSlotString the time slot for the appointment in the format "yyyyMMdd HH:mm-HH:mm"
+     * @param appointmentID  the unique identifier for the appointment
+     * @param patientID      the unique identifier for the patient
+     * @param doctorID       the unique identifier for the doctor
+     */
     public void addAppointment(String timeSlotString, int appointmentID, String patientID, String doctorID) {
         try {
             AppointmentInformation newAppointment = new AppointmentInformation(
@@ -302,6 +429,11 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
+    /**
+     * Displays the appointment matrix for a given date.
+     *
+     * @param date The date for which the appointment matrix is to be displayed.
+     */
     public void displayMatrix(String date) {
         AppointmentSchedule schedule = storageServiceInterface.loadSchedule(date);
         String[][] matrix = schedule.getMatrix();
@@ -313,6 +445,12 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
+    /**
+     * Displays the appointment schedule for a given date, listing available time slots
+     * and corresponding staff members.
+     *
+     * @param date The date for which the appointment schedule is to be displayed, in yyyy-MM-dd format.
+     */
     public void displaySchedule(String date) {
         AppointmentSchedule schedule = storageServiceInterface.loadSchedule(date);
         String[][] matrix = schedule.getMatrix();
@@ -348,6 +486,11 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
+    /**
+     * Displays the appointment outcomes for a given patient ID.
+     *
+     * @param patientID the unique identifier of the patient whose appointment outcomes are to be displayed
+     */
     public void displayAppointmentOutcomesByPatient(String patientID) {
         boolean found = false;
         System.out.println("Appointment Outcomes for Patient ID: " + patientID);
@@ -383,6 +526,12 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
     }
 
 
+    /**
+     * Retrieves the patient ID associated with a given appointment ID.
+     *
+     * @param appointmentID the unique identifier for the appointment
+     * @return the patient ID associated with the appointment, or null if no matching appointment is found
+     */
     //For doctor
     public String getPatienIDbyAppointmentID(String appointmentID) {
         for (AppointmentInformation appointment : appointments) {
@@ -397,6 +546,13 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         return null;
     }
 
+    /**
+     * Displays all pending appointment requests for a given doctor based on their ID.
+     * If no pending requests are found, it prints a message to the console.
+     *
+     * @param doctorID the unique identifier of the doctor whose pending appointment requests are to be viewed
+     * @return true if there are pending appointments for the specified doctor, false otherwise
+     */
     public boolean viewRequest(String doctorID) {
         boolean found = false;
         for (AppointmentInformation appointment : appointments) {
@@ -414,6 +570,12 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         return true;
     }
 
+    /**
+     * Manages appointment requests by allowing a doctor to update the status of a pending appointment.
+     *
+     * @param appointmentID The unique identifier of the appointment to be managed.
+     * @param doctorID      The unique identifier of the doctor handling the appointment request.
+     */
     public void manageAppointmentRequests(int appointmentID, String doctorID) {
         boolean found = false;
         Scanner scanner = new Scanner(System.in);
@@ -450,6 +612,13 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
+    /**
+     * Displays the confirmed appointments for a specific doctor on a given date.
+     * If no confirmed appointments are found, a message will be printed indicating so.
+     *
+     * @param doctorID The unique identifier of the doctor whose schedule is to be viewed.
+     * @param date     The specific date for which the doctor's confirmed appointments are to be viewed.
+     */
     public void viewDoctorSchedule(String doctorID, String date) {
         boolean found = false;
         for (AppointmentInformation appointment : appointments) {
@@ -467,6 +636,13 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
     }
 
 
+    /**
+     * Sets the schedule for a doctor by making a specific time slot available.
+     *
+     * @param doctorID The unique identifier of the doctor whose schedule is being set.
+     * @param Date     The date for which the schedule is being set.
+     * @param timeSlot The specific time slot that is being set as available.
+     */
     public void setDoctorSchedule(String doctorID, String Date, String timeSlot) {
         AppointmentSchedule schedule = storageServiceInterface.loadSchedule(Date);
         int doctorCol = -1;  // Find doctor column
@@ -500,6 +676,13 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
     }
 
+    /**
+     * Cancels the schedule of a doctor for a specific time slot on a given date.
+     *
+     * @param doctorID Identifier of the doctor whose schedule is to be canceled.
+     * @param Date     The date for which the doctor's schedule is to be canceled.
+     * @param timeSlot The specific time slot that needs to be canceled.
+     */
     public void cancelDoctorSchedule(String doctorID, String Date, String timeSlot) {
         AppointmentSchedule schedule = storageServiceInterface.loadSchedule(Date);
         int doctorCol = -1;  // Find doctor column
@@ -533,6 +716,13 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
     }
 
+    /**
+     * Displays the daily schedule of a specific doctor for a given date.
+     *
+     * @param doctorID the unique identifier of the doctor
+     * @param date     the specific date for which the schedule is to be viewed
+     * @return true if the doctor's schedule for the given date is found and displayed successfully, false otherwise
+     */
     public boolean viewDoctorDailySchedule(String doctorID, String date) {
         AppointmentSchedule schedule = storageServiceInterface.loadSchedule(date);
         String[][] matrix = schedule.getMatrix();
@@ -575,6 +765,16 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         return true;
     }
 
+    /**
+     * Records the outcome of an appointment by creating an AppointmentOutcome object.
+     *
+     * @param appointmentID        the ID of the appointment
+     * @param patientID            the ID of the patient
+     * @param typeOfAppointment    the type of the appointment
+     * @param consultationNotes    notes from the consultation during the appointment
+     * @param prescribedMedication a list of prescribed medications during the appointment
+     * @return the created AppointmentOutcome object
+     */
     public AppointmentOutcome keyInOutcome(String appointmentID, String patientID, String typeOfAppointment, String consultationNotes, ArrayList<DrugDispenseRequest> prescribedMedication) {
 
         int dummyID = 1000;
@@ -582,6 +782,12 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         return new AppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
     }
 
+    /**
+     * Displays the list of confirmed appointments for a specific doctor on a given date.
+     *
+     * @param date     the specified date in the format yyyyMMdd to filter appointments.
+     * @param doctorID the unique identifier of the doctor whose appointments are to be displayed.
+     */
     public void displayAppointmentsForDoctor(String date, String doctorID) {
         boolean found = false;
         System.out.println("Appointments for Doctor ID: " + doctorID + " on " + date);
@@ -601,6 +807,15 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
+    /**
+     * Displays all confirmed appointments for a given doctor based on their doctor ID.
+     * If no confirmed appointments are found, it will print a corresponding message.
+     *
+     * @param doctorID The unique identifier of the doctor for whom the confirmed appointments
+     *                 are to be displayed.
+     * @return true if at least one confirmed appointment is found for the given doctor ID,
+     * false otherwise.
+     */
     public boolean displayAllAppointmentsForDoctor(String doctorID) {
         boolean found = false;
         System.out.println("All Confirmed Appointments for Doctor ID: " + doctorID);
@@ -621,12 +836,22 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
     }
 
 
-
+    /**
+     * Adds a new appointment outcome to the list of appointment outcomes.
+     *
+     * @param outcome The appointment outcome to add.
+     */
     public void addAppointmentOutcome(AppointmentOutcome outcome) {
         appointmentOutcomes.add(outcome);
         //Need to add a function to write the new outcome to last row of CSV
     }
 
+    /**
+     * Displays all appointments available in the system. This method iterates over
+     * the list of appointments and calls the displayOneAppointment method to
+     * output the details of each appointment. This functionality is intended for
+     * administrative users.
+     */
     //For admin
     public void displayAllAppointments() {
         for (AppointmentInformation appointment : appointments) {
@@ -635,6 +860,16 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
     }
 
 
+    /**
+     * Creates a new appointment outcome and records it.
+     *
+     * @param appointmentID        The ID of the appointment.
+     * @param patientID            The ID of the patient.
+     * @param typeOfAppointment    The type of the appointment (e.g., consultation, follow-up).
+     * @param consultationNotes    Notes from the consultation.
+     * @param prescribedMedication List of medications prescribed during the appointment.
+     * @return The newly created AppointmentOutcome object.
+     */
     //For pharmacist
     //These three methods will be used together to create a new appointment outcome
     public AppointmentOutcome createNewAppointmentOutcome(String appointmentID, String patientID, String typeOfAppointment, String consultationNotes, ArrayList<DrugDispenseRequest> prescribedMedication) {
@@ -645,11 +880,23 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         return outcome;
     }
 
+    /**
+     * Creates a new ArrayList of DrugDispenseRequest objects.
+     *
+     * @return A new ArrayList containing DrugDispenseRequest objects.
+     */
     public ArrayList<DrugDispenseRequest> createNewArrayOfDrugDispenseRequest() {
         ArrayList<DrugDispenseRequest> newList = new ArrayList<>();
         return newList;
     }
 
+    /**
+     * Adds a new drug dispense request to the given list of requests.
+     *
+     * @param list        The list of DrugDispenseRequest objects to add the new request to.
+     * @param drugName    The name of the drug to be dispensed.
+     * @param addQuantity The quantity of the drug to be dispensed.
+     */
     public void addDrugDispenseRequest(ArrayList<DrugDispenseRequest> list, String drugName, int addQuantity) {
         // Create a new DrugDispenseRequest instance
         DrugDispenseRequest drugRequest = storageServiceInterface.createNewDrugDispenseRequest(drugName, addQuantity);
@@ -658,6 +905,13 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
     //
 
 
+    /**
+     * Updates the status of the prescribed medications for a given appointment ID.
+     * If any medication is in pending status, it is updated to dispensed.
+     *
+     * @param appointmentID the ID of the appointment for which the prescription status needs to be updated
+     * @return true if at least one medication status was updated, otherwise false
+     */
     public boolean updatePrescriptionStatus(String appointmentID) {
         boolean updated = false;
 
@@ -677,6 +931,11 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         return true;
     }
 
+    /**
+     * Updates all appointment outcomes by writing them into a CSV file.
+     *
+     * @return a boolean indicating whether the operation was successful
+     */
     public boolean updateAppointmentOutcometoCSV() {
         boolean updated = false;
         storageServiceInterface.writeAllAppointmentOutcomesToCSV(appointmentOutcomes);
@@ -685,6 +944,13 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
     }
 
+    /**
+     * Displays the list of pending prescriptions for all appointment outcomes.
+     * The method iterates over the stored appointment outcomes and checks
+     * each prescribed medication to determine if any drugs are pending.
+     * If there are pending drugs, their details are printed to the console.
+     * Otherwise, it indicates that there are no pending drugs for the appointment.
+     */
     public void displayPendingPrescriptions() {
         System.out.println("Pending Prescriptions:");
         int havePendingDrug = 0;
@@ -709,9 +975,11 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
-    //TODO: For yingjie: I want a function that returns a list of patientIDs that
-    // have pending prescriptions.
-    // Returns: List<String>
+    /**
+     * Returns a list of patient IDs that have pending drug requests.
+     *
+     * @return A list of patient IDs as strings that have pending drug requests.
+     */
     public List<String> getPatientIDsWithPendingDrugRequest() {
         List<String> patientIDs = new ArrayList<>();
 
@@ -730,10 +998,10 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
     }
 
     /**
-     * A function that returns a list of appointment outcomes that have pending prescriptions
-     * for a given patient.
-     * @param patientID
-     * @return List<AppointmentOutcome> of AppointmentOutcomes with pending prescriptions
+     * Retrieves a list of appointment outcomes that have a pending prescription for a given patient ID.
+     *
+     * @param patientID the ID of the patient for whom to retrieve appointment outcomes with pending prescriptions
+     * @return a list of AppointmentOutcome objects that have pending prescriptions for the specified patient
      */
     public List<AppointmentOutcome> getAppointmentOutcomesPendingPrescriptionByPatientID(String patientID) {
         List<AppointmentOutcome> outcomes = new ArrayList<>();
@@ -751,9 +1019,14 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         return outcomes;
     }
 
-    //TODO: For yingjie: I want a function that returns takes in a patientID
-    // and returns a list of pending prescriptions for that patient.
-    // Takesin: String patientID, Returns: List<DrugDispenseRequest>
+    /**
+     * Retrieves a list of pending drug dispense requests for the specified patient ID.
+     *
+     * @param patientID the unique identifier of the patient whose drug requests are to be retrieved.
+     * @return an ArrayList containing DrugDispenseRequest objects that are pending for the specified patient.
+     * If there are no pending requests, an empty list is returned with a console message indicating
+     * no pending requests for the given patient ID.
+     */
     public ArrayList<DrugDispenseRequest> getDrugRequestsByPatientID(String patientID) {
         ArrayList<DrugDispenseRequest> pendingDrugRequests = new ArrayList<>();
         ArrayList<DrugDispenseRequest> drugRequests = new ArrayList<>();
@@ -774,6 +1047,13 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         return pendingDrugRequests;
     }
 
+    /**
+     * Updates the status of an appointment to COMPLETED if it is currently CONFIRMED.
+     *
+     * @param appointmentID The unique identifier of the appointment to be completed.
+     * @param doctorID      The identifier of the doctor associated with the appointment.
+     * @return {@code true} if the appointment status was successfully updated to COMPLETED, {@code false} otherwise.
+     */
     //For update appointmentStatus to COMPLETED
     public boolean completeAnAppointment(String appointmentID, String doctorID) {
         boolean updated = false;
@@ -803,6 +1083,14 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         return updated;
     }
 
+    /**
+     * Adds a new doctor to the appointment schedule for the specified date.
+     * This method updates the schedule by adding the doctor to the matrix and setting
+     * all their time slots to "available".
+     *
+     * @param doctorID The unique identifier of the doctor to be added to the schedule.
+     * @param date     The date of the schedule to which the doctor is to be added.
+     */
     //For admin to add staff and update to the schedule
     public void addNewDoctorToSchedule(String doctorID, String date) {
         AppointmentSchedule schedule = storageServiceInterface.loadSchedule(date);
@@ -832,6 +1120,11 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         storageServiceInterface.writeScheduleToCSV(schedule, date);
     }
 
+    /**
+     * Updates all scheduled appointments with a new doctor.
+     *
+     * @param doctorID the unique identifier of the new doctor to be added to all schedules.
+     */
     public void updateAllSchedulesWithNewDoctor(String doctorID) {
 
         File[] csvFiles = storageServiceInterface.getAllDateFile();
@@ -852,6 +1145,12 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
+    /**
+     * Checks if a schedule exists for the given date.
+     *
+     * @param date The date in "yyyyMMdd" format for which the schedule existence needs to be checked.
+     * @return true if the schedule exists for the given date, false otherwise.
+     */
     public boolean checkExistingSchedule(String date) {
         if (!date.matches("\\d{8}")) {
             System.out.println("Invalid date format. Please use yyyyMMdd.");
@@ -862,6 +1161,11 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
     }
 
+    /**
+     * Initializes a new schedule for the given date if it does not already exist.
+     *
+     * @param date The date for which the schedule is to be created, formatted as YYYYMMDD.
+     */
     public void createNewSchedule(String date) {
         storageServiceInterface.initializeSchedule(date);
 

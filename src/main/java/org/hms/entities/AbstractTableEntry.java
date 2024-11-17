@@ -5,35 +5,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractTableEntry implements Serializable {
+
+    /**
+     * Represents the unique identifier for an entry in a table.
+     * This variable is protected to allow access within subclasses.
+     */
     protected int tableEntryID;
 
-    public AbstractTableEntry(int tableEntryID){
+    /**
+     * Initializes an instance of AbstractTableEntry with the specified table entry ID.
+     *
+     * @param tableEntryID the unique identifier for the table entry
+     */
+    public AbstractTableEntry(int tableEntryID) {
         this.tableEntryID = tableEntryID;
     }
-
-    public int getTableEntryID() {
-        return tableEntryID;
-    }
-
-    public void setTableEntryID(int tableEntryID) {
-        this.tableEntryID = tableEntryID;
-    }
-
-    /**
-     * Concrete classes must define how to save CSV.
-     * @return a csvLine representation of the data.
-     */
-    public abstract String toCSVString();
-
-
-    /**
-     * Concrete classes must define how to load CSV.
-     * @param csvLine comma seperated entry values.
-     */
-    public abstract void loadFromCSVString(String csvLine);
 
     /**
      * Preprocesses a string into expect CSV String entry format.
+     *
      * @param input
      * @return Formatted CSV String
      */
@@ -51,6 +41,7 @@ public abstract class AbstractTableEntry implements Serializable {
 
     /**
      * Parses a properly formatted CSVLine into an Array of Strings
+     *
      * @param csvLine
      * @return Array of CSVLine Entries, casted to String
      */
@@ -84,6 +75,38 @@ public abstract class AbstractTableEntry implements Serializable {
         // Add the last field
         result.add(currentField.toString());
 
-            return result.toArray(new String[0]);
+        return result.toArray(new String[0]);
     }
+
+    /**
+     * Retrieves the unique identifier for the table entry.
+     *
+     * @return the unique identifier for the table entry
+     */
+    public int getTableEntryID() {
+        return tableEntryID;
+    }
+
+    /**
+     * Sets the unique identifier for the table entry.
+     *
+     * @param tableEntryID the unique identifier for the table entry
+     */
+    public void setTableEntryID(int tableEntryID) {
+        this.tableEntryID = tableEntryID;
+    }
+
+    /**
+     * Concrete classes must define how to save CSV.
+     *
+     * @return a csvLine representation of the data.
+     */
+    public abstract String toCSVString();
+
+    /**
+     * Concrete classes must define how to load CSV.
+     *
+     * @param csvLine comma seperated entry values.
+     */
+    public abstract void loadFromCSVString(String csvLine);
 }
