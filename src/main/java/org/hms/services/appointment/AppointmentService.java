@@ -662,7 +662,6 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
 
 
-
     public void addAppointmentOutcome(AppointmentOutcome outcome) {
         appointmentOutcomes.add(outcome);
         //Need to add a function to write the new outcome to last row of CSV
@@ -769,6 +768,28 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
 
         return patientIDs;
+    }
+
+    /**
+     * A function that returns a list of appointment outcomes that have pending prescriptions
+     * for a given patient.
+     * @param patientID
+     * @return List<AppointmentOutcome> of AppointmentOutcomes with pending prescriptions
+     */
+    public List<AppointmentOutcome> getAppointmentOutcomesPendingPrescriptionByPatientID(String patientID) {
+        List<AppointmentOutcome> outcomes = new ArrayList<>();
+        for (AppointmentOutcome outcome : appointmentOutcomes) {
+            if (outcome.getPatientID().equals(patientID)) {
+                for (DrugDispenseRequest drugRequest : outcome.getPrescribedMedication()) {
+                    if (drugRequest.getStatus() == DrugRequestStatus.PENDING) {
+                        outcomes.add(outcome);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return outcomes;
     }
 
     //TODO: For yingjie: I want a function that returns takes in a patientID

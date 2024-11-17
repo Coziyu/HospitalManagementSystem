@@ -4,10 +4,16 @@ import org.hms.App;
 import org.hms.entities.UserContext;
 import org.hms.entities.UserRole;
 import org.hms.entities.Colour;
+import org.hms.services.appointment.AppointmentOutcome;
+import org.hms.services.drugdispensary.DrugDispenseRequest;
+import org.hms.services.drugdispensary.DrugRequestStatus;
 import org.hms.services.logging.AuditLogger;
 
-import java.time.LocalDateTime;
+import java.awt.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 public class PharmacistMenu extends AbstractMainMenu {
@@ -63,18 +69,146 @@ public class PharmacistMenu extends AbstractMainMenu {
         }
     }
 
-    // TODO: For Nich & Yingjie to work on.
     private void handleViewAppointmentOutcomes() {
         System.out.println("\n" + Colour.BLUE + "=== View Appointment Outcome Records ===" + Colour.RESET);
-        System.out.println("Recent Appointment Outcomes with Prescriptions:");
+        System.out.println("Recent patients with pending Prescriptions:");
 
-        
+        List<String> patientIDs = app.getAppointmentService().getPatientIDsWithPendingDrugRequest();
+        // Select a patient
+        if (patientIDs.isEmpty()) {
+            System.out.println("No patients with pending prescriptions.");
+            return;
+        }
+
+        String patientID = "";
+        try {
+            for (int i = 0; i < patientIDs.size(); i++) {
+                System.out.println(i + ". " + patientIDs.get(i));
+            }
+            System.out.println("Select a patient (Enter the entry number):");
+
+            int choice = Integer.parseInt(scanner.nextLine());
+
+            if (choice < 0 || choice >= patientIDs.size()) {
+                System.out.println(Colour.RED + "Invalid choice. Please try again." + Colour.RESET);
+                return;
+            }
+            patientID = patientIDs.get(choice);
+
+        } catch (InputMismatchException e) {
+            System.out.println(Colour.RED + "Please enter a valid number." + Colour.RESET);
+            return;
+        }
+
+        List<AppointmentOutcome> appointmentOutcomes = app.getAppointmentService().getAppointmentOutcomesPendingPrescriptionByPatientID(patientID);
+
+        if (appointmentOutcomes.isEmpty()) {
+            System.out.println("No pending prescriptions for this patient.");
+            return;
+        }
+
+        for (AppointmentOutcome appointmentOutcome : appointmentOutcomes) {
+            // Print the AppointmentOutcome
+            System.out.println("\n" + Colour.GREEN + " == Appointment Outcome == " + Colour.RESET);
+            System.out.println(Color.YELLOW + appointmentOutcome.toPrintString() + Colour.RESET);
+            // Display Pending Prescriptions
+            System.out.println("\n" + Colour.GREEN + " == Pending Prescriptions == " + Colour.RESET);
+            List<DrugDispenseRequest> pendingPrescriptions = appointmentOutcome.getPrescribedMedication();
+            for (DrugDispenseRequest pendingPrescription : pendingPrescriptions) {
+                System.out.println(pendingPrescription.toPrintString());
+            }
+        }
 
         logPharmacistAction("Viewed appointment outcomes");
     }
 
     private void handleUpdatePrescriptionStatus() {
         // TODO: Nich and Yingjie to Implement
+
+        System.out.println("\n" + Colour.BLUE + "=== Dispense Pending Prescriptions ===" + Colour.RESET);
+        System.out.println("Recent patients with pending Prescriptions:");
+
+        List<String> patientIDs = app.getAppointmentService().getPatientIDsWithPendingDrugRequest();
+        // Select a patient
+        if (patientIDs.isEmpty()) {
+            System.out.println("No patients with pending prescriptions.");
+            return;
+        }
+
+        String patientID = "";
+        try {
+            for (int i = 0; i < patientIDs.size(); i++) {
+                System.out.println(i + ". " + patientIDs.get(i));
+            }
+            System.out.println("Select a patient (Enter the entry number):");
+            int choice = Integer.parseInt(scanner.nextLine());
+            if (choice < 0 || choice >= patientIDs.size()) {
+                System.out.println(Colour.RED + "Invalid choice. Please try again." + Colour.RESET);
+                return;
+            }
+            patientID = patientIDs.get(choice);
+
+        } catch (InputMismatchException e) {
+            System.out.println(Colour.RED + "Please enter a valid number." + Colour.RESET);
+            return;
+        }
+
+        List<AppointmentOutcome> appointmentOutcomes = app.getAppointmentService().getAppointmentOutcomesPendingPrescriptionByPatientID(patientID);
+
+        if (appointmentOutcomes.isEmpty()) {
+            System.out.println("No pending prescriptions for this patient.");
+            return;
+        }
+
+        // Show patient's details first
+        System.out.println(Colour.GREEN + " == Patient Particulars == " + Colour.RESET);
+        String personalParticulars = app.getMedicalRecordService().getPatientPersonalParticulars(patientID);
+        System.out.println(personalParticulars);
+        System.out.println(Colour.GREEN + " == Medical History == " + Colour.RESET);
+        String medicalRecordString = app.getMedicalRecordService().getPatientMedicalRecord(patientID);
+        System.out.println(medicalRecordString);
+
+        //Handle every AppointmentOutcome
+        for (int j = 0; j < appointmentOutcomes.size(); j++) {
+
+            // Print the AppointmentOutcome
+            System.out.println(Colour.GREEN + " == Appointment Outcome == " + Colour.RESET);
+            System.out.println(appointmentOutcomes.get(j).toPrintString());
+
+            List<DrugDispenseRequest> dispenseRequests = appointmentOutcomes.get(j).getPrescribedMedication();
+
+            for (int i = 0; i < dispenseRequests.size(); i++) {
+
+                System.out.println(Colour.GREEN + " == Prescription Details == " + Colour.RESET);
+                System.out.println(dispenseRequests.get(i).toPrintString());
+
+                // Prompt confirmation for dispense
+                System.out.print("Dispense this prescription? (Y/N): ");
+                String choice = scanner.nextLine();
+                if (choice.equalsIgnoreCase("N")) {
+                    System.out.println("Prescription not dispensed.");
+                    continue;
+                } else if (choice.equalsIgnoreCase("Y")) {
+                    boolean success = app.getDrugDispensaryService().dispenseDrug(dispenseRequests.get(i));
+                    if (success) {
+
+                        //TODO: Remove this assert
+                        assert (dispenseRequests.get(i).getStatus() == DrugRequestStatus.DISPENSED);
+
+                        System.out.println(Colour.GREEN + "Prescription dispensed successfully." + Colour.RESET);
+                        app.getAppointmentService().updateAppointmentOutcometoCSV();
+                    } else {
+                        System.out.println(Colour.RED + "Failed to dispense prescription." + Colour.RESET);
+                    }
+                } else {
+                    System.out.println(Colour.RED + "Invalid choice. Please try again." + Colour.RESET);
+                    i--;
+                }
+            }
+            System.out.println("Handled AppointmentOutcome " + (j + 1) + " of " + appointmentOutcomes.size());
+        }
+
+        logPharmacistAction("Dispensed pending prescriptions");
     }
 
     /**
