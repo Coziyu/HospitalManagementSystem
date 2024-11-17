@@ -119,7 +119,6 @@ public class DrugReplenishRequest extends AbstractTableEntry {
      * @return A string representation of the object.
      */
     public String toPrintString(String formatString){
-        // TODO: Consider adding print string's escape method
         String printString = String.format(formatString,
                 getTableEntryID(),
                 drugName,
