@@ -1,6 +1,7 @@
 package org.hms.services.drugdispensary;
 
 import org.hms.entities.AbstractTableEntry;
+import org.hms.entities.Colour;
 
 public class DrugDispenseRequest extends AbstractTableEntry {
     String drugName;
@@ -93,5 +94,13 @@ public class DrugDispenseRequest extends AbstractTableEntry {
         drugName = parts[1];
         quantity = Integer.parseInt(parts[2]);
         status = DrugRequestStatus.valueOf(parts[3]);
+    }
+
+    public String toPrintString() {
+        return (String.format(Colour.YELLOW + "Drug Requested: %s, Quantity: %s,Status: %s" + Colour.RESET,
+                preprocessCSVString(drugName),
+                quantity,
+                status)
+        );
     }
 }
