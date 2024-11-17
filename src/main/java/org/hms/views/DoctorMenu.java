@@ -79,6 +79,14 @@ public class DoctorMenu extends AbstractMainMenu {
     private void handleRecordAppointmentOutcome() {
         // TODO: For nicholas to check
 
+        if(!app.getAppointmentService().displayAllAppointmentsForDoctor(userContext.getHospitalID())){
+            return;
+        };
+
+        System.out.print("Enter Appointment ID: ");
+        String appointmentID = scanner.nextLine();
+
+
         ArrayList<DrugDispenseRequest> prescribedMedication = app.getAppointmentService().createNewArrayOfDrugDispenseRequest();
 
         System.out.print("Enter number of medications to prescribe: ");
@@ -95,12 +103,9 @@ public class DoctorMenu extends AbstractMainMenu {
             app.getAppointmentService().addDrugDispenseRequest(prescribedMedication, drugName, quantity);
         }
 
-        // Step 3: Collect data for the AppointmentOutcome fields
-        System.out.print("Enter Appointment ID: ");
-        String appointmentID = scanner.nextLine();
 
-        System.out.print("Enter Patient ID: ");
-        String patientID = scanner.nextLine();
+        //System.out.print("Enter Patient ID: ");
+        String patientID = app.getAppointmentService().getPatienIDbyAppointmentID(appointmentID);
 
         System.out.print("Enter Type of Appointment: ");
         String typeOfAppointment = scanner.nextLine();
@@ -118,7 +123,6 @@ public class DoctorMenu extends AbstractMainMenu {
 
     private void handleAppointmentRequests() {
         // TODO: For Yingjie to implement
-        System.out.println("Feature coming soon");
 
         String doctorID = (app.getUserContext().getHospitalID());
         //doctorID = "D1001" ;  //remove this line after real doctor ID have appointments
@@ -176,16 +180,17 @@ public class DoctorMenu extends AbstractMainMenu {
     }
 
     private void handleViewAppointments() {
-        System.out.println("\n=== Today's Appointments ===");
+        System.out.println("\n=== Upcoming Appointments ===");
         System.out.println("Doctor: Dr. " + userContext.getName());
-        logDoctorAction("Viewed today's appointments");
+        logDoctorAction("Viewed upcoming appointments");
         // Implementation would show today's appointments
 
         String doctorID = (app.getUserContext().getHospitalID());
-        LocalDate currentDate = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        String formattedDate = currentDate.format(formatter);
-        app.getAppointmentService().displayAppointmentsForDoctor(formattedDate, doctorID);
+        //LocalDate currentDate = LocalDate.now();
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        //String formattedDate = currentDate.format(formatter);
+        //app.getAppointmentService().displayAppointmentsForDoctor(formattedDate, doctorID);
+        app.getAppointmentService().displayAllAppointmentsForDoctor(doctorID);
 
     }
 
