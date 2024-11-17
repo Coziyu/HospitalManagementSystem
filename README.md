@@ -88,7 +88,7 @@ This project was done as part of a graded assignment in our SC2002 Object-Orient
 | UMLClassDiag  | Class Diagram of our HMS Application  |
 | documents  | Report and javadocs of our HMS Application  |
 
-<b>TODO PUT THE JAVADOC LINK</b>
+<b>[See this](https://github.com/Coziyu/HospitalManagementSystem/blob/main/javadoc/index.html)</b>
 
 ---
 ##  Getting Started
