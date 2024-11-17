@@ -98,7 +98,8 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
     }
 
     /**
-     * TODO. Fill in
+     * Saves the table entries to a CSV file. The file will specified by filename.
+     * This will not change the linked filePath of the table.
      * Note that saveToFile will always sort the tableEntries by TableEntryID before saving.
      * @param filename
      * @throws IOException
@@ -124,7 +125,7 @@ public abstract class AbstractTable<T extends AbstractTableEntry> implements Ser
     }
 
     /**
-     * TODO: Fill in
+     * Saves the table entries to a CSV file. The file will be specified by the filePath of the table.
      * Note that saveToFile will always sort the tableEntries by TableEntryID before saving.
      * @throws IOException
      */

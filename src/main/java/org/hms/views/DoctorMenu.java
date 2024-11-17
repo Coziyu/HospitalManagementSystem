@@ -266,15 +266,18 @@ public class DoctorMenu extends AbstractMainMenu {
 
 
             // Prompt select MedicalEntry to update from the MedicalRecord
-            System.out.print("Enter entryID to update: ");
-            int entryID = scanner.nextInt();
-            scanner.nextLine();
+            int entryID = -1;
+            while (!validEntryNumbers.contains(entryID)) {
+                if(entryID != -1){
+                    System.out.println(Colour.RED + "Invalid entryID." + Colour.RESET);
+                    logDoctorAction("Attempted access to non-existent medical record entry: " + entryID);
+                }
+                System.out.print("Enter entryID to update: (-1 to cancel): ");
+                entryID = scanner.nextInt();
 
-            // TODO: Do not return
-            if (!validEntryNumbers.contains(entryID)) {
-                System.out.println(Colour.RED + "Invalid entryID." + Colour.RESET);
-                logDoctorAction("Attempted access to non-existent medical record entry: " + entryID);
-                return;
+                if(entryID == -1){
+                    return;
+                }
             }
 
             // Display the MedicalEntry to be updated

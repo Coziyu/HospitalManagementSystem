@@ -86,7 +86,6 @@ public class DrugInventoryEntry extends AbstractTableEntry {
 
     /**
      * Converts the drug inventory entry to a CSV formatted string
-     * TODO
      * @return a CSV string representing the entry details
      */
     @Override
@@ -117,7 +116,6 @@ public class DrugInventoryEntry extends AbstractTableEntry {
      * @return A string representation of the object.
      */
     public String toPrintString(String formatString){
-        // TODO: Consider adding print string's escape method
         String printString = String.format(formatString,
                 getTableEntryID(),
                 name,
