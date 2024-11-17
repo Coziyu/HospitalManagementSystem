@@ -110,8 +110,10 @@ public class DoctorMenu extends AbstractMainMenu {
 
         // Use createNewAppointmentOutcome to create an AppointmentOutcome object
         AppointmentOutcome newOutcome = app.getAppointmentService().createNewAppointmentOutcome(appointmentID, patientID, typeOfAppointment, consultationNotes, prescribedMedication);
+        app.getAppointmentService().completeAnAppointment(appointmentID, app.getUserContext().getHospitalID());
 
-        System.out.println("AppointmentOutcome has been written to the CSV file.");
+        //System.out.println("AppointmentOutcome has been written to the CSV file.");
+        System.out.println("Appointment is completed and outcome has been recorded");
     }
 
     private void handleAppointmentRequests() {
@@ -322,12 +324,17 @@ public class DoctorMenu extends AbstractMainMenu {
 
     private void handleViewSchedule() {
         // TODO: Implement this.
+        String doctorID = app.getUserContext().getHospitalID();
+        System.out.print("Enter date (YYYYMMDD): ");
+
+        String dateStr = scanner.nextLine();
+
         System.out.println("\n=== Daily Schedule ===");
         System.out.println("Schedule for: Dr. " + userContext.getName());
         System.out.println("Hospital ID: " + userContext.getHospitalID());
-        logDoctorAction("Viewed weekly schedule");
+        logDoctorAction("Viewed daily schedule");
         // Implementation would show doctor's schedule
-        System.out.println("Feature coming soon...");
+        app.getAppointmentService().viewDoctorDailySchedule(doctorID, dateStr);
     }
 
     private void logDoctorAction(String action) {
