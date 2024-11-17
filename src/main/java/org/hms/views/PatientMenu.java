@@ -51,7 +51,6 @@ public class PatientMenu extends AbstractMainMenu {
                     case 6 -> handleCancelAppointment();
                     case 7 -> handleViewUpcomingAppointments();
                     case 8 -> handleViewPastAppointmentOutcome();
-                    case 10 -> handleAddDoctor();
                     case 9 -> {
                         app.getAuthenticationService().logout();
                         app.setCurrentMenu(new AuthenticationMenu(app));
@@ -132,6 +131,13 @@ public class PatientMenu extends AbstractMainMenu {
                 System.out.println("Cannot schedule appointments in the past.");
                 return;
             }
+
+            /******this part for check does schedule alr exists in the folder, if no, initialize a new date******/
+            if(!app.getAppointmentService().checkExistingSchedule(dateStr)){
+                app.getAppointmentService().createNewSchedule(dateStr);
+            }
+
+            /******************/
 
             //dateStr = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString();
             app.getAppointmentService().displaySchedule(dateStr);
