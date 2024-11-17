@@ -134,6 +134,7 @@ Run HospitalManagementSystem using the following command:
 ❯ java -classpath java -classpath build\classes\java\main org.hms.Main
 ```
 
+### In order to run through the test cases, ensure that you look through the [default_account_passwords_here](https://github.com/Coziyu/HospitalManagementSystem/blob/main/data/default_passwords_plaintext.csv)
 
 
 ---
