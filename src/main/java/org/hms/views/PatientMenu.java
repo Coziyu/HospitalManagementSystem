@@ -154,9 +154,11 @@ public class PatientMenu extends AbstractMainMenu {
             System.out.println("Enter time slot : ");
             String timeslot = scanner.nextLine();
             // TODO: scheduleAppointment requires doctorID, patientID, and timeSlot too.
-            if(app.getAppointmentService().checkExistingAppointment(patientID)){
-            app.getAppointmentService().scheduleAppointment(patientID, doctorID, dateStr,timeslot, app.getAppointmentService().getAppointmentSchedule(dateStr));
-            System.out.println("Appointment scheduled for: " + date.format(DateTimeFormatter.ISO_LOCAL_DATE));}
+            if(app.getAppointmentService().checkExistingAppointment(patientID)) {
+                if (app.getAppointmentService().scheduleAppointment(patientID, doctorID, dateStr, timeslot, app.getAppointmentService().getAppointmentSchedule(dateStr))) {
+                    System.out.println("Appointment scheduled for: " + date.format(DateTimeFormatter.ISO_LOCAL_DATE));
+                }
+            }
             else{
                 System.out.println("can not schedule more than 1 appointment");}
 

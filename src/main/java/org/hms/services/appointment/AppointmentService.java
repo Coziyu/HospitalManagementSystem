@@ -46,8 +46,9 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         for (AppointmentInformation appointment : appointments) {
             // Check if the patientID matches
             if (appointment.getPatientID().equals(patientID)) {
+                if((appointment.getAppointmentStatus() == AppointmentStatus.PENDING) || (appointment.getAppointmentStatus() == AppointmentStatus.CONFIRMED)){
                 // Return the doctor's ID for the matching appointment
-                return appointment.getDoctorID();
+                return appointment.getDoctorID();}
             }
         }
         // If no appointment is found for the given patientID
@@ -151,12 +152,12 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
                 }
             }
             // If no appointment is found for the given patientID
-            System.out.println("No appointment found for patient ID: " + patientID);
+            //System.out.println("No appointment found for patient ID: " + patientID);
         }
     }
 
 
-    public void scheduleAppointment(String patientID, String doctorID, String Date, String timeSlot, AppointmentSchedule schedule) {
+    public boolean scheduleAppointment(String patientID, String doctorID, String Date, String timeSlot, AppointmentSchedule schedule) {
         //before calling any function related to schedule/reschedule appointment, use storageservice to get schedule of wanted date first;
 
         int doctorCol = -1;  // Find doctor column
@@ -186,9 +187,11 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
             String timeSlotString = Date + " " + timeSlot + "-" + timeSlot;
             int appointmentID = appointments.size() + 100;
             addAppointment(timeSlotString, appointmentID, patientID, doctorID);
+            return true;
 
         } else {
             System.out.println("The selected time slot is not available.");
+            return false;
         }
     }
 
