@@ -89,12 +89,32 @@ public class DoctorMenu extends AbstractMainMenu {
 
         ArrayList<DrugDispenseRequest> prescribedMedication = app.getAppointmentService().createNewArrayOfDrugDispenseRequest();
 
+
         System.out.print("Enter number of medications to prescribe: ");
         int medicationCount = Integer.parseInt(scanner.nextLine());
+
+        // Show list of drugs in the pharmacy
+        System.out.println(Colour.GREEN + " == Available Drugs == " + Colour.RESET);
+        System.out.println(app.getDrugDispensaryService().getDrugInventoryAsString());
 
         for (int i = 1; i <= medicationCount; i++) {
             System.out.print("Enter name of drug " + i + ": ");
             String drugName = scanner.nextLine();
+
+            // Check if the drug is available in the pharmacy
+            if (!app.getDrugDispensaryService().doesDrugExist(drugName)) {
+                System.out.println(Colour.RED + "Drug not available in pharmacy." + Colour.RESET);
+                System.out.println("Do you want to add a record for this drug? Note that drug will only be in stock once the administrator approves it. (y/n)");
+                String response = scanner.nextLine();
+                if (response.equalsIgnoreCase("y")) {
+                    app.getDrugDispensaryService().addNewDrug(drugName, 0,0);
+                }
+                else {
+                    // Return to the start of the loop
+                    i--;
+                    continue;
+                }
+            }
 
             System.out.print("Enter quantity for " + drugName + ": ");
             int quantity = Integer.parseInt(scanner.nextLine());
@@ -286,6 +306,7 @@ public class DoctorMenu extends AbstractMainMenu {
                 }
                 System.out.print("Enter entryID to update: (-1 to cancel): ");
                 entryID = scanner.nextInt();
+                scanner.nextLine();
 
                 if(entryID == -1){
                     return;

@@ -19,28 +19,38 @@
 
 ##  Table of Contents
 
-- [ Overview](#-overview)
-- [ Features](#-features)
-- [ Project Structure](#-project-structure)
-    - [ Project Index](#-project-index)
+- [ Overview](#overview)
+- [ Features](#features)
+- [ Project Structure](#project-structure)
+    - [ Project Index](#project-index)
 - [ Getting Started](#-getting-started)
     - [ Prerequisites](#-prerequisites)
     - [ Installation](#-installation)
     - [ Usage](#-usage)
     - [ Testing](#-testing)
-- [ Contributing](#-contributing)
+- [ Contributing](#contributing)
 
 ---
 
 ##  Overview
-
-<code>❯ TODO</code>
+This project was done as part of a graded assignment in our SC2002 Object-Oriented Programming Module. Hospital Management System or HMS for short, is a Java Object-Oriented application that is designed to automate the management of hospital operations like patient or staff management, appointment scheduling and drug inventory management.
 
 ---
 
 ##  Features
 
-<code>❯ TODO</code>
+- Authentication Service
+  - Handles user authentication and validation for role-based access control
+- Staff Management Service
+  - Managing manpower related actions like adding, removing, archiving of staff details and assignment of role.
+- Patient Management Service
+  - Medical Record Service
+  	 - Responsible for storing and retrieving patient medical histories + details, also allows patients and doctors to update role-specific details
+  - Appointment Service
+   	- Managing appointment scheduling and outcomes such as doctor schedule management and time slot allocation
+- Drug Dispensary Service
+  - Manages drug inventory and stock levels as well as requests to dispense and replenish 
+
 
 ---
 
@@ -70,9 +80,13 @@
         ├── main
         └── test
 ```
-
-
 ###  Project Index
+
+ Folder Name 	      | Purpose |
+| ------------- | ------------- |
+| HospitalManagementSystem | HMS Application source code, data files and libraries |
+| UMLClassDiag  | Class Diagram of our HMS Application  |
+| documents  | Report and javadocs of our HMS Application  |
 
 <b>TODO PUT THE JAVADOC LINK</b>
 
@@ -159,6 +173,15 @@ Run HospitalManagementSystem using the following command:
       <img src="https://contrib.rocks/image?repo=Coziyu/HospitalManagementSystem">
    </a>
 </p>
+Lab Group : SCSI
+Group 3
 
+ Name 	      | Github Username |
+| ------------- | ------------- |
+| Chong Zhi Yu  | Coziyu  |
+| Tang Yingjie  | Tyingjie  |
+| Amos Ang Chee Tiong  | mosc0de  |
+| Ng Yuhang Dilon  | dillydecoded  |
+| Yeo Elijah Xuan-Ye  | Tricktail  |
 
 ---
