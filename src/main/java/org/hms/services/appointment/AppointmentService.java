@@ -90,12 +90,12 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         for (AppointmentInformation appointment : appointments) {
             // Check if the patientID matches
             if (appointment.getPatientID().equals(patientID)) {
-                if(appointment.getAppointmentStatus() == AppointmentStatus.PENDING || appointment.getAppointmentStatus() == AppointmentStatus.CONFIRMED) {
-                // Format the date and time slot
-                String date = dateFormatter.format(appointment.getAppointmentTimeSlot());
-                String timeSlot = timeFormatter.format(appointment.getAppointmentTimeSlot());
-                return new String[]{date, timeSlot};
-            }
+                if (appointment.getAppointmentStatus() == AppointmentStatus.PENDING || appointment.getAppointmentStatus() == AppointmentStatus.CONFIRMED) {
+                    // Format the date and time slot
+                    String date = dateFormatter.format(appointment.getAppointmentTimeSlot());
+                    String timeSlot = timeFormatter.format(appointment.getAppointmentTimeSlot());
+                    return new String[]{date, timeSlot};
+                }
             }
         }
         // If no appointment is found for the given patientID
@@ -126,7 +126,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
 
         String slotValue = schedule.getSlot(timeSlotRow, doctorCol);
 
-        if (!("available".equals(slotValue)) ){  // If slot is available (1)
+        if (!("available".equals(slotValue))) {  // If slot is available (1)
             schedule.setSlot(timeSlotRow, doctorCol, "available");
             storageServiceInterface.writeScheduleToCSV(schedule, Date);// Occupy the slot with patientID
             //System.out.println("Schedule set successful for doctor " + doctorID + " at " + timeSlot + " on " + "2024-11-01" + ".");//hard code the date here,need change
@@ -146,14 +146,14 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
                     appointment.setAppointmentStatus(AppointmentStatus.CANCELLED);
                     storageServiceInterface.writeAppointmentsToCsv(appointments);
                     return; // Exit after setting the first matching appointment
+                } else {
+                    continue;
                 }
-                else{continue;}
             }
             // If no appointment is found for the given patientID
             System.out.println("No appointment found for patient ID: " + patientID);
         }
     }
-
 
 
     public void scheduleAppointment(String patientID, String doctorID, String Date, String timeSlot, AppointmentSchedule schedule) {
@@ -591,11 +591,9 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
             String details = matrix[row][doctorCol]; // Corresponding column for doctorID
             if (details.equals("available")) {
                 details = Colour.GREEN + "Available" + Colour.RESET;
-            }
-            else if (details.equals("unavailable")) {
+            } else if (details.equals("unavailable")) {
                 details = Colour.RED + "Unavailable" + Colour.RESET;
-            }
-            else {
+            } else {
                 details = Colour.YELLOW + details + Colour.RESET;
             }
             System.out.println(timeSlot + "\t" + details);
@@ -629,7 +627,6 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
             System.out.println("No appointments found for Doctor ID: " + doctorID + " on " + date);
         }
     }
-
 
 
     public void addAppointmentOutcome(AppointmentOutcome outcome) {
@@ -688,7 +685,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
     }
 
     //TODO: For nich to call this method
-    public boolean updateAppointmentOutcometoCSV(){
+    public boolean updateAppointmentOutcometoCSV() {
         boolean updated = false;
         storageServiceInterface.writeAllAppointmentOutcomesToCSV(appointmentOutcomes);
         updated = true;
@@ -764,7 +761,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
     }
 
     //For update appointmentStatus to COMPLETED
-    public boolean completeAnAppointment(String appointmentID, String doctorID){
+    public boolean completeAnAppointment(String appointmentID, String doctorID) {
         boolean updated = false;
         for (AppointmentInformation appointment : appointments) {
             // Check if the appointmentID and doctorID match
@@ -793,7 +790,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
     }
 
     //For admin to add staff and update to the schedule
-    public void addNewDoctorToSchedule(String doctorID, String date){
+    public void addNewDoctorToSchedule(String doctorID, String date) {
         AppointmentSchedule schedule = storageServiceInterface.loadSchedule(date);
 
         String[][] oldMatrix = schedule.getMatrix();
@@ -818,7 +815,7 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         schedule.setMatrix(newMatrix);
 
         // Save the updated schedule back to the storage service
-        storageServiceInterface.writeScheduleToCSV(schedule,date);
+        storageServiceInterface.writeScheduleToCSV(schedule, date);
     }
 
     public void updateAllSchedulesWithNewDoctor(String doctorID) {
@@ -841,11 +838,20 @@ public class AppointmentService extends AbstractService<IAppointmentDataInterfac
         }
     }
 
-    public void createNewSchedule(String date){
-        boolean existingSchedule = storageServiceInterface.checkScheduleExist(date);
-        if(!existingSchedule){
-            storageServiceInterface.initializeSchedule(date);
+    public boolean checkExistingSchedule(String date) {
+        if (!date.matches("\\d{8}")) {
+            System.out.println("Invalid date format. Please use yyyyMMdd.");
+            return false;
         }
+
+        return storageServiceInterface.checkScheduleExist(date);
+
     }
 
+    public void createNewSchedule(String date) {
+        storageServiceInterface.initializeSchedule(date);
+
+    }
 }
+
+
