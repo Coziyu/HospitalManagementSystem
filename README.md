@@ -23,11 +23,11 @@
 - [ Features](#features)
 - [ Project Structure](#project-structure)
     - [ Project Index](#project-index)
-- [ Getting Started](#-getting-started)
-    - [ Prerequisites](#-prerequisites)
-    - [ Installation](#-installation)
-    - [ Usage](#-usage)
-    - [ Testing](#-testing)
+- [ Getting Started](-getting-started)
+    - [ Prerequisites](#prerequisites)
+    - [ Installation](#installation)
+    - [ Usage](#usage)
+    - [ Testing](#testing)
 - [ Contributing](#contributing)
 
 ---
@@ -85,10 +85,12 @@ This project was done as part of a graded assignment in our SC2002 Object-Orient
  Folder Name 	      | Purpose |
 | ------------- | ------------- |
 | HospitalManagementSystem | HMS Application source code, data files and libraries |
-| UMLClassDiag  | Class Diagram of our HMS Application  |
-| documents  | Report and javadocs of our HMS Application  |
+| diagrams  | UML Class Diagram and Topology Diagram of our HMS Application  |
+| report  |  Report of our HMS Application  |
+| javadocs  |  javadocs of our HMS Application  |
+| testcase_screenshots  |  Images of our test cases  |
 
-<b>[See this](https://github.com/Coziyu/HospitalManagementSystem/blob/main/javadoc/index.html)</b>
+<b>[See this for Javadocs](https://coziyu.github.io/HospitalManagementSystem/)</b>
 
 ---
 ##  Getting Started
