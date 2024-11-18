@@ -141,7 +141,7 @@ public class PharmacistMenu extends AbstractMainMenu {
         for (AppointmentOutcome appointmentOutcome : appointmentOutcomes) {
             // Print the AppointmentOutcome
             System.out.println("\n" + Colour.GREEN + " == Appointment Outcome == " + Colour.RESET);
-            System.out.println(Color.YELLOW + appointmentOutcome.toPrintString() + Colour.RESET);
+            System.out.println(Colour.YELLOW + appointmentOutcome.toPrintString() + Colour.RESET);
             // Display Pending Prescriptions
             System.out.println("\n" + Colour.GREEN + " == Pending Prescriptions == " + Colour.RESET);
             List<DrugDispenseRequest> pendingPrescriptions = appointmentOutcome.getPrescribedMedication();
