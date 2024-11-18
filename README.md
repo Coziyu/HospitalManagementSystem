@@ -90,7 +90,7 @@ This project was done as part of a graded assignment in our SC2002 Object-Orient
 | javadocs  |  javadocs of our HMS Application  |
 | testcase_screenshots  |  Images of our test cases  |
 
-<b>[See this](https://github.com/Coziyu/HospitalManagementSystem/blob/main/javadoc/index.html)</b>
+<b>[See this for Javadocs](https://coziyu.github.io/HospitalManagementSystem/)</b>
 
 ---
 ##  Getting Started
